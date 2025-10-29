@@ -57,6 +57,7 @@ int main(){
     // sceny
     SceneManager mgr;
     mgr.add(std::make_unique<RotatingTriangleScene>(&prog)); // 1
+    mgr.add(std::make_unique<SpheresScene>());
     mgr.add(std::make_unique<EmptyScene>());                  // 2
     gMgr = &mgr;
     glfwSetKeyCallback(w, key_cb);
@@ -82,7 +83,7 @@ int main(){
             cam.processKeyboard(fwd,back,left,right,dt);
             int ww,hh; glfwGetFramebufferSize(w,&ww,&hh); float aspect=(float)ww/(float)hh;
             glm::mat4 V = cam.view(); glm::mat4 P = cam.proj(60.f, aspect, 0.1f, 200.f);
-         
+
 
         // barva pro flat shader
         prog.use();

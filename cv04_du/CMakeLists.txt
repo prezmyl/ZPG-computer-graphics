@@ -29,6 +29,12 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 # >>> Target MUSÍ být nadefinovaný před target_* příkazy <<<
 add_executable(cv04_du ${SOURCES})
 
+# Po sestavení zkopíruj assets vedle binárky (do build diru)
+add_custom_command(TARGET cv04_du POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:cv04_du>/assets)
+
+
 target_include_directories(cv04_du PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
