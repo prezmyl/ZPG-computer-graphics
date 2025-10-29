@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
-#include "AbstractTransformation.h"
+#include "math/AbstractTransformation.h"
 
 // tady drzim usporadane transformace -> odpovida modelove matici M z pradnasek
 class TransformChain {

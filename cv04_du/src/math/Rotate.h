@@ -1,6 +1,6 @@
 // Rotate.h
 #pragma once
-#include "AbstractTransformation.h"
+#include "math/AbstractTransformation.h"
 #include <glm/vec3.hpp>
 
 class Rotate final : public AbstractTransformation {

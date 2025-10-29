@@ -1,15 +1,20 @@
-#include "gfx/Technique.h"
+#include "Technique.h"
+#include <fstream>
+#include <sstream>
+#include <memory>
 
-std::shared_ptr<Technique> Technique::createFromFiles(const std::string& vs, const std::string& fs, std::string* err){
-    auto prog = std::make_shared<ShaderProgram>();
-    if(!prog->loadFromFiles(vs, fs, err)){
-        return nullptr;
-    }
-    prog->bindUniformBlock("CameraBlock",   CAMERA_BINDING);
-    prog->bindUniformBlock("MaterialBlock", MATERIAL_BINDING);
-    prog->bindUniformBlock("LightBlock",    LIGHT_BINDING);
+static std::string slurp(const std::string& path){
+    std::ifstream f(path);
+    std::stringstream ss;
+    ss << f.rdbuf();
+    return ss.str();
+}
 
+std::shared_ptr<Technique> Technique::createFromFiles(const std::string& vs, const std::string& fs, std::string* /*err*/){
+    const std::string vsSrc = slurp(vs);
+    const std::string fsSrc = slurp(fs);
+    ShaderProgram sp = ShaderProgram::fromSources(vsSrc.c_str(), fsSrc.c_str());
     auto t = std::make_shared<Technique>();
-    t->program = std::move(prog);
+    t->program = std::make_shared<ShaderProgram>(std::move(sp));
     return t;
 }

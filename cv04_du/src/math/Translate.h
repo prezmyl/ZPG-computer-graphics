@@ -1,5 +1,5 @@
 #pragma once
-#include "AbstractTransformation.h"
+#include "math/AbstractTransformation.h"
 #include <glm/vec3.hpp>
 
 class Translate final : public AbstractTransformation {
