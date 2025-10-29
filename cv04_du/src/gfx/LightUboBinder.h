@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
-#include "Ubo.h"
-#include "Technique.h"
-#include "Light.h"
+#include "gfx/Ubo.h"
+#include "gfx/Technique.h"
+#include "gfx/Light.h"
 
 class LightUboBinder {
 public:

@@ -1,4 +1,4 @@
-#include "Material.h"
+#include "gfx/Material.h"
 
 Material::Material()
 : ubo_(sizeof(Std140Material), Technique::MATERIAL_BINDING)

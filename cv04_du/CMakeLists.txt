@@ -1,38 +1,45 @@
-cmake_minimum_required(VERSION 3.30)
-project(cv04_du)
+cmake_minimum_required(VERSION 3.20)
+project(cv04_du LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Najdi knihovny
 find_package(OpenGL REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GLFW REQUIRED glfw3)
 find_package(GLEW REQUIRED)
 
-add_executable(${PROJECT_NAME}
-        main.cpp
-        ShaderProgram.cpp
-        ShaderProgram.h
-        TransformChain.cpp
-        TransformChain.h
-        AbstractTransformation.h
-        Translate.cpp
-        Translate.h
-        Rotate.cpp
-        Rotate.h
-        Scale.cpp
-        Scale.h
-        Model.h
-        TriangleModel.cpp
-        TriangleModel.h
-        Scene.h
-        Scenes.h
-        DrawableObject.cpp
-        DrawableObject.h
+# GLFW: zkus více názvů targetu, jinak spadni na -lglfw
+find_package(glfw3 QUIET)
+set(GLFW_TARGET "")
+if (TARGET glfw)
+    set(GLFW_TARGET glfw)
+elseif (TARGET glfw3)
+    set(GLFW_TARGET glfw3)
+elseif (TARGET GLFW::GLFW)
+    set(GLFW_TARGET GLFW::GLFW)
+else()
+    set(GLFW_TARGET glfw)  # spoléháme na -lglfw z linkeru
+endif()
 
+# Zdroje – rekurzivně
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+        src/*.cpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARIES} GLEW::GLEW OpenGL::GL)
-target_compile_options(${PROJECT_NAME} PRIVATE ${GLFW_CFLAGS_OTHER})
-target_link_options(${PROJECT_NAME} PRIVATE ${GLFW_LDFLAGS_OTHER})
+# >>> Target MUSÍ být nadefinovaný před target_* příkazy <<<
+add_executable(cv04_du ${SOURCES})
+
+target_include_directories(cv04_du PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_link_libraries(cv04_du PRIVATE
+        OpenGL::GL
+        GLEW::GLEW
+        ${GLFW_TARGET}
+)
+
+# Linuxové dodatky
+if (UNIX AND NOT APPLE)
+    target_link_libraries(cv04_du PRIVATE dl pthread)
+endif()

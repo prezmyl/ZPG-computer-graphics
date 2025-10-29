@@ -1,0 +1,119 @@
+[xpolas@fedora cv04_du 08:01 PM]$  # po tvém # po tvém skriptu by mělo najít jen "gfx/..."
+grep -R --line-number '#include ".*\.h"' src | grep -v gfx/ | head
+# GLM klassika:
+grep -R --line-number '<glm/gtx' src || echo "OK: žádné staré gtx includes"
+src/models/TriangleModel.cpp:1:#include "models/TriangleModel.h"
+src/models/TriangleModel.h:3:#include "core/Model.h"
+src/math/Rotate.cpp:1:#include "math/Rotate.h"
+src/math/TransformChain.cpp:1:#include "math/TransformChain.h"
+src/math/Scale.cpp:1:#include "math/Scale.h"
+src/math/Scale.h:2:#include "AbstractTransformation.h"
+src/math/Rotate.h:3:#include "AbstractTransformation.h"
+src/math/TransformChain.h:5:#include "AbstractTransformation.h"
+src/math/Translate.cpp:1:#include "math/Translate.h"
+src/math/Translate.h:2:#include "AbstractTransformation.h"
+OK: žádné staré gtx includes
+[xpolas@fedora cv04_du 08:04 PM]$  # ověř, že# ověř, že se .cpp bere do targetu
+grep -R --line-number "fromSources" src
+
+# podívej se, zda objekt obsahuje symbol
+nm -C cmake-build-debug/CMakeFiles/cv04_du.dir/**/ShaderProgram.cpp.o | grep fromSources
+
+# postav s verbose
+cmake --build cmake-build-debug -j1 --verbose
+src/gfx/ShaderProgram.cpp:21:ShaderProgram ShaderProgram::fromSources(const char* vsSrc, const char* fsSrc){
+src/gfx/ShaderProgram.h:12:    static ShaderProgram fromSources(const char* vsSrc, const char* fsSrc);
+src/app/main.cpp:53:    ShaderProgram prog = ShaderProgram::fromSources(VS_POS, FS_FLAT);
+nm: 'cmake-build-debug/CMakeFiles/cv04_du.dir/**/ShaderProgram.cpp.o': No such file
+Change Dir: '/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug'
+
+Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile -j1
+/usr/bin/cmake -P /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug/CMakeFiles/VerifyGlobs.cmake
+/usr/bin/cmake -S/home/xpolas/banska/ZPG/cv04_du -B/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug --check-build-system CMakeFiles/Makefile.cmake 0
+/usr/bin/cmake -E cmake_progress_start /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug/CMakeFiles /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug//CMakeFiles/progress.marks
+/usr/bin/gmake  -f CMakeFiles/Makefile2 all
+gmake[1]: Entering directory '/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug'
+/usr/bin/gmake  -f CMakeFiles/cv04_du.dir/build.make CMakeFiles/cv04_du.dir/depend
+gmake[2]: Entering directory '/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug'
+cd /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/xpolas/banska/ZPG/cv04_du /home/xpolas/banska/ZPG/cv04_du /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug/CMakeFiles/cv04_du.dir/DependInfo.cmake "--color="
+Dependencies file "CMakeFiles/cv04_du.dir/src/gfx/Technique.cpp.o.d" is newer than depends file "/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug/CMakeFiles/cv04_du.dir/compiler_depend.internal".
+Consolidate compiler generated dependencies of target cv04_du
+gmake[2]: Leaving directory '/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug'
+/usr/bin/gmake  -f CMakeFiles/cv04_du.dir/build.make CMakeFiles/cv04_du.dir/build
+gmake[2]: Entering directory '/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug'
+[  5%] Building CXX object CMakeFiles/cv04_du.dir/src/app/main.cpp.o
+/usr/bin/c++  -I/home/xpolas/banska/ZPG/cv04_du/src -g -std=gnu++20 -MD -MT CMakeFiles/cv04_du.dir/src/app/main.cpp.o -MF CMakeFiles/cv04_du.dir/src/app/main.cpp.o.d -o CMakeFiles/cv04_du.dir/src/app/main.cpp.o -c /home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp
+/home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp:7:10: fatal error: src/gfx/ShaderProgram.h: No such file or directory
+    7 | #include "src/gfx/ShaderProgram.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+gmake[2]: *** [CMakeFiles/cv04_du.dir/build.make:79: CMakeFiles/cv04_du.dir/src/app/main.cpp.o] Error 1
+gmake[2]: Leaving directory '/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug'
+gmake[1]: *** [CMakeFiles/Makefile2:87: CMakeFiles/cv04_du.dir/all] Error 2
+gmake[1]: Leaving directory '/home/xpolas/banska/ZPG/cv04_du/cmake-build-debug'
+gmake: *** [Makefile:91: all] Error 2
+
+[xpolas@fedora cv04_du 08:05 PM]$====================[ Build | cv04_du | Debug ]=================================
+                                 /home/xpolas/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake --build /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug --target cv04_du -j 10
+                                 [  5%] Building CXX object CMakeFiles/cv04_du.dir/src/app/main.cpp.o
+                                 [ 11%] Building CXX object CMakeFiles/cv04_du.dir/src/core/DrawableObject.cpp.o
+                                 [ 17%] Building CXX object CMakeFiles/cv04_du.dir/src/gfx/Technique.cpp.o
+                                 [ 29%] Building CXX object CMakeFiles/cv04_du.dir/src/math/Rotate.cpp.o
+                                 [ 29%] Building CXX object CMakeFiles/cv04_du.dir/src/math/Translate.cpp.o
+                                 [ 35%] Building CXX object CMakeFiles/cv04_du.dir/src/math/Scale.cpp.o
+                                 [ 41%] Building CXX object CMakeFiles/cv04_du.dir/src/math/TransformChain.cpp.o
+                                 In file included from /home/xpolas/banska/ZPG/cv04_du/src/math/Rotate.cpp:1:
+                                 /home/xpolas/banska/ZPG/cv04_du/src/math/Rotate.h:3:10: fatal error: AbstractTransformation.h: No such file or directory
+                                     3 | #include "AbstractTransformation.h"
+                                       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 In file included from /home/xpolas/banska/ZPG/cv04_du/src/math/Scale.cpp:1:
+                                 /home/xpolas/banska/ZPG/cv04_du/src/math/Scale.h:2:10: fatal error: AbstractTransformation.h: No such file or directory
+                                     2 | #include "AbstractTransformation.h"
+                                       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 compilation terminated.
+                                 compilation terminated.
+                                 In file included from /home/xpolas/banska/ZPG/cv04_du/src/math/Translate.cpp:1:
+                                 /home/xpolas/banska/ZPG/cv04_du/src/math/Translate.h:2:10: fatal error: AbstractTransformation.h: No such file or directory
+                                     2 | #include "AbstractTransformation.h"
+                                       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 compilation terminated.
+                                 gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:247: CMakeFiles/cv04_du.dir/src/math/Scale.cpp.o] Error 1
+                                 gmake[3]: *** Waiting for unfinished jobs....
+                                 gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:233: CMakeFiles/cv04_du.dir/src/math/Rotate.cpp.o] Error 1
+                                 gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:275: CMakeFiles/cv04_du.dir/src/math/Translate.cpp.o] Error 1
+                                 In file included from /home/xpolas/banska/ZPG/cv04_du/src/math/TransformChain.cpp:1:
+                                 /home/xpolas/banska/ZPG/cv04_du/src/math/TransformChain.h:5:10: fatal error: AbstractTransformation.h: No such file or directory
+                                     5 | #include "AbstractTransformation.h"
+                                       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 compilation terminated.
+                                 gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:261: CMakeFiles/cv04_du.dir/src/math/TransformChain.cpp.o] Error 1
+                                 In file included from /home/xpolas/banska/ZPG/cv04_du/src/scene/Scenes.h:5,
+                                                  from /home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp:9:
+                                 /home/xpolas/banska/ZPG/cv04_du/src/math/TransformChain.h:5:10: fatal error: AbstractTransformation.h: No such file or directory
+                                     5 | #include "AbstractTransformation.h"
+                                       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 compilation terminated.
+                                 gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:79: CMakeFiles/cv04_du.dir/src/app/main.cpp.o] Error 1
+                                 In file included from /home/xpolas/banska/ZPG/cv04_du/src/core/DrawableObject.cpp:4:
+                                 /home/xpolas/banska/ZPG/cv04_du/src/math/TransformChain.h:5:10: fatal error: AbstractTransformation.h: No such file or directory
+                                     5 | #include "AbstractTransformation.h"
+                                       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 compilation terminated.
+                                 gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:93: CMakeFiles/cv04_du.dir/src/core/DrawableObject.cpp.o] Error 1
+                                 /home/xpolas/banska/ZPG/cv04_du/src/gfx/Technique.cpp: In static member function ‘static std::shared_ptr<Technique> Technique::createFromFiles(const std::string&, const std::string&, std::string*)’:
+                                 /home/xpolas/banska/ZPG/cv04_du/src/gfx/Technique.cpp:5:15: error: ‘using std::__shared_ptr_access<ShaderProgram, __gnu_cxx::_S_atomic, false, false>::element_type = class ShaderProgram’ {aka ‘class ShaderProgram’} has no member named ‘loadFromFiles’
+                                     5 |     if(!prog->loadFromFiles(vs, fs, err)){
+                                       |               ^~~~~~~~~~~~~
+                                 /home/xpolas/banska/ZPG/cv04_du/src/gfx/Technique.cpp:8:11: error: ‘using std::__shared_ptr_access<ShaderProgram, __gnu_cxx::_S_atomic, false, false>::element_type = class ShaderProgram’ {aka ‘class ShaderProgram’} has no member named ‘bindUniformBlock’
+                                     8 |     prog->bindUniformBlock("CameraBlock",   CAMERA_BINDING);
+                                       |           ^~~~~~~~~~~~~~~~
+                                 /home/xpolas/banska/ZPG/cv04_du/src/gfx/Technique.cpp:9:11: error: ‘using std::__shared_ptr_access<ShaderProgram, __gnu_cxx::_S_atomic, false, false>::element_type = class ShaderProgram’ {aka ‘class ShaderProgram’} has no member named ‘bindUniformBlock’
+                                     9 |     prog->bindUniformBlock("MaterialBlock", MATERIAL_BINDING);
+                                       |           ^~~~~~~~~~~~~~~~
+                                 /home/xpolas/banska/ZPG/cv04_du/src/gfx/Technique.cpp:10:11: error: ‘using std::__shared_ptr_access<ShaderProgram, __gnu_cxx::_S_atomic, false, false>::element_type = class ShaderProgram’ {aka ‘class ShaderProgram’} has no member named ‘bindUniformBlock’
+                                    10 |     prog->bindUniformBlock("LightBlock",    LIGHT_BINDING);
+                                       |           ^~~~~~~~~~~~~~~~
+                                 gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:205: CMakeFiles/cv04_du.dir/src/gfx/Technique.cpp.o] Error 1
+                                 gmake[2]: *** [CMakeFiles/Makefile2:87: CMakeFiles/cv04_du.dir/all] Error 2
+                                 gmake[1]: *** [CMakeFiles/Makefile2:94: CMakeFiles/cv04_du.dir/rule] Error 2
+                                 gmake: *** [Makefile:125: cv04_du] Error 2

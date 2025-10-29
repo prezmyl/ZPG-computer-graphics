@@ -1,4 +1,4 @@
-#include "ShaderStage.h"
+#include "gfx/ShaderStage.h"
 #include <vector>
 
 static GLenum toGl(ShaderStage::Type t){

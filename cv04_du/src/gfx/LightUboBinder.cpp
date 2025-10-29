@@ -1,4 +1,4 @@
-#include "LightUboBinder.h"
+#include "gfx/LightUboBinder.h"
 #include <algorithm>
 
 LightUboBinder::LightUboBinder()

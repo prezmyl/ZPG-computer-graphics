@@ -1,4 +1,4 @@
-#include "Technique.h"
+#include "gfx/Technique.h"
 
 std::shared_ptr<Technique> Technique::createFromFiles(const std::string& vs, const std::string& fs, std::string* err){
     auto prog = std::make_shared<ShaderProgram>();

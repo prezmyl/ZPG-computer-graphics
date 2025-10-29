@@ -1,4 +1,4 @@
-#include "Ubo.h"
+#include "gfx/Ubo.h"
 
 Ubo::Ubo(GLsizeiptr sizeBytes, GLuint bindingPoint) : binding_(bindingPoint), size_(sizeBytes) {
     glGenBuffers(1, &id_);

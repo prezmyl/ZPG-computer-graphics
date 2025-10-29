@@ -1,4 +1,4 @@
-#include "CameraUboBinder.h"
+#include "gfx/CameraUboBinder.h"
 
 CameraUboBinder::CameraUboBinder()
 : ubo_(sizeof(Std140Camera), Technique::CAMERA_BINDING) {}

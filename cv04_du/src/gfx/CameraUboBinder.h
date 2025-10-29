@@ -1,8 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "Ubo.h"
-#include "Technique.h"
-#include "Camera.h"
+#include "gfx/Ubo.h"
+#include "gfx/Technique.h"
+#include "gfx/Camera.h"
 
 class CameraUboBinder {
 public:

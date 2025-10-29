@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "Ubo.h"
-#include "Technique.h"
+#include "gfx/Ubo.h"
+#include "gfx/Technique.h"
 
 class Material {
 public:
