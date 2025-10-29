@@ -1,0 +1,17 @@
+Zadání
+
+Přidání třídy Camera, v aplikaci bude možné se pohybovat (klávesy WSAD) a rozhlížet pomocí myši (nezamykejte kurzor myši, použijte pro rozhlížení třeba pravé tlačítko myši+pohyb).
+Přidejte třídu Light, která bude reprezentovat bodové světlo (při změně musíte upravit pozici v ShaderProgramu). Později přidáme více světel a více typů.
+Vertex a fragment shadery prosím uložte do textových souboru a přidejte možnost jejich načtení ze souboru. Zkuste použít návrhový vzor Observer mezi kamerou a shader programem.
+Naimplementujte čtyři základní osvětlovací modely, které jsme probrali na přednášce a použijte je v jedné scéně. Jedná se o tyto shadery:
+Konstantní (Constant)
+Lambertův difúzní model (Lambert)
+Phongův osvětlovací model (Phong)
+Blinn-Phongův model (Blinn)
+Vygenerujte les (min. 50 stromů a 50 keřů), který budete moci procházet a rozhlížet se v něm (Udělejte několik snímku třeba 3_1 až 3_5).
+Vytvořte testovací scénu se čtyřmi kulovými plochami a jedno bodové světlo uprostřed (kontrolujeme funkčnost osvětlení). Kulové plochy by neměly degradovat do elipsoidu.
+Odevzdání úkolu
+
+Odešlete výsledné zdrojové soubory CPP, H a GLSL (neposílejte knihovny).
+
+Přiložte prosím screeny obrazovky s jednotlivými úkoly a pojmenujte je login_1.png ... až login_6.png (každý k jednomu bodu zadání).
