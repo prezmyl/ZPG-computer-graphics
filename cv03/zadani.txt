@@ -1,0 +1,15 @@
+Zadání Rozšiřte naší aplikaci z minulého cvičení o transformace, které byly probrány na posledním tutoriálu.
+
+Rozšiřte naši aplikaci o možnost používání transformací, vycházejte z dohodnutých vlastností na přednášce. Využijte projektivní prostor a matice 4×4.
+Vytvořte přetížené metody ve třídě ShaderProgram pro posílání hodnot do shader programu (nastavení uniformních proměnných).
+Přidejte možnost skládání transformací (lze využít návrhový vzor Kompozit – vyzkoušejte si ho). Cílem je možnost popsat modelovou matici, která se skládá z různého počtu matic (Translation, Rotation a Scale) a jejich kombinací (např. M=S2T3R2S1R1T2T1.
+Rozšiřte aplikaci o možnost používání různých scén (vytvořte např. třídu Scene, která bude zodpovědná za uložení objektů ve scéně, bude mít vektor DrawableObject). Mezi scénami by mělo být možné přepínat, například pomocí numerických kláves 1, 2, 3 atd.
+Vytvořte jednoduchou scénu s jedním trojúhelníkem, zkuste jej roztočit podobně jako na prvním cvičení ((float)glfwGetTime() * 50.f).
+Vytvořte scénu se čtyřmi kuličkami rozloženými symetricky na souřadnicových osách (tak, aby byly vidět na obrazovce).
+Vytvořte složitější scénu, která bude obsahovat více různých objektů s různými shader programy a transformacemi (použijte minimálně 20 objektů; využijte různé modely přiložené na LMS).
+Upravte objektový kód výsledné aplikace podle návodu z tutoriálu. Načrtněte třídní diagram (stačí ručně jen názvy tříd a vazby) vaší aplikace a přiložte jej.
+Odevzdání úkolu
+
+Odešlete výsledné zdrojové soubory CPP a H (neposílejte knihovny).
+
+Přiložte prosím screeny obrazovky s jednotlivými úkoly a pojmenujte je login_1.png ... až login_8.png (každý k jednomu bodu zadání).

@@ -1,0 +1,90 @@
+[xpolas@dynamic-2a00-1028-83a8-1d86-69ea-5d83-fb70-1eff.ipv6.o2.cz ZPG 08:23 PM]$  tree
+.
+├── cv01
+│   ├── cmake-build-debug
+│   │   ├── build.ninja
+│   │   ├── CMakeCache.txt
+│   │   ├── CMakeFiles
+│   │   │   ├── 3.30.5
+│   │   │   │   ├── CMakeCCompiler.cmake
+│   │   │   │   ├── CMakeCXXCompiler.cmake
+│   │   │   │   ├── CMakeDetermineCompilerABI_C.bin
+│   │   │   │   ├── CMakeDetermineCompilerABI_CXX.bin
+│   │   │   │   ├── CMakeSystem.cmake
+│   │   │   │   ├── CompilerIdC
+│   │   │   │   │   ├── a.out
+│   │   │   │   │   ├── CMakeCCompilerId.c
+│   │   │   │   │   └── tmp
+│   │   │   │   └── CompilerIdCXX
+│   │   │   │       ├── a.out
+│   │   │   │       ├── CMakeCXXCompilerId.cpp
+│   │   │   │       └── tmp
+│   │   │   ├── clion-Debug-log.txt
+│   │   │   ├── clion-environment.txt
+│   │   │   ├── cmake.check_cache
+│   │   │   ├── CMakeConfigureLog.yaml
+│   │   │   ├── cv01.dir
+│   │   │   │   ├── CXX.dd
+│   │   │   │   ├── CXXDependInfo.json
+│   │   │   │   ├── CXXModules.json
+│   │   │   │   ├── main.cpp.ddi
+│   │   │   │   ├── main.cpp.o
+│   │   │   │   ├── main.cpp.o.ddi
+│   │   │   │   ├── main.cpp.o.ddi.d
+│   │   │   │   ├── main.cpp.o.ddi.i
+│   │   │   │   └── main.cpp.o.modmap
+│   │   │   ├── pkgRedirects
+│   │   │   ├── rules.ninja
+│   │   │   ├── TargetDirectories.txt
+│   │   │   └── ZPG.dir
+│   │   ├── cmake_install.cmake
+│   │   ├── cv01
+│   │   └── Testing
+│   │       └── Temporary
+│   │           └── LastTest.log
+│   ├── CMakeLists.txt
+│   ├── cv01.txt
+│   └── main.cpp
+├── cv02
+│   ├── cmake-build-debug
+│   │   ├── build.ninja
+│   │   ├── CMakeCache.txt
+│   │   ├── CMakeFiles
+│   │   │   ├── 3.30.5
+│   │   │   │   ├── CMakeCCompiler.cmake
+│   │   │   │   ├── CMakeCXXCompiler.cmake
+│   │   │   │   ├── CMakeDetermineCompilerABI_C.bin
+│   │   │   │   ├── CMakeDetermineCompilerABI_CXX.bin
+│   │   │   │   ├── CMakeSystem.cmake
+│   │   │   │   ├── CompilerIdC
+│   │   │   │   │   ├── a.out
+│   │   │   │   │   ├── CMakeCCompilerId.c
+│   │   │   │   │   └── tmp
+│   │   │   │   └── CompilerIdCXX
+│   │   │   │       ├── a.out
+│   │   │   │       ├── CMakeCXXCompilerId.cpp
+│   │   │   │       └── tmp
+│   │   │   ├── clion-Debug-log.txt
+│   │   │   ├── clion-environment.txt
+│   │   │   ├── cmake.check_cache
+│   │   │   ├── CMakeConfigureLog.yaml
+│   │   │   ├── cv02.dir
+│   │   │   │   ├── CXXDependInfo.json
+│   │   │   │   └── main.cpp.o
+│   │   │   ├── pkgRedirects
+│   │   │   ├── rules.ninja
+│   │   │   └── TargetDirectories.txt
+│   │   ├── cmake_install.cmake
+│   │   ├── cv02
+│   │   └── Testing
+│   │       └── Temporary
+│   │           └── LastTest.log
+│   ├── CMakeLists.txt
+│   ├── cv02.txt
+│   └── main.cpp
+├── cviceni_1.pdf
+├── Lineární algebra.pdf
+├── ZPG_Prednaska_1.pdf
+├── ZPG_Prednaska_2.pdf
+└── ZPG_Prednaska_3.pdf
+
