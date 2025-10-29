@@ -1,0 +1,121 @@
+ChatGPT said:
+
+Jasně — prošel jsem tvoje cv04_du v repu i přiložené diagramy/poznámky a navrhnu evoluci architektury tak, aby šla hladce rozšiřovat (více světel, materiály, textury) a zároveň běžela i na slabších strojích.
+
+Z čeho vycházím: tvůj aktuální návrh (tu03_ukol2), obecné schéma (obecnyNavrh) a komentáře z Discordu (SSBO místo hromady glUniform*, „buffer shader“ přístup).
+GitHub
+
+Technický podklad: UBO/SSBO a std140/std430 layouty z Khronos/LearnOpenGL.
+Learn OpenGL
++3
+The Khronos Group
++3
+wikis.khronos.org
++3
+
+Doporučená cílová architektura (nezboří tvůj kód, jen ho „zarovná“)
+
+Program ⟶ Technique/Material + „parametrické buffery“
+
+Technique: drží ShaderProgram + know-how pro vazby bloků (binding points).
+
+Material: data pro shading (Ka/Kd/Ks/shininess, případně textury).
+
+Parametry neposílat jednotlivými uniformy, ale přes UBO/SSBO bloky:
+
+CameraBlock (UBO, per-frame): V, P, VP, cameraPos.
+
+LightBlock (UBO pro 1–N malý počet světel; při větším počtu rovnou SSBO Lights[]).
+
+MaterialBlock (UBO, per-material): Ka, Kd, Ks, shininess.
+
+ObjectBlock (UBO nebo obyč. uniformy, per-draw): Model, NormalMatrix.
+Tohle realizuje přesně to, co na Discordu radí „poslat jeden buffer místo mnoha uniform“; SSBO pro světla je škálovatelnější než pole uniformů.
+wikis.khronos.org
+
+Renderer (minibatcher)
+
+Řaď drawcally podle (Technique, Material) → méně glUseProgram a méně bindů UBO/SSBO.
+
+Drawable nese jen ukazatel na Mesh (VAO/VBO/IBO), Material a transform.
+
+Camera as Observable → UBO binder
+
+Ne ať se ShaderProgram chová jako Observer (bude jich víc), ale malá třída CameraUboBinder: poslouchá kameru a při změně přepíše CameraBlock (1× za frame). To sedí na tvůj požadavek „observable vlastnosti“ bez těsné vazby na program.
+
+Totéž lze udělat pro světla (LightUbo/LightSsboBinder).
+
+Shader vrstvy: Stage vs Program
+
+Klidně si přidej třídu ShaderStage (type=Vertex|Fragment, RAII na glCreateShader/glDeleteShader), ale nedoporučuji hlubokou dědičnost VertexShader : Shader, FragmentShader : Shader. Stačí jeden ShaderStage s enumem typu + ShaderProgram jako kompozice dvou stage (to odpovídá tvému „obecnému návrhu“, ale je praktičtější na údržbu).
+
+Vzory, které přirozeně používáš/ použij
+
+Composite (scene → drawables), Strategy (Technique = volitelný osvětlovací model), Observer (Camera→UBO), Flyweight (Mesh sdílený mnoha instancemi), Factory/Builder (načtení shaderů a vytvoření Technique), RAII (GL objekty v deskuktorech).
+
+Minimální migrační plán (inkrementální, bez přepisování všeho)
+
+Krok 0 – beze změny výsledku: zaveď ShaderProgram cache a loader ze souborů (už máš v plánu).
+Krok 1 – CameraBlock UBO (binding=0)
+
+Vytvoř struct CameraBlockCPU { mat4 V, P, VP; vec4 cameraPos; } (pozor na std140 zarovnání). Upload 1×/frame. GLSL:
+
+layout(std140, binding = 0) uniform CameraBlock {
+  mat4 uView; mat4 uProj; mat4 uViewProj; vec4 uViewPos;
+};
+
+
+Tím odstráníš každosnímkové setUniform(uView/uProj/uViewPos).
+The Khronos Group
++1
+
+Krok 2 – MaterialBlock UBO (binding=1)
+
+struct MaterialBlockCPU { vec4 Ka, Kd, Ks; float shininess; /*+padding*/ };
+
+Techniky (Constant/Lambert/Phong/Blinn) používají stejný název bloku → můžeš přepínat shader bez reuploadu.
+Learn OpenGL
+
+Krok 3 – LightBlock → UBO ⟶ (později) SSBO
+
+Začni jednoduše: 1–4 světla v UBO (binding=2). Jakmile půjdeš na desítky světel (světlušky), přepni na SSBO Lights { Light lights[]; int count; } (binding=0) a indexuj v shaderu.
+wikis.khronos.org
+
+Limit UBO velikosti zjistíš GL_MAX_UNIFORM_BLOCK_SIZE (min. 16 KB); u SSBO sleduj GL_MAX_SHADER_STORAGE_BLOCK_SIZE.
+Khronos Registry
+
+Krok 4 – ObjectBlock (binding=3) nebo ponech „per-draw uniform“
+
+Pokud nechceš hned řešit instancing, klidně nech uModel/uNormalMatrix jako obyč. uniformy a jen je nastavuj per-draw. Přechod na UBO/instancing si nech na později.
+
+Krok 5 – Technique & Material vrstvička
+
+Technique si při konstrukturu rezervuje binding points a ověří, že odpovídají blokům v GLSL (program introspection).
+
+Material::bind() jen přibinduje MaterialBlock UBO a hotovo. Přepínání Constant/Lambert/Phong/Blinn = Strategy bez výměny API.
+
+Krok 6 – Renderer: řazení podle (Technique, Material)
+
+V render smyčce seskup Drawable → méně glUseProgram a méně glBindBufferBase.
+
+
+
+Co tím získáš hned teď
+
+Stabilní API pro další úkoly (více světel, materiály, textury, post-process) bez „překopání“.
+
+Výrazně méně CPU→GL overheadu (místo stovek glUniform* volání 3–4 buffery/ frame), přesně jak radí Discord poznámka o „SSBO/UBO“.
+
+Čisté oddělení data vs. program: mesh (VAO/VBO) ≠ material (UBO/texture) ≠ technique (program & vazby).
+
+Co ponechat z tvého návrhu / co upravit
+
+Ponech TransformChain, DrawableObject, Scene/SceneManager (sedí).
+
+Uprav Shader vrstvu: přidej ShaderStage (1 třída s enumem) + ShaderProgram (kompozice). Dědičnost VertexShader/FragmentShader je spíš kosmetika — nechci ti zbytečně nafukovat API.
+
+Doplníš Technique, Material, Ubo/Ssbo wrappry a *Binder (Camera/Light).
+
+Renderer: jednoduché seskupování drawcallů už teď (bez velké magie).
+
+Chceš, abych ti to rovnou přepsal do konkrétních hlaviček/souborů pro cv04_du (tj. přesné názvy tříd/složek + 3–4 hotové GLSL bloky a tiny diff v render smyčce)? Udělám to přímo na míru tvému projektu.

@@ -1,3 +1,4 @@
+#include "gfx/Camera.h"
 #include <cstdio>
 #include <cstdlib>
 #include <GL/glew.h>
@@ -73,8 +74,9 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (auto* s = mgr.active()){
-            s->update(0.f);
-            s->render(I, I); 
+            s->update(dt);
+            s->render(V, P);
+
         }
 
         glfwSwapBuffers(w);
