@@ -9,6 +9,8 @@ public:
     virtual ~Scene() = default;
     virtual void update(float /*dt*/) {}
     virtual void render(const glm::mat4& V, const glm::mat4& P) = 0;
+    // doplněno kvůli Phong/Blinn: kamera->FS uViewPos
+    virtual void setViewPos(const glm::vec3&) {}
 };
 
 class SimpleScene : public Scene {

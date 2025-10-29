@@ -1,28 +1,97 @@
-a8-1d86-69ea-5d83-fb70-1eff.ipv6.o2.cz cv04_du 06:26 PM]$  tree > str
-[xpolas@dynamic-2a00-1028-83a8-1d86-69ea-5d83-fb70-1eff.ipv6.o2.cz cv04_du 06:26 PM]$  pwd
-/home/xpolas/banska/ZPG/cv04_du
-[xpolas@dynamic-2a00-1028-83a8-1d86-69ea-5d83-fb70-1eff.ipv6.o2.cz cv04_du 08:14 PM]$  mkdir -p cmkdir -p cmake-build-debug && cd cmake-build-debug
-CMakeCache.txt  CMakeFiles  cmake_install.cmake  Makefile
-^C
-cmake -DCMAKE_BUILD_TYPE=Debug ..86-69ea-5d83-fb70-1eff.ipv6.o2.cz cmake-build-debug 08:15 PM]$
--- Configuring done (0.1s)
--- Generating done (0.0s)
--- Build files have been written to: /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug
-cmake --build . -j00-1028-83a8-1d86-69ea-5d83-fb70-1eff.ipv6.o2.cz cmake-build-debug 08:15 PM]$
-[ 11%] Building CXX object CMakeFiles/cv04_du.dir/src/core/DrawableObject.cpp.o
-[ 11%] Building CXX object CMakeFiles/cv04_du.dir/src/app/main.cpp.o
-[ 35%] Building CXX object CMakeFiles/cv04_du.dir/src/math/Scale.cpp.o
-[ 35%] Building CXX object CMakeFiles/cv04_du.dir/src/math/TransformChain.cpp.o
-[ 35%] Building CXX object CMakeFiles/cv04_du.dir/src/math/Rotate.cpp.o
-[ 35%] Building CXX object CMakeFiles/cv04_du.dir/src/gfx/Technique.cpp.o
-[ 41%] Building CXX object CMakeFiles/cv04_du.dir/src/math/Translate.cpp.o
-[ 47%] Linking CXX executable cv04_du
-[100%] Built target cv04_du
-mkdir -p cmake-build-debug && cd cmake-build-debug
-cmake -DCMAKE_BUILD_TYPE=Debug ..z cmake-build-debug 08:49 PM]$
--- Configuring done (0.1s)
--- Generating done (0.0s)
--- Build files have been written to: /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug
-cmake --build . -j-1eff.ipv6.o2.cz cmake-build-debug 08:49 PM]$
-Error: could not load cache
-[xpolas@dynamic-2a00-1028-83a8-1d86-69ea-5d83-fb70-1eff.ipv6.o2.cz cmake-build-debug 08:49 PM]$
+====================[ Build | cv04_du | Debug ]=================================
+/home/xpolas/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake --build /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug --target cv04_du -j 10
+[  5%] Building CXX object CMakeFiles/cv04_du.dir/src/app/main.cpp.o
+[ 10%] Building CXX object CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o
+/home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp: In function ‘int main()’:
+/home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp:77:27: error: ‘cam’ was not declared in this scope
+   77 |             s->setViewPos(cam.position());
+      |                           ^~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp: In lambda function:
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:8:26: error: variable ‘std::ifstream f’ has initializer but incomplete type
+    8 |         std::ifstream f(p); std::stringstream ss; ss<<f.rdbuf(); return ss.str();
+      |                          ^
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:4:1: note: ‘std::ifstream’ is defined in header ‘<fstream>’; this is probably fixable by adding ‘#include <fstream>’
+    3 | #include "meshes/sphere.h"
+  +++ |+#include <fstream>
+    4 |
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:8:47: error: aggregate ‘std::stringstream ss’ has incomplete type and cannot be defined
+    8 |         std::ifstream f(p); std::stringstream ss; ss<<f.rdbuf(); return ss.str();
+      |                                               ^~
+/home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp:78:23: error: ‘dt’ was not declared in this scope
+   78 |             s->update(dt);
+      |                       ^~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp: In function ‘ShaderProgram loadProg(const char*, const char*)’:
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:11:51: error: ‘fs’ was not declared in this scope; did you mean ‘vs’?
+   11 |     return ShaderProgram::fromSources(vs.c_str(), fs.c_str());
+      |                                                   ^~
+      |                                                   vs
+/home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp:79:23: error: ‘V’ was not declared in this scope
+   79 |             s->render(V, P);
+      |                       ^
+/home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp:79:26: error: ‘P’ was not declared in this scope
+   79 |             s->render(V, P);
+      |                          ^
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp: In constructor ‘SpheresScene::SpheresScene()’:
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:16:9: error: ‘SPHERE_VERTS’ was not declared in this scope
+   16 |         SPHERE_VERTS, SPHERE_VERT_COUNT*3,
+      |         ^~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:16:23: error: ‘SPHERE_VERT_COUNT’ was not declared in this scope
+   16 |         SPHERE_VERTS, SPHERE_VERT_COUNT*3,
+      |                       ^~~~~~~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:17:9: error: ‘SPHERE_NORMS’ was not declared in this scope
+   17 |         SPHERE_NORMS, SPHERE_VERT_COUNT*3,
+      |         ^~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:18:9: error: ‘SPHERE_IDX’ was not declared in this scope
+   18 |         SPHERE_IDX,   SPHERE_IDX_COUNT
+      |         ^~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:18:23: error: ‘SPHERE_IDX_COUNT’ was not declared in this scope
+   18 |         SPHERE_IDX,   SPHERE_IDX_COUNT
+      |                       ^~~~~~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp: In member function ‘virtual void SpheresScene::render(const glm::mat4&, const glm::mat4&)’:
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:60:9: error: converting to ‘const glm::vec3’ {aka ‘const glm::vec<3, float, glm::packed_highp>’} from initializer list would use explicit constructor ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’
+   60 |     draw(spLambert_, M2, {0.05f}, {0.3f,0.8f,0.3f}, {0,0,0}, 1.f);
+      |     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/glm/detail/type_vec3.hpp:435,
+                 from /usr/include/glm/ext/vector_bool3.hpp:5,
+                 from /usr/include/glm/vec3.hpp:5,
+                 from /usr/include/glm/glm.hpp:118,
+                 from /home/xpolas/banska/ZPG/cv04_du/src/scene/Scene.h:2,
+                 from /home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.h:2,
+                 from /home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:1:
+/usr/include/glm/detail/type_vec3.inl:34:42: note: ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’ declared here
+   34 |         GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, T, Q>::vec(T scalar)
+      |                                          ^~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:63:9: error: converting to ‘const glm::vec3’ {aka ‘const glm::vec<3, float, glm::packed_highp>’} from initializer list would use explicit constructor ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’
+   63 |     draw(spPhong_,   M3, {0.05f}, {0.8f,0.6f,0.3f}, {0.8f}, 32.f);
+      |     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/glm/detail/type_vec3.inl:34:42: note: ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’ declared here
+   34 |         GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, T, Q>::vec(T scalar)
+      |                                          ^~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:63:9: error: converting to ‘const glm::vec3’ {aka ‘const glm::vec<3, float, glm::packed_highp>’} from initializer list would use explicit constructor ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’
+   63 |     draw(spPhong_,   M3, {0.05f}, {0.8f,0.6f,0.3f}, {0.8f}, 32.f);
+      |     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/glm/detail/type_vec3.inl:34:42: note: ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’ declared here
+   34 |         GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, T, Q>::vec(T scalar)
+      |                                          ^~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:66:9: error: converting to ‘const glm::vec3’ {aka ‘const glm::vec<3, float, glm::packed_highp>’} from initializer list would use explicit constructor ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’
+   66 |     draw(spBlinn_,   M4, {0.05f}, {0.3f,0.5f,0.9f}, {0.8f}, 32.f);
+      |     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/glm/detail/type_vec3.inl:34:42: note: ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’ declared here
+   34 |         GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, T, Q>::vec(T scalar)
+      |                                          ^~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:66:9: error: converting to ‘const glm::vec3’ {aka ‘const glm::vec<3, float, glm::packed_highp>’} from initializer list would use explicit constructor ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’
+   66 |     draw(spBlinn_,   M4, {0.05f}, {0.3f,0.5f,0.9f}, {0.8f}, 32.f);
+      |     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/glm/detail/type_vec3.inl:34:42: note: ‘constexpr glm::vec<3, T, Q>::vec(T) [with T = float; glm::qualifier Q = glm::packed_highp]’ declared here
+   34 |         GLM_FUNC_QUALIFIER GLM_CONSTEXPR vec<3, T, Q>::vec(T scalar)
+      |                                          ^~~~~~~~~~~~
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp: In member function ‘virtual void SpheresScene::setViewPos(const glm::vec3&)’:
+/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:71:5: error: ‘viewPos_’ was not declared in this scope
+   71 |     viewPos_ = p;
+      |     ^~~~~~~~
+gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:79: CMakeFiles/cv04_du.dir/src/app/main.cpp.o] Error 1
+gmake[3]: *** Waiting for unfinished jobs....
+gmake[3]: *** [CMakeFiles/cv04_du.dir/build.make:317: CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:87: CMakeFiles/cv04_du.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:94: CMakeFiles/cv04_du.dir/rule] Error 2
+gmake: *** [Makefile:125: cv04_du] Error 2

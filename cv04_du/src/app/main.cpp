@@ -74,6 +74,7 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (auto* s = mgr.active()){
+            s->setViewPos(cam.position());
             s->update(dt);
             s->render(V, P);
 

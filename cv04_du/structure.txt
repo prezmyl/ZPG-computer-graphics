@@ -1,66 +1,166 @@
 .
-├── AbstractTransformation.h
+├── assets
+│   ├── shaders
+│   │   ├── common_blocks.glsl
+│   │   ├── fs_blinn_ubo.glsl
+│   │   ├── fs_constant_ubo.glsl
+│   │   ├── fs_lambert_ubo.glsl
+│   │   ├── fs_phong_ubo.glsl
+│   │   └── vs_mvp_normals_ubo.glsl
+│   └── shaders_basic
+│       ├── fs_blinn_basic.glsl
+│       ├── fs_constant_basic.glsl
+│       ├── fs_lambert_basic.glsl
+│       ├── fs_phong_basic.glsl
+│       └── vs_posnorm_basic.glsl
 ├── cmake-build-debug
-│   ├── build.ninja
+│   ├── cmake-build-debug
 │   ├── CMakeCache.txt
 │   ├── CMakeFiles
-│   │   ├── 3.30.5
-│   │   │   ├── CMakeCCompiler.cmake
+│   │   ├── 3.31.6
 │   │   │   ├── CMakeCXXCompiler.cmake
-│   │   │   ├── CMakeDetermineCompilerABI_C.bin
 │   │   │   ├── CMakeDetermineCompilerABI_CXX.bin
 │   │   │   ├── CMakeSystem.cmake
-│   │   │   ├── CompilerIdC
-│   │   │   │   ├── a.out
-│   │   │   │   ├── CMakeCCompilerId.c
-│   │   │   │   └── tmp
 │   │   │   └── CompilerIdCXX
 │   │   │       ├── a.out
 │   │   │       ├── CMakeCXXCompilerId.cpp
 │   │   │       └── tmp
-│   │   ├── clion-Debug-log.txt
-│   │   ├── clion-environment.txt
 │   │   ├── cmake.check_cache
 │   │   ├── CMakeConfigureLog.yaml
+│   │   ├── CMakeDirectoryInformation.cmake
+│   │   ├── cmake.verify_globs
 │   │   ├── cv04_du.dir
-│   │   │   ├── CXXDependInfo.json
-│   │   │   ├── DrawableObject.cpp.o
-│   │   │   ├── main.cpp.o
-│   │   │   ├── Rotate.cpp.o
-│   │   │   ├── Scale.cpp.o
-│   │   │   ├── ShaderProgram.cpp.o
-│   │   │   ├── TransformChain.cpp.o
-│   │   │   ├── Translate.cpp.o
-│   │   │   └── TriangleModel.cpp.o
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.internal
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   ├── depend.make
+│   │   │   ├── flags.make
+│   │   │   ├── link.d
+│   │   │   ├── link.txt
+│   │   │   ├── progress.make
+│   │   │   └── src
+│   │   │       ├── app
+│   │   │       │   ├── main.cpp.o
+│   │   │       │   └── main.cpp.o.d
+│   │   │       ├── core
+│   │   │       │   ├── DrawableObject.cpp.o
+│   │   │       │   └── DrawableObject.cpp.o.d
+│   │   │       ├── gfx
+│   │   │       │   ├── Camera.cpp.o
+│   │   │       │   ├── Camera.cpp.o.d
+│   │   │       │   ├── CameraUboBinder.cpp.o
+│   │   │       │   ├── CameraUboBinder.cpp.o.d
+│   │   │       │   ├── Light.cpp.o
+│   │   │       │   ├── Light.cpp.o.d
+│   │   │       │   ├── LightUboBinder.cpp.o
+│   │   │       │   ├── LightUboBinder.cpp.o.d
+│   │   │       │   ├── Material.cpp.o
+│   │   │       │   ├── Material.cpp.o.d
+│   │   │       │   ├── ShaderProgram.cpp.o
+│   │   │       │   ├── ShaderProgram.cpp.o.d
+│   │   │       │   ├── ShaderStage.cpp.o
+│   │   │       │   ├── ShaderStage.cpp.o.d
+│   │   │       │   ├── Technique.cpp.o
+│   │   │       │   ├── Technique.cpp.o.d
+│   │   │       │   ├── Ubo.cpp.o
+│   │   │       │   └── Ubo.cpp.o.d
+│   │   │       ├── math
+│   │   │       │   ├── Rotate.cpp.o
+│   │   │       │   ├── Rotate.cpp.o.d
+│   │   │       │   ├── Scale.cpp.o
+│   │   │       │   ├── Scale.cpp.o.d
+│   │   │       │   ├── TransformChain.cpp.o
+│   │   │       │   ├── TransformChain.cpp.o.d
+│   │   │       │   ├── Translate.cpp.o
+│   │   │       │   └── Translate.cpp.o.d
+│   │   │       ├── models
+│   │   │       │   ├── MeshModel.cpp.o
+│   │   │       │   ├── MeshModel.cpp.o.d
+│   │   │       │   ├── TriangleModel.cpp.o
+│   │   │       │   └── TriangleModel.cpp.o.d
+│   │   │       └── scene
+│   │   │           └── SpheresScene.cpp.o.d
+│   │   ├── Makefile2
+│   │   ├── Makefile.cmake
 │   │   ├── pkgRedirects
-│   │   ├── rules.ninja
-│   │   └── TargetDirectories.txt
+│   │   ├── Progress
+│   │   │   ├── 1
+│   │   │   ├── 18
+│   │   │   └── count.txt
+│   │   ├── progress.marks
+│   │   ├── TargetDirectories.txt
+│   │   └── VerifyGlobs.cmake
 │   ├── cmake_install.cmake
 │   ├── cv04_du
+│   ├── Makefile
 │   └── Testing
 │       └── Temporary
 │           └── LastTest.log
 ├── CMakeLists.txt
+├── CMakeLists.txt.bak
+├── debug_log.txt
 ├── discord.txt
-├── DrawableObject.cpp
-├── DrawableObject.h
-├── main.cpp
-├── Model.h
-├── Rotate.cpp
-├── Rotate.h
-├── Scale.cpp
-├── Scale.h
-├── Scene.h
-├── Scenes.h
-├── ShaderProgram.cpp
-├── ShaderProgram.h
+├── fix_project.sh
+├── github_repo.txt
+├── plan.txt
+├── src
+│   ├── app
+│   │   └── main.cpp
+│   ├── core
+│   │   ├── DrawableObject.cpp
+│   │   ├── DrawableObject.h
+│   │   └── Model.h
+│   ├── gfx
+│   │   ├── Camera.cpp
+│   │   ├── Camera.h
+│   │   ├── CameraUboBinder.cpp
+│   │   ├── CameraUboBinder.h
+│   │   ├── Light.cpp
+│   │   ├── Light.h
+│   │   ├── LightUboBinder.cpp
+│   │   ├── LightUboBinder.h
+│   │   ├── Material.cpp
+│   │   ├── Material.h
+│   │   ├── ShaderProgram.cpp
+│   │   ├── ShaderProgram.h
+│   │   ├── ShaderStage.cpp
+│   │   ├── ShaderStage.h
+│   │   ├── Technique.cpp
+│   │   ├── Technique.h
+│   │   ├── Ubo.cpp
+│   │   └── Ubo.h
+│   ├── math
+│   │   ├── AbstractTransformation.h
+│   │   ├── Rotate.cpp
+│   │   ├── Rotate.h
+│   │   ├── Scale.cpp
+│   │   ├── Scale.h
+│   │   ├── TransformChain.cpp
+│   │   ├── TransformChain.h
+│   │   ├── Translate.cpp
+│   │   └── Translate.h
+│   ├── meshes
+│   │   ├── bushes.h
+│   │   ├── gift.h
+│   │   ├── plain.h
+│   │   ├── sphere.h
+│   │   ├── suzi_flat.h
+│   │   ├── suzi_smooth.h
+│   │   └── tree.h
+│   ├── models
+│   │   ├── MeshModel.cpp
+│   │   ├── MeshModel.h
+│   │   ├── TriangleModel.cpp
+│   │   └── TriangleModel.h
+│   └── scene
+│       ├── Scene.h
+│       ├── Scenes.h
+│       ├── SpheresScene.cpp
+│       └── SpheresScene.h
 ├── structure.txt
-├── TransformChain.cpp
-├── TransformChain.h
-├── Translate.cpp
-├── Translate.h
-├── TriangleModel.cpp
-├── TriangleModel.h
 └── zadane04.txt
 
-12 directories, 52 files
+30 directories, 134 files

@@ -65,3 +65,8 @@ void SpheresScene::render(const glm::mat4& V, const glm::mat4& P){
     // Blinn
     draw(spBlinn_,   M4, {0.05f}, {0.3f,0.5f,0.9f}, {0.8f}, 32.f);
 }
+
+// --- doplněno: viewPos z kamery (pro Phong/Blinn)
+void SpheresScene::setViewPos(const glm::vec3& p){
+    viewPos_ = p;
+}

@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 class SpheresScene : public Scene {
+    void setViewPos(const glm::vec3&) override;
 public:
     SpheresScene();
     void update(float dt) override;
