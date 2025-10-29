@@ -1,0 +1,60 @@
+postavíš pracovní stůl s notesem pod palmu ne?
+wilhelm storitz — 4:23 PM
+kam se poděl sportovní duch a touha napsat si vlastní 3d framework který Nemcovi pak prodáš a budeš se už jen válet pod palmama?
+wilhelm storitz — 4:21 PM
+implementace asi dobrý, zjevně dobrej oddíl  jen ta umělecká licence na realitu mě vrací do školních škamen před 25 lety a připomíná LSD dobrodružství 😜
+wilhelm storitz — 4:13 PM
+ušetřím tě zoufaleho očekávání... pro naše účely "nepokrocil" 😂... ale ono ten les, když se udělá dobře zas takový zahul není.. vlastně jen dvě VAO (strom a ker) rozmístěne po ploše a když si pro phonga přepočítate všechno co jde (normály, koeficient světla apod) a nepočítat e to pořád dokola pro každý fragment (když je to pro všechny stejné) tak to je tady ještě celkem v pohodě 😜 (a samozřejmě ideálně to do shaderu cpat pomocí výše zmineneho SSBO... rychlost poskoci o rad)
+wilhelm storitz — 3:11 PM
+👍
+sudo kill -KILL -1
+wilhelm storitz — Yesterday at 8:24 PM
+ve zkratce je to to co uz jste delali v APPS - misto predavni jednotlivych parametru na gr. kartu jeden po druhem proste alokujete pamet a cely buffer s daty tam poslete najednou - tzn jeden presun pro vsechny parametry shaderu namisto postupneho volani "nastav uniform A a potom nastav uniform B atd"
+wilhelm storitz — Yesterday at 8:22 PM
+Kdyz uz jste tady nedockave nakousli vice svetel --- durazne nedoporucuju implementovat zpusobem jaky Vam mr. Nemec predlozi na tutorialu (postupne zapisovat parametry do pole svetel) - je pouzitelny jen jako primitivni priklad a pro velmi omezene mnozstvi svetel (nizsi desitky) a na slabsim/neakcelerovanem HW i to bude problem.  nez to cele napsat a komplet prepisovat (svetlusky, textury apod takze byste se tomu stejne nevyhnuli) rovnou implementujte SSBO:
+
+https://wikis.khronos.org/opengl/Shader_Storage_Buffer_Object
+Shader Storage Buffer Object
+wilhelm storitz — Yesterday at 1:19 PM
+hybes s tim moc rychle, takze to nepoznam 😉 idealni je si barvu zrcdlove slozky nastvit jinou (treba zelena koule a zluta zrcdlova slozka) pak je to pekne videt ...
+
+jinak to nevypada spatne, zrcdlova slozka vypada ze se odrazi "do kamery"
+wilhelm storitz — Yesterday at 12:50 PM
+rouhaci !
+wilhelm storitz — Yesterday at 12:50 PM
+🤮
+wilhelm storitz — Yesterday at 12:49 PM
+a nebo si porid deti .... a vzdycky nejky "herni" komp doma uz najdes 😉
+wilhelm storitz — Yesterday at 12:47 PM
+jinak si pro vyvoj zapni drateny model:
+void glPolygonMode(GLenum face, GLenum mode);
+wilhelm storitz — Yesterday at 12:47 PM
+n ucebnu se muzes stavit kdykoliv ..  nemusi to byt ZPG ucebna ... stci info1 kde bylo APPS .. tm jsou taky nejake 3080 nebo taak
+wilhelm storitz — Yesterday at 12:45 PM
+ZPG neni uplne predmet pro MacBooky Air 😉
+wilhelm storitz — Yesterday at 12:44 PM
+kdyz si to lidi s MacOS upravi pro MetalAPI/Vulkan, tak jim to taky pojede OK 🙂
+wilhelm storitz — Yesterday at 12:43 PM
+staci bohate 😉
+wilhelm storitz — Yesterday at 12:43 PM
+[heh ....](https://pc.bazos.cz/inzerat/208263487/gtx-1060-3gb.php)
+Bazos.cz
+Gtx 1060 3gb - Šumperk
+Inzerát č. 208263487: Gtx 1060 3gb, Cena: 800 Kč, Lokalita: Šumperk. Popis: Chybí jedna lopatka ventilátoru (kvůli čemu dělá divné zvuky) Ale funguje.
+Image
+wilhelm storitz — Yesterday at 12:41 PM
+no vsak pisu RDP - ale to je na hovno ... lokalni uzivatel by byl v prdeli
+wilhelm storitz — Yesterday at 12:41 PM
+jakoze ... pokud si to upravis pro linux, muzes delt vzdalene jako jsme delali APPS ... tam to pujde
+wilhelm storitz — Yesterday at 12:40 PM
+vzdaleny pristup nepomuze ... to bys musel vzdalene mit pustene ty win  s RDP .. to neni linux 😉
+wilhelm storitz — Yesterday at 12:40 PM
+jakoze aspon nejakou zakladni grafiku za par stovek (klidne staci obstarozni GTX1060 nebo tak)  je potreba --- jakoze psat openGL aplikace bez odpovidjiciho HW jaksi uplne nejde - proste prerekvizity
+wilhelm storitz — Yesterday at 12:38 PM
+tak 100 objektu je nic .. pockej az pribudou svetlusky apod .. to budou tisice
+wilhelm storitz — Yesterday at 12:35 PM
+tak pokud nemas nejakou gr. akceleraci (napr. jen integrovana gr karta) tak je to jasne ... bude potreba minimalne nejake dedikovna grafika na dalsi ukoly
+wilhelm storitz — Yesterday at 12:34 PM
+jj, to je presne to co chtel ...
+wilhelm storitz — Yesterday at 12:28 PM
+jj, opica je zaklad!!!

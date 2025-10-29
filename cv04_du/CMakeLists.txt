@@ -11,6 +11,8 @@ find_package(GLEW REQUIRED)
 
 add_executable(${PROJECT_NAME}
         main.cpp
+        ShaderProgram.cpp
+        ShaderProgram.h
         TransformChain.cpp
         TransformChain.h
         AbstractTransformation.h
