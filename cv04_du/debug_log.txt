@@ -1,12 +1,16 @@
-✅ Opraveno. Teď přegeneruj build:
-   cd cmake-build-debug && cmake --build . -jcd cmake-build-debug && cmake --build . -j || (cd .. && mkdir -p cmake-build-debug && cd cmake-build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . -j) xpolas@fedora cv04_du 09:09 PM]$  cd cmake-build-debug && cmake --build . -j || (cd .. && mkdir -p cmake-build-debug && cd cmake-build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . -j)
-cmake-build-debug  CMakeCache.txt  CMakeFiles  cmake_install.cmake  cv04_du  Makefile  Testing
-[ 10%] Building CXX object CMakeFiles/cv04_du.dir/src/app/main.cpp.o
-[ 10%] Building CXX object CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o
+====================[ Build | cv04_du | Debug ]=================================
+/home/xpolas/.local/share/JetBrains/Toolbox/apps/clion/bin/cmake/linux/x64/bin/cmake --build /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug --target cv04_du -j 10
+[0/2] Re-checking globbed directories...
+[1/4] Building CXX object CMakeFiles/cv04_du.dir/src/app/main.cpp.o
+FAILED: CMakeFiles/cv04_du.dir/src/app/main.cpp.o
+/usr/bin/c++  -I/home/xpolas/banska/ZPG/cv04_du/src -g -std=gnu++20 -fdiagnostics-color=always -MD -MT CMakeFiles/cv04_du.dir/src/app/main.cpp.o -MF CMakeFiles/cv04_du.dir/src/app/main.cpp.o.d -o CMakeFiles/cv04_du.dir/src/app/main.cpp.o -c /home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp
 /home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp: In function ‘int main()’:
 /home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp:84:13: error: ‘s’ was not declared in this scope
    84 |             s->setViewPos(cam.position());
       |             ^
+[2/4] Building CXX object CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o
+FAILED: CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o
+/usr/bin/c++  -I/home/xpolas/banska/ZPG/cv04_du/src -g -std=gnu++20 -fdiagnostics-color=always -MD -MT CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o -MF CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o.d -o CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o -c /home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp
 /home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp: In constructor ‘SpheresScene::SpheresScene()’:
 /home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:20:22: error: ‘SPHERE_VERTS’ was not declared in this scope; did you mean ‘SP_VERTS’?
    20 | #    define SP_VERTS SPHERE_VERTS /* kdyby nic neprošlo, necháme to spadnout na linku */
@@ -26,44 +30,4 @@ cmake-build-debug  CMakeCache.txt  CMakeFiles  cmake_install.cmake  cv04_du  Mak
 /home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:64:37: note: in expansion of macro ‘SP_IDX’
    64 |     const size_t idxCount  = sizeof(SP_IDX)   / sizeof(unsigned);
       |                                     ^~~~~~
-gmake[2]: *** [CMakeFiles/cv04_du.dir/build.make:79: CMakeFiles/cv04_du.dir/src/app/main.cpp.o] Error 1
-gmake[2]: *** Waiting for unfinished jobs....
-gmake[2]: *** [CMakeFiles/cv04_du.dir/build.make:317: CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o] Error 1
-gmake[1]: *** [CMakeFiles/Makefile2:87: CMakeFiles/cv04_du.dir/all] Error 2
-gmake: *** [Makefile:91: all] Error 2
-assets  cmake-build-debug  CMakeLists.txt  CMakeLists.txt.bak  debug_log.txt  discord.txt  fix_project.sh  github_repo.txt  plan.txt  src  structure.txt  zadane04.txt
-cmake-build-debug  CMakeCache.txt  CMakeFiles  cmake_install.cmake  cv04_du  Makefile  Testing
--- Configuring done (0.1s)
--- Generating done (0.0s)
--- Build files have been written to: /home/xpolas/banska/ZPG/cv04_du/cmake-build-debug
-[  5%] Building CXX object CMakeFiles/cv04_du.dir/src/app/main.cpp.o
-[ 10%] Building CXX object CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o
-/home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp: In function ‘int main()’:
-/home/xpolas/banska/ZPG/cv04_du/src/app/main.cpp:84:13: error: ‘s’ was not declared in this scope
-   84 |             s->setViewPos(cam.position());
-      |             ^
-/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp: In constructor ‘SpheresScene::SpheresScene()’:
-/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:20:22: error: ‘SPHERE_VERTS’ was not declared in this scope; did you mean ‘SP_VERTS’?
-   20 | #    define SP_VERTS SPHERE_VERTS /* kdyby nic neprošlo, necháme to spadnout na linku */
-      |                      ^~~~~~~~~~~~
-/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:62:37: note: in expansion of macro ‘SP_VERTS’
-   62 |     const size_t posCount  = sizeof(SP_VERTS) / sizeof(float);
-      |                                     ^~~~~~~~
-/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:32:22: error: ‘SPHERE_NORMS’ was not declared in this scope; did you mean ‘SP_NORMS’?
-   32 | #    define SP_NORMS SPHERE_NORMS
-      |                      ^~~~~~~~~~~~
-/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:63:37: note: in expansion of macro ‘SP_NORMS’
-   63 |     const size_t normCount = sizeof(SP_NORMS) / sizeof(float);
-      |                                     ^~~~~~~~
-/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:44:20: error: ‘SPHERE_IDX’ was not declared in this scope; did you mean ‘SP_IDX’?
-   44 | #    define SP_IDX SPHERE_IDX
-      |                    ^~~~~~~~~~
-/home/xpolas/banska/ZPG/cv04_du/src/scene/SpheresScene.cpp:64:37: note: in expansion of macro ‘SP_IDX’
-   64 |     const size_t idxCount  = sizeof(SP_IDX)   / sizeof(unsigned);
-      |                                     ^~~~~~
-gmake[2]: *** [CMakeFiles/cv04_du.dir/build.make:79: CMakeFiles/cv04_du.dir/src/app/main.cpp.o] Error 1
-gmake[2]: *** Waiting for unfinished jobs....
-gmake[2]: *** [CMakeFiles/cv04_du.dir/build.make:317: CMakeFiles/cv04_du.dir/src/scene/SpheresScene.cpp.o] Error 1
-gmake[1]: *** [CMakeFiles/Makefile2:87: CMakeFiles/cv04_du.dir/all] Error 2
-gmake: *** [Makefile:91: all] Error 2
-[xpolas@fedora cmake-build-debug 09:09 PM]$
+ninja: build stopped: subcommand failed.

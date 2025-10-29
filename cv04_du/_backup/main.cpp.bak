@@ -8,7 +8,6 @@
 #include "gfx/ShaderProgram.h"
 #include "scene/Scene.h"
 #include "scene/Scenes.h"
-#include "scene/SpheresScene.h"
 
 
 // GLSL
@@ -82,7 +81,7 @@ int main(){
             cam.processKeyboard(fwd,back,left,right,dt);
             int ww,hh; glfwGetFramebufferSize(w,&ww,&hh); float aspect=(float)ww/(float)hh;
             glm::mat4 V = cam.view(); glm::mat4 P = cam.proj(60.f, aspect, 0.1f, 200.f);
-         
+            s->setViewPos(cam.position());
 
         // barva pro flat shader
         prog.use();
@@ -92,7 +91,6 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (auto* s = mgr.active()){
-
             s->setViewPos(cam.position());
             s->update(dt);
             s->render(V, P);
