@@ -4,9 +4,9 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "ShaderProgram.h"
-#include "Scene.h"
-#include "Scenes.h"
+#include "gfx/ShaderProgram.h"
+#include "scene/Scene.h"
+#include "scene/Scenes.h"
 
 // GLSL
 static const char* VS_POS = R"GLSL(

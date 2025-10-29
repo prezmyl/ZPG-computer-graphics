@@ -1,4 +1,4 @@
-#include "TriangleModel.h"
+#include "models/TriangleModel.h"
 
 TriangleModel::TriangleModel() {
     const float verts[] = {

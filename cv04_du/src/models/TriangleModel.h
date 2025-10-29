@@ -1,6 +1,6 @@
 #pragma once
 #include <GL/glew.h>
-#include "Model.h"
+#include "core/Model.h"
 
 class TriangleModel : public Model {
 public:

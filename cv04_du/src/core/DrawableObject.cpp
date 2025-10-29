@@ -1,7 +1,7 @@
-#include "DrawableObject.h"
-#include "Model.h"
-#include "ShaderProgram.h"
-#include "TransformChain.h"
+#include "core/DrawableObject.h"
+#include "core/Model.h"
+#include "gfx/ShaderProgram.h"
+#include "math/TransformChain.h"
 
 void DrawableObject::draw(const glm::mat4& V, const glm::mat4& P) const {
     if (!model || !program) return;

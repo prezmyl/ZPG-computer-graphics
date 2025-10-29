@@ -1,4 +1,4 @@
-#include "TransformChain.h"
+#include "math/TransformChain.h"
 
 glm::mat4 TransformChain::combined() const {
     glm::mat4 M(1.f);

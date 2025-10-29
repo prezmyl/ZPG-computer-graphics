@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
-#include "ShaderProgram.h"
+#include "gfx/ShaderProgram.h"
 
 struct Technique {
     static constexpr GLuint CAMERA_BINDING   = 0;

@@ -1,9 +1,9 @@
 #pragma once
 #include <GLFW/glfw3.h>
-#include "Scene.h"
-#include "TriangleModel.h"
-#include "TransformChain.h"
-#include "Rotate.h"
+#include "scene/Scene.h"
+#include "models/TriangleModel.h"
+#include "math/TransformChain.h"
+#include "math/Rotate.h"
 
 class RotatingTriangleScene : public SimpleScene {
 public:
