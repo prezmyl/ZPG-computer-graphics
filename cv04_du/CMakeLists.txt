@@ -1,0 +1,36 @@
+cmake_minimum_required(VERSION 3.30)
+project(cv04_du)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(OpenGL REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLFW REQUIRED glfw3)
+find_package(GLEW REQUIRED)
+
+add_executable(${PROJECT_NAME}
+        main.cpp
+        TransformChain.cpp
+        TransformChain.h
+        AbstractTransformation.h
+        Translate.cpp
+        Translate.h
+        Rotate.cpp
+        Rotate.h
+        Scale.cpp
+        Scale.h
+        Model.h
+        TriangleModel.cpp
+        TriangleModel.h
+        Scene.h
+        Scenes.h
+        DrawableObject.cpp
+        DrawableObject.h
+
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${GLFW_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARIES} GLEW::GLEW OpenGL::GL)
+target_compile_options(${PROJECT_NAME} PRIVATE ${GLFW_CFLAGS_OTHER})
+target_link_options(${PROJECT_NAME} PRIVATE ${GLFW_LDFLAGS_OTHER})
