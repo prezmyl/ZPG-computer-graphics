@@ -1,0 +1,18 @@
+# ninja log v6
+1	12	1761770141718675559	/home/xpolas/banska/ZPG/cv04_du/build-debug/CMakeFiles/cmake.verify_globs	670307fbb8eb473
+15	412	1761770141732034843	CMakeFiles/cv04_du.dir/src/gfx/Ubo.cpp.o	ceec08bc20ac7e23
+18	1886	1761770141735034909	CMakeFiles/cv04_du.dir/src/math/Scale.cpp.o	5008b898299b724
+415	1893	1761770142133043757	CMakeFiles/cv04_du.dir/src/math/Translate.cpp.o	d9012310a9c6a911
+15	1936	1761770141733034865	CMakeFiles/cv04_du.dir/src/math/Rotate.cpp.o	27237bbbc6bb6eaa
+13	1984	1761770141730631494	CMakeFiles/cv04_du.dir/src/gfx/Light.cpp.o	aa8d8696cdaacab
+1893	2184	1761770143610076592	CMakeFiles/cv04_du.dir/src/models/TriangleModel.cpp.o	dcca9e24e8d2f240
+12	2250	1761770141730175178	CMakeFiles/cv04_du.dir/src/gfx/Camera.cpp.o	e4971499662ebdb6
+14	2315	1761770141731768271	CMakeFiles/cv04_du.dir/src/gfx/ShaderStage.cpp.o	3bcac1aae6eb5aa9
+13	2645	1761770141730392851	CMakeFiles/cv04_du.dir/src/gfx/CameraUboBinder.cpp.o	691cbbee47ed0d5b
+12	2669	1761770141729695488	CMakeFiles/cv04_du.dir/src/core/DrawableObject.cpp.o	ab97a216616a8d21
+13	2679	1761770141731034821	CMakeFiles/cv04_du.dir/src/gfx/Material.cpp.o	fc39ff5c87561f89
+14	2687	1761770141731548795	CMakeFiles/cv04_du.dir/src/gfx/ShaderProgram.cpp.o	95625892cb4ea78c
+19	2791	1761770141736034932	CMakeFiles/cv04_du.dir/src/math/TransformChain.cpp.o	954e264496411e00
+14	2873	1761770141731975314	CMakeFiles/cv04_du.dir/src/gfx/Technique.cpp.o	34cb62e15b25d9cb
+13	2932	1761770141730913610	CMakeFiles/cv04_du.dir/src/gfx/LightUboBinder.cpp.o	a706a3ae0adbf9fb
+1887	3053	1761770143604076459	CMakeFiles/cv04_du.dir/src/models/MeshModel.cpp.o	d5000fc5de07b4e3

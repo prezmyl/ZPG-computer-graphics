@@ -62,9 +62,26 @@ int main(){
 
 
     const glm::mat4 I(1.f);
+    // --- Camera state ---
+    static Camera cam({0.f,1.6f,4.f}, -90.f, 0.f);
+    static bool rmbDown=false; static double lastX=0.0, lastY=0.0;
 
     while(!glfwWindowShouldClose(w)){
         glfwPollEvents();
+            // --- per-frame input + V,P ---
+            if (glfwGetMouseButton(w, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
+                double x,y; glfwGetCursorPos(w,&x,&y);
+                if(!rmbDown){ rmbDown=true; lastX=x; lastY=y; }
+                double dx=x-lastX, dy=y-lastY; lastX=x; lastY=y;
+                cam.processMouse((float)dx,(float)-dy,true);
+            } else rmbDown=false;
+            float dt = 1.0f/60.0f;
+            bool fwd=glfwGetKey(w,GLFW_KEY_W)==GLFW_PRESS, back=glfwGetKey(w,GLFW_KEY_S)==GLFW_PRESS;
+            bool left=glfwGetKey(w,GLFW_KEY_A)==GLFW_PRESS, right=glfwGetKey(w,GLFW_KEY_D)==GLFW_PRESS;
+            cam.processKeyboard(fwd,back,left,right,dt);
+            int ww,hh; glfwGetFramebufferSize(w,&ww,&hh); float aspect=(float)ww/(float)hh;
+            glm::mat4 V = cam.view(); glm::mat4 P = cam.proj(60.f, aspect, 0.1f, 200.f);
+            s->setViewPos(cam.position());
 
         // barva pro flat shader
         prog.use();
