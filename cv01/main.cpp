@@ -1,247 +1,166 @@
-// main.cpp
-#include <GL/glew.h>
+/*
+ * Copyright (c) 2026 Martin Nemec
+ *
+ * File: main.cpp
+ * Description:  Fixed Function Pipeline.
+ */
+
+ //Include GLFW
 #include <GLFW/glfw3.h>
 
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+//Include GLM
+#include <glm/vec3.hpp> // glm::vec3
+#include <glm/vec4.hpp> // glm::vec4
+#include <glm/mat4x4.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
+#include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
-#include <cstdio>
-#include <cstdlib>
-#include <string>
+//Include the standard C++ headers
+#include <stdlib.h>
+#include <stdio.h>
 
-// ---------- Shadery (jednoduché, pozice + barva) ----------
-static const char* VERT_SRC = R"GLSL(
-#version 330 core
-layout (location=0) in vec3 inPos;
-layout (location=1) in vec3 inCol;
 
-uniform mat4 MVP;
+float rotationDirection = 1.0f;
 
-out vec3 vCol;
+static void error_callback(int error, const char* description) { fputs(description, stderr); }
 
-void main() {
-    gl_Position = MVP * vec4(inPos, 1.0);
-    vCol = inCol;
-}
-)GLSL";
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
 
-static const char* FRAG_SRC = R"GLSL(
-#version 330 core
-in vec3 vCol;
-out vec4 fragColor;
-void main() {
-    fragColor = vec4(vCol, 1.0);
-}
-)GLSL";
-
-// ---------- Stav aplikace ----------
-struct AppState {
-    float angle = 0.0f;        // úhel rotace (rad)
-    float speed = 1.0f;        // rychlost (rad/s)
-    int dir = +1;              // směr rotace (+1 / -1)
-    glm::vec3 axis = {0,0,1};  // aktuální osa rotace
-    bool rotateAroundCorner = false; // rotace kolem rohu (P)
-} g;
-
-// ---------- Callbacky ----------
-static void key_callback(GLFWwindow* w, int key, int sc, int action, int mods) {
-    if (action == GLFW_PRESS) {
-        switch (key) {
-            case GLFW_KEY_ESCAPE: glfwSetWindowShouldClose(w, GLFW_TRUE); break;
-            case GLFW_KEY_SPACE:  g.dir = -g.dir; break;             // přepni směr
-            case GLFW_KEY_X:      g.axis = {1,0,0}; break;
-            case GLFW_KEY_Y:      g.axis = {0,1,0}; break;
-            case GLFW_KEY_Z:      g.axis = {0,0,1}; break;
-            case GLFW_KEY_C:      g.rotateAroundCorner = !g.rotateAroundCorner; break;
-            case GLFW_KEY_KP_ADD:
-            case GLFW_KEY_EQUAL:  g.speed *= 1.25f; break;            // zrychli
-            case GLFW_KEY_KP_SUBTRACT:
-            case GLFW_KEY_MINUS:  g.speed *= 0.8f;  break;            // zpomal
-            default: break;
-        }
-    }
+	if ( key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+		rotationDirection *= -1.0f;
+	}
 }
 
-static void framebuffer_size_callback(GLFWwindow*, int w, int h) {
-    glViewport(0, 0, w, h);
+static void window_focus_callback(GLFWwindow* window, int focused) { printf("window_focus_callback \n"); }
+
+static void window_iconify_callback(GLFWwindow* window, int iconified) { printf("window_iconify_callback \n"); }
+
+static void window_size_callback(GLFWwindow* window, int width, int height) {
+	printf("resize %d, %d \n", width, height);
+	glViewport(0, 0, width, height);
 }
 
-// ---------- Pomůcky ----------
-static GLuint mkShader(GLenum type, const char* src) {
-    GLuint sh = glCreateShader(type);
-    glShaderSource(sh, 1, &src, nullptr);
-    glCompileShader(sh);
-    GLint ok = GL_FALSE;
-    glGetShaderiv(sh, GL_COMPILE_STATUS, &ok);
-    if (!ok) {
-        GLint len = 0;
-        glGetShaderiv(sh, GL_INFO_LOG_LENGTH, &len);
-        std::string log(len, '\0');
-        glGetShaderInfoLog(sh, len, nullptr, log.data());
-        fprintf(stderr, "Shader compile error:\n%s\n", log.c_str());
-        exit(EXIT_FAILURE);
-    }
-    return sh;
+static void cursor_callback(GLFWwindow* window, double x, double y) { printf("cursor_callback \n"); }
+
+static void button_callback(GLFWwindow* window, int button, int action, int mode) {
+	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
 }
 
-static GLuint mkProgram(const char* vs, const char* fs) {
-    GLuint v = mkShader(GL_VERTEX_SHADER, vs);
-    GLuint f = mkShader(GL_FRAGMENT_SHADER, fs);
-    GLuint p = glCreateProgram();
-    glAttachShader(p, v);
-    glAttachShader(p, f);
-    glLinkProgram(p);
-    glDeleteShader(v);
-    glDeleteShader(f);
 
-    GLint ok = GL_FALSE;
-    glGetProgramiv(p, GL_LINK_STATUS, &ok);
-    if (!ok) {
-        GLint len = 0;
-        glGetProgramiv(p, GL_INFO_LOG_LENGTH, &len);
-        std::string log(len, '\0');
-        glGetProgramInfoLog(p, len, nullptr, log.data());
-        fprintf(stderr, "Program link error:\n%s\n", log.c_str());
-        exit(EXIT_FAILURE);
-    }
-    return p;
-}
 
-int main() {
-    // ---------- GLFW init ----------
-    if (!glfwInit()) { fprintf(stderr, "GLFW init failed\n"); return EXIT_FAILURE; }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//GLM test
 
-    GLFWwindow* win = glfwCreateWindow(800, 600, "ZPG - cv01", nullptr, nullptr);
-    if (!win) { fprintf(stderr, "Window create failed\n"); glfwTerminate(); return EXIT_FAILURE; }
-    glfwMakeContextCurrent(win);
-    glfwSwapInterval(1);
+// Projection matrix: 45 degree FOV, 4:3 aspect ratio, near = 0.01, far = 100
+glm::mat4 projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.01f, 100.0f);
 
-    glfwSetKeyCallback(win, key_callback);
-    glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
+// Camera matrix
+glm::mat4 view = glm::lookAt(
+	glm::vec3(10, 10, 10), // Camera is at (4,3,-3), in World Space
+	glm::vec3(0, 0, 0), // and looks at the origin
+	glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+);
+// Model matrix : an identity matrix (model will be at the origin)
+glm::mat4 model = glm::mat4(1.0f);
 
-    // ---------- GLEW init ----------
-    glewExperimental = GL_TRUE;
-    GLenum glewErr = glewInit();
-    if (glewErr != GLEW_OK) {
-        fprintf(stderr, "GLEW init error: %s\n", (const char*)glewGetErrorString(glewErr));
-        return EXIT_FAILURE;
-    }
 
-    // Info (dobré pro debug)
-    printf("OpenGL: %s\n", glGetString(GL_VERSION));
-    printf("GLSL:   %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-    printf("Vendor: %s\n", glGetString(GL_VENDOR));
-    printf("Renderer: %s\n", glGetString(GL_RENDERER));
+int main(void)
+{
+	// Pointer to the GLFW window
+	GLFWwindow* window;
 
-    // ---------- Geometrie: čtverec (2 trojúhelníky), pozice a barva ----------
-    // Vrcholy v NDC ([-1,1]) kolem středu; poslední vrchol je žlutý.
-    // Pořadí vrcholů:
-    // 0: (-0.5, -0.5)  červená
-    // 1: (-0.5,  0.5)  zelená
-    // 2: ( 0.5,  0.5)  modrá
-    // 3: ( 0.5, -0.5)  ŽLUTÁ  <-- požadavek
-    const float vertices[] = {
-        //    x      y     z      r     g     b
-        -0.5f, -0.5f, 0,   1.0f, 0.0f, 0.0f, // 0
-        -0.5f,  0.5f, 0,   0.0f, 1.0f, 0.0f, // 1
-         0.5f,  0.5f, 0,   0.0f, 0.0f, 1.0f, // 2
-         0.5f, -0.5f, 0,   1.0f, 1.0f, 0.0f  // 3  (žlutý)
-    };
-    const unsigned int indices[] = {
-        0, 1, 2,  // první trojúhelník
-        0, 2, 3   // druhý trojúhelník
-    };
+	// Initialize GLFW
+	if (!glfwInit())
+		exit(EXIT_FAILURE);
+	window = glfwCreateWindow(640, 480, "ZPG", NULL, NULL);
+	if (!window)
+	{
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
 
-    GLuint vao=0, vbo=0, ebo=0;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+	// Set GLFW callback functions
+	glfwSetErrorCallback(error_callback);
 
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glfwSetKeyCallback(window, key_callback);
 
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glfwSetCursorPosCallback(window, cursor_callback);
 
-    // layout(location=0) vec3 inPos
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
-    // layout(location=1) vec3 inCol
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
+	glfwSetMouseButtonCallback(window, button_callback);
 
-    glBindVertexArray(0); // (ponecháme EBO bindnuté s VAO uvnitř)
+	glfwSetWindowFocusCallback(window, window_focus_callback);
 
-    // ---------- Program ----------
-    GLuint prog = mkProgram(VERT_SRC, FRAG_SRC);
-    GLint locMVP = glGetUniformLocation(prog, "MVP");
+	glfwSetWindowIconifyCallback(window, window_iconify_callback);
 
-    // ---------- Stav scény ----------
-    glClearColor(0.08f, 0.08f, 0.1f, 1.0f);
-    glEnable(GL_DEPTH_TEST);
+	glfwSetWindowSizeCallback(window, window_size_callback);
 
-    int w, h;
-    glfwGetFramebufferSize(win, &w, &h);
+	// Get framebuffer size and set the viewport
+	int width, height;
+	glfwGetFramebufferSize(window, &width, &height);
+	float ratio = width / (float)height;
+	glViewport(0, 0, width, height);
 
-    double last = glfwGetTime();
+	// Orthographic projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 
-    while (!glfwWindowShouldClose(win)) {
-        double now = glfwGetTime();
-        float dt = float(now - last);
-        last = now;
+	float angle = 0.0f;
+	double lastTime = glfwGetTime();
+	while (!glfwWindowShouldClose(window))
+	{
+		// Clear color buffer
+		glClear(GL_COLOR_BUFFER_BIT);
 
-        g.angle += g.dir * g.speed * dt; // plynulá změna úhlu
+		// ModelView matrix
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		double currentTime = glfwGetTime();
+		float deltaTime = (float)(currentTime - lastTime);
+		lastTime = currentTime;
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		angle += rotationDirection * 50.0f * deltaTime;
 
-        // --- matice ---
-        glfwGetFramebufferSize(win, &w, &h);
-        float aspect = (h>0) ? (float)w / (float)h : 1.0f;
+		glRotatef(angle, 0.f, 0.f, 1.f);
 
-        // Projekce + "kamera" (2D scéna, ale použijeme ortho/perspective pro demonstraci)
-        glm::mat4 P = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 10.0f);
-        glm::mat4 V = glm::lookAt(glm::vec3(0,0,2.0f), glm::vec3(0,0,0), glm::vec3(0,1,0));
+		// Draw a triangle
+		glBegin(GL_TRIANGLES);
 
-        // Model: buď rotace kolem středu (0,0,0),
-        // nebo kolem pravého-dolního rohu čtverce (0.5, -0.5, 0) – to je náš P.
-        glm::mat4 M(1.0f);
+		// 1. trojúhelník
+		glColor3f(1.f, 0.f, 0.f);
+		glVertex3f(-0.5f, -0.5f, 0.f);
 
-        if (g.rotateAroundCorner) {
-            glm::vec3 Piv(0.5f, -0.5f, 0.0f); // roh čtverce
-            M = glm::translate(glm::mat4(1.0f), Piv)
-              * glm::rotate(glm::mat4(1.0f), g.angle, glm::normalize(g.axis))
-              * glm::translate(glm::mat4(1.0f), -Piv);
-        } else {
-            M = glm::rotate(glm::mat4(1.0f), g.angle, glm::normalize(g.axis));
-        }
+		glColor3f(0.f, 1.f, 0.f);
+		glVertex3f(0.5f, -0.5f, 0.f);
 
-        glm::mat4 MVP = P * V * M;
+		glColor3f(0.f, 0.f, 1.f);
+		glVertex3f(0.5f, 0.5f, 0.f);
 
-        // --- vykreslení ---
-        glUseProgram(prog);
-        glUniformMatrix4fv(locMVP, 1, GL_FALSE, glm::value_ptr(MVP));
 
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		// 2. trojúhelník
+		glColor3f(1.f, 0.f, 0.f);
+		glVertex3f(-0.5f, -0.5f, 0.f);
 
-        glfwSwapBuffers(win);
-        glfwPollEvents();
-    }
+		glColor3f(0.f, 0.f, 1.f);
+		glVertex3f(0.5f, 0.5f, 0.f);
 
-    glDeleteProgram(prog);
-    glDeleteBuffers(1, &ebo);
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
+		glColor3f(1.f, 0.f, 1.f);
+		glVertex3f(-0.5f, 0.5f, 0.f);
 
-    glfwDestroyWindow(win);
-    glfwTerminate();
-    return 0;
+		glEnd();
+		glEnd();
+
+		// Display the rendered frame and process events
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+	// Clean up and terminate GLFW
+	glfwDestroyWindow(window);
+	glfwTerminate();
+	exit(EXIT_SUCCESS);
 }

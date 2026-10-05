@@ -1,0 +1,210 @@
+Cvičení 2
+Osnova sekce
+Toto cvičení budeme věnovat úpravě zdrojového kódu a přechod na  OpenGL 3.3+ (přechod na moderní OpenGL).
+Pro pohodlné používání příkazu OpenGL, budeme potřebovat knihovnu GLAD, která která se postará o načtení funkcí OpenGL dostupných v ovladači grafické karty.
+
+Program vytvoří OpenGL kontext.
+Grafický ovladač poskytne adresy funkcí, které podporuje.
+Tyto adresy je potřeba v programu načíst.
+GLAD tento proces udělá za nás.
+GLAD (OpenGL Loader-Generator) gen.glad.sh umožňuje vygenerovat knihovnu pro OpenGL verze 4.6 (lze i nižší) a můžeme vygenerovat pouze hlavičkové soubory (v opačném případě budeme mít *.h a *.c soubory a musíme je přidat do projektu.
+
+
+//Include GLAD
+//Only define this in one file
+#define GLAD_GL_IMPLEMENTATION
+#include <glad/gl.h>
+
+//Include GLFW
+#include <GLFW/glfw3.h>
+
+//Include the standard C++ headers
+#include <stdlib.h>
+#include <stdio.h>
+#include <fstream>
+#include <string>
+#include <iterator>
+#include <iostream>
+#include <vector>
+Upravíme začátek main funkce, abychom inicializovali OpenGL a zjistili aktuální verzi.
+
+	// Pointer to the GLFW window
+	GLFWwindow* window;
+
+	// Initialize GLFW
+	if (!glfwInit())
+		exit(EXIT_FAILURE);
+
+	//Initialization of a specific version
+	/*
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE,
+	GLFW_OPENGL_CORE_PROFILE);  //*/
+
+
+	window = glfwCreateWindow(800, 600, "ZPG", NULL, NULL);
+	if (!window)
+	{
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
+
+	// Initialize GLAD and load OpenGL function pointers
+	if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress))
+	{
+		printf("GLAD initialization failed\n");
+		return -1;
+	}
+
+	// Get version info
+	printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+	printf("Vendor %s\n", glGetString(GL_VENDOR));
+	printf("Renderer %s\n", glGetString(GL_RENDERER));
+	printf("GLSL %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	int major, minor, revision;
+	glfwGetVersion(&major, &minor, &revision);
+	printf("Using GLFW %i.%i.%i\n", major, minor, revision);
+Model - kombinace VBO + VAO
+VBO - Vertex Buffer Object - oblast paměti na grafické kartě, do které nahrajeme data vrcholů modelu.
+VAO - Vertex Array Object - návod na to, jak máme data interpretovat.
+
+float points[] = {
+    0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+   -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+};
+
+	//vertex buffer object (VBO)
+	GLuint VBO = 0;
+	glGenBuffers(1, &VBO); // generate the VBO
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+	//Vertex Array Object (VAO)
+	GLuint VAO = 0;
+	glGenVertexArrays(1, &VAO); //generate the VAO
+	glBindVertexArray(VAO); //bind the VAO
+	glEnableVertexAttribArray(0); //enable vertex attributes
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// index, number of components, data type, normalized, vertex stride, offset
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+Načtěte a zkompilujte ze souboru Vertex a Fragment shader a následně vytvořte Shader program.
+
+GLuint createShaderFromFile(GLenum shaderType, const char* shaderFile)
+{
+	// Creates an empty shader
+	GLuint shaderID = glCreateShader(shaderType);
+
+	if (shaderID == 0)
+	{
+		std::cout << "Unable to create shader" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	//Loading the contents of a file into a variable
+	std::ifstream file(shaderFile);
+	if (!file.is_open())
+	{
+		std::cout << "Unable to open file " << shaderFile << std::endl;
+		glDeleteShader(shaderID);
+		exit(-1);
+	}
+	std::string shaderCode((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+	// Set the shader source code
+	const char* source = shaderCode.c_str();
+	glShaderSource(shaderID, 1, &source, nullptr);
+
+	// Compile the shader source code
+	glCompileShader(shaderID);
+
+	// Check specialization/compilation status
+	GLint success;
+	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		char infoLog[1024];
+		glGetShaderInfoLog(shaderID, sizeof(infoLog), nullptr, infoLog);
+		std::cout
+			<< "Shader failed:\n"
+			<< infoLog << std::endl;
+		glDeleteShader(shaderID);
+		exit(1);
+	}
+	return shaderID;
+}
+
+// Create and compile the vertex and fragment shaders
+GLuint vertexShader = createShaderFromFile(GL_VERTEX_SHADER, "shaders/basic.vert");
+GLuint fragmentShader =	createShaderFromFile(GL_FRAGMENT_SHADER, "shaders/basic.frag");
+
+//Create and link the shader program
+GLuint shaderProgram = glCreateProgram();
+glAttachShader(shaderProgram, fragmentShader);
+glAttachShader(shaderProgram, vertexShader);
+glLinkProgram(shaderProgram);
+Uvnitř vykreslovací smyčky while postupně nastavte konkrétní shader, VAO a vykreslete trojúhelníky.
+
+while (!glfwWindowShouldClose(window))
+{
+	// Clear color and depth buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(shaderProgram);
+	glBindVertexArray(VAO);
+
+	// Draw a triangles
+	glDrawArrays(GL_TRIANGLES, 0, 2880); //mode,first,count
+
+	// Display the rendered frame and process events
+	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
+
+
+Zdrojové kódy si vhodně upravte na objektový kód (třídy, metody). Při návrhu OOP se řiďte věcmi, které jsme si řekli na přednášce a cvičeních.
+
+Výsledné zdrojové kódy (CPP a H) odešlete podle termínů na https://kelvin.cs.vsb.cz/.
+
+
+Příklad souboru main.cpp
+
+/**
+ * @file main.cpp
+ *
+ * @brief Main function
+ *
+ * @author ...
+  **/
+#include "Application.h"
+int main(void)
+{
+	Application* app = new Application();
+	app->initialization(); //OpenGL inicialization
+
+	//Loading scene
+	app->createShaders();
+	app->createModels();
+	app->run(); //Rendering
+}
+Úkoly k procvičování
+
+Přidejte si do projektu knihovnu GLAD, abychom mohli používat programovatelný vykreslovací řetězec.
+Udělejte v shaderu schválně chybu a ověřte, že se aplikace nepustí a že vypíše chybu.
+Zaměřte se na svůj objektový kód podle domluvy na cvičení a upravte jej tak, aby jste si zpřehlednili funkčnost a každá třída podle svého názvu odpovídala za přidělenou část (aplikace, shadery, modely atd.).
+Zkuste si vytvořit více modelů a vykreslovat je, vytvořte si jednoduchá primitiva, jako trojúhelník, čtverec, krychle atd. (příště již přidáme složitější modely).
+Vyzkoušejte si vykreslit více modelů pomocí více shader programu (shader programy se můžou lišit třeba výslednou barvou ve fragment shaderu).
+
+glad.zip Soubor
+
+basic.frag Soubor
+
+basic.vert Soubor
+
+models.zip Soubor

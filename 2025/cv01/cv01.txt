@@ -1,0 +1,116 @@
+Cvičení 1
+Seznámení s průběhem předmětu Základy počítačové grafiky.
+
+Předpokladem je znalost programování v jazyce C++ na úrovni třetího ročníku bakalářského studia (práce s projektem, debugování zdrojového kódu, objektové programování atd.).
+Znalost středoškolské matematiky a matematiky probírané na vysoké škole v předcházejících ročnících (přímka, funkce kosinus, operace s maticemi atd.). Lineární algebra (Skripta: linearni_algebra.pdf).
+Cvičení jsou povinná a budou průběžně kontrolována.
+Cílem předmětu je probrat a prakticky ověřit základní části počítačové grafiky (OpenGL) a jejich implementaci. Jednotlivé části budeme pro přehlednost přidávat do jednoho projektu a tvořit tak naši výslednou aplikaci.
+
+Postupně budeme probírat:
+
+Více modelů, shaderů
+Načítání modelů (FBX)
+Transformace
+Kamera a promítání
+Osvětlovací modely (Lambert, Phong, Blinn)
+Normálová matice
+Světla (bodové, směrové, reflektor). více světel
+Textury, skybox, skydome
+Identifikace modelů, unproject
+Pohyb po úsečce, Bézierova kubika, Bézierova křivka po obloucích
+Řiďte se pokyny vyučujícího na svém cvičení. Celkem 45 bodů za zápočet.
+Mimo přednášky a cvičení existuje pro OpenGL spousta dostupné literatury a ukázek.
+Jako příklad uveďme learnopengl.com i s online knihou Joey de Vries: Learn OpenGL, ISBN: 978-90-90-33256-7 nebo online https://open.gl/ a kniha  Alexander Overvoorde: Modern OpenGL Guide.
+Vše podstatné si budeme vysvětlovat postupně na jednotlivých přednáškách a následně prakticky zkoušet na cvičeních.
+Pro studium teorie lze využít také skripta Matematické základy počítačové grafiky.
+
+Na cvičeních budeme používat C++ (Visual Studio 2022) a další vybrané knihovny. Odzkoušejte dnes minimálně GLFW a GLM (později GLEW, Assimp, OpenCV, …).
+
+Cvičení jsou povinná a každou úlohu budeme odesílat přes kelvin.cs.vsb.cz, termínem odevzdání bude vždy neděle.
+Cílem předmětu je vytvořit jednoduchý vykreslovací řetězec, kdy se budeme pohybovat a budeme mít možnost určité interakce s objekty (C++, OpenGL).
+Výslednou aplikaci (Standartní zobrazovací řetězec) budeme průběžně vytvářet a konzultovat na cvičeních.
+Pokud byste chtěli vyvíjet aplikaci v jiném jazyce, je to po domluvě možné.
+#include <iostream>
+
+int main()
+{
+  std::cout << "Hello World!\n";
+  system("PAUSE");
+  return 0;
+}
+Testovací příklad [main.cpp] //cvičení 1
+Abychom si ušetřili práci, budeme využívat některé knihovny, které nám budou umožňovat rozšířit stávající možosti C/C++.
+
+Knihovny (popřípadě jejich části) lze rozdělit podle způsobu použití na:
+
+Statickou část knihovny – pro kterou platí, že to co program z knihoven využívá, je vloženo přímo do spustitelného kódu (zvětšují velikost).
+Dynamická část knihovny – které se načítají za běhu. Tyto knihovny se přikládají k spustitelnému souboru samostatně a mohou být sdíleny mezi více programy.
+Ve Windows mají statické knihovny obvykle příponu .lib (static library) a dynamické knihovny mají příponu .dll (dynamic linked library).
+
+GLFW: http://www.glfw.org/download.html
+GLM: https://glm.g-truc.net
+GLEW: http://glew.sourceforge.net/
+
+opengl32.lib
+glu32.lib
+glfw3.lib
+
+//glew32.lib, assimp.lib, openCV.lib,  ...
+
+I na 64bitových systémech se používá soubor s názvem opengl32.lib a glu32.lib, který se přizpůsobuje automaticky dané architektuře (32bitové nebo 64bitové).
+
+GLFW (http://www.glfw.org/)
+
+GLFW is an Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events. It is easy to integrate into existing applications and does not lay claim to the main loop.
+
+GLM (http://glm.g-truc.net/) OpenGL Mathematics
+
+OpenGL Mathematics (GLM) is a header only C++ mathematics library for graphics software based on the OpenGL Shading Language (GLSL) specifications. GLM provides classes and functions designed and implemented with the same naming conventions and functionalities than GLSL so that anyone who knows GLSL, can use GLM as well in C++.
+
+GLEW (http://glew.sourceforge.net/) The OpenGL Extension Wrangler Library
+
+The OpenGL Extension Wrangler Library (GLEW) is a cross-platform open-source C/C++ extension loading library. GLEW provides efficient run-time mechanisms for determining which OpenGL extensions are supported on the target platform. OpenGL core and extension functionality is exposed in a single header file. GLEW has been tested on a variety of operating systems, including Windows, Linux, Mac OS X, FreeBSD, Irix, and Solaris.
+
+Assimp (http://assimp.sourceforge.net/) Open Asset Import Library
+
+Assimp is a portable Open Source library to import various well-known 3D model formats in a uniform manner. The most recent version also knows how to export 3d files and is therefore suitable as a general-purpose 3D model converter. See the feature list.
+
+OpenCV (http://opencv.org/) Open Source Computer Vision Library
+
+OpenCV is an open source computer vision and machine learning software library. OpenCV was built to provide a common infrastructure for computer vision applications and to accelerate the use of machine perception in the commercial products.
+
+AntTweakBar (http://anttweakbar.sourceforge.net)
+
+AntTweakBar is a small and easy-to-use C/C++ library that allows programmers to quickly add a light and intuitive graphical user interface into graphic applications based on OpenGL (compatibility and core profiles), DirectX 9, DirectX 10 or DirectX 11 to interactively tweak parameters on-screen.
+
+FreeGLUT (http://freeglut.sourceforge.net/) Free OpenGL Utility Toolkit
+
+Free-software/open-source alternative to the OpenGL Utility Toolkit (GLUT) library.
+
+Relativní vs. absolutní cesta
+
+D:\ZPG\Cviceni\Libraries\glew\lib\Release\Win32
+
+vs.
+
+..\..\Libraries\glew\lib\Release\Win32
+
+$(ProjectDir)\Libraries\glm-master
+
+$(solutiondir)\Libraries
+
+Úkoly k procvičování
+
+Vytvořte z aktuálního trojúhelníku čtverec, jehož čtvrtý vrchol bude žlutý.
+
+Upravte aplikaci tak, aby se při stisku klávesy změnil plynulý směr rotace.
+
+Změňte si osu rotace.
+
+Zkuste rotovat kolem obecného bodu (např. kolem jednoho z rohů čtverce).
+
+Zprovozněte si knihovny GLM a GLEW, budeme je potřebovat příští týden.
+
+Používejte verzovací systém, můžete použít gitlab.vsb.cz.
+
+Zopakujte si debugování (procházení, krokování, vypisování proměnných atd.) zdrojového kódu.

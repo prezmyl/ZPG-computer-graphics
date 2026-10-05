@@ -1,0 +1,29 @@
+classDiagram
+    class ShaderProgram {
+        +use()
+        +setUniform(name, mat4|vec3|vec4|float|int|bool)
+    }
+
+    class Transform { <<interface>> +matrix(): mat4 }
+    class Translate
+    class Rotate
+    class Scale
+    class CompositeTransform { +add(t:Transform) }
+
+    Transform <|.. Translate
+    Transform <|.. Rotate
+    Transform <|.. Scale
+    Transform <|.. CompositeTransform
+
+    class Mesh { +vao +count +draw() }
+    class Drawable { +mesh:Mesh* +program:ShaderProgram* +transform:Transform }
+
+    class Scene { <<abstract>> +update(dt) +render(V,P) }
+    class SimpleScene
+    class SceneManager { +scenes +current +active() +next(idx) }
+
+    Scene <|-- SimpleScene
+    Drawable --> Mesh
+    Drawable --> ShaderProgram
+    Drawable --> Transform
+    SceneManager --> Scene

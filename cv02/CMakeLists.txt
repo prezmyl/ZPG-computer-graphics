@@ -1,24 +1,29 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.20)
+
 project(cv02)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(OpenGL REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GLFW REQUIRED glfw3)
-find_package(GLEW REQUIRED)
-# GLM je header-only; pokud nenajde config, nevadí (na Fedoře bývá glm-devel OK)
+find_package(glfw3 REQUIRED)
 
-include_directories(
-        ${GLFW_INCLUDE_DIRS}
-        ${GLEW_INCLUDE_DIRS}
-        # ${GLM_INCLUDE_DIRS}  # volitelné, často není potřeba
+add_executable(cv02
+        main.cpp
 )
 
-add_executable(cv02 main.cpp)
+target_include_directories(cv02 PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
-target_link_libraries(cv02
-        ${GLFW_LIBRARIES}
-        GLEW::GLEW
+target_link_libraries(cv02 PRIVATE
+        glfw
         OpenGL::GL
+)
+
+# Zkopíruje shaders do build adresáře,
+# aby fungovala cesta "shaders/basic.vert" i při spuštění z CLionu.
+file(COPY
+        ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
 )

@@ -1,0 +1,56 @@
+.
+├── cmake-build-debug
+│   ├── build.ninja
+│   ├── CMakeCache.txt
+│   ├── CMakeFiles
+│   │   ├── 3.30.5
+│   │   │   ├── CMakeCCompiler.cmake
+│   │   │   ├── CMakeCXXCompiler.cmake
+│   │   │   ├── CMakeDetermineCompilerABI_C.bin
+│   │   │   ├── CMakeDetermineCompilerABI_CXX.bin
+│   │   │   ├── CMakeSystem.cmake
+│   │   │   ├── CompilerIdC
+│   │   │   │   ├── a.out
+│   │   │   │   ├── CMakeCCompilerId.c
+│   │   │   │   └── tmp
+│   │   │   └── CompilerIdCXX
+│   │   │       ├── a.out
+│   │   │       ├── CMakeCXXCompilerId.cpp
+│   │   │       └── tmp
+│   │   ├── clion-Debug-log.txt
+│   │   ├── clion-environment.txt
+│   │   ├── cmake.check_cache
+│   │   ├── CMakeConfigureLog.yaml
+│   │   ├── cv02.dir
+│   │   ├── cv03.dir
+│   │   │   ├── CXX.dd
+│   │   │   ├── CXXDependInfo.json
+│   │   │   ├── CXXModules.json
+│   │   │   ├── main.cpp.ddi
+│   │   │   ├── main.cpp.o
+│   │   │   ├── main.cpp.o.ddi
+│   │   │   ├── main.cpp.o.ddi.d
+│   │   │   ├── main.cpp.o.ddi.i
+│   │   │   └── main.cpp.o.modmap
+│   │   ├── pkgRedirects
+│   │   ├── rules.ninja
+│   │   └── TargetDirectories.txt
+│   ├── cmake_install.cmake
+│   ├── cv03
+│   └── Testing
+│       └── Temporary
+│           └── LastTest.log
+├── CMakeLists.txt
+├── main.cpp
+├── Models
+│   ├── bushes.h
+│   ├── gift.h
+│   ├── plain.h
+│   ├── sphere.h
+│   ├── suzi_flat.h
+│   ├── suzi_smooth.h
+│   └── tree.h
+├── structure.txt
+└── zpg_tut2_note.pdf
+
+14 directories, 40 files

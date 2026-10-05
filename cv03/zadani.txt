@@ -1,15 +1,75 @@
-Zadání Rozšiřte naší aplikaci z minulého cvičení o transformace, které byly probrány na posledním tutoriálu.
+Protože nám odpadla přednáška, tak se zatím omezíme pouze na znalosti středoškolské matematiky a více budeme řešit příští týden po přednášce.
 
-Rozšiřte naši aplikaci o možnost používání transformací, vycházejte z dohodnutých vlastností na přednášce. Využijte projektivní prostor a matice 4×4.
-Vytvořte přetížené metody ve třídě ShaderProgram pro posílání hodnot do shader programu (nastavení uniformních proměnných).
-Přidejte možnost skládání transformací (lze využít návrhový vzor Kompozit – vyzkoušejte si ho). Cílem je možnost popsat modelovou matici, která se skládá z různého počtu matic (Translation, Rotation a Scale) a jejich kombinací (např. M=S2T3R2S1R1T2T1.
-Rozšiřte aplikaci o možnost používání různých scén (vytvořte např. třídu Scene, která bude zodpovědná za uložení objektů ve scéně, bude mít vektor DrawableObject). Mezi scénami by mělo být možné přepínat, například pomocí numerických kláves 1, 2, 3 atd.
-Vytvořte jednoduchou scénu s jedním trojúhelníkem, zkuste jej roztočit podobně jako na prvním cvičení ((float)glfwGetTime() * 50.f).
-Vytvořte scénu se čtyřmi kuličkami rozloženými symetricky na souřadnicových osách (tak, aby byly vidět na obrazovce).
-Vytvořte složitější scénu, která bude obsahovat více různých objektů s různými shader programy a transformacemi (použijte minimálně 20 objektů; využijte různé modely přiložené na LMS).
-Upravte objektový kód výsledné aplikace podle návodu z tutoriálu. Načrtněte třídní diagram (stačí ručně jen názvy tříd a vazby) vaší aplikace a přiložte jej.
-Odevzdání úkolu
+Mezi základní transformace patří 
 
-Odešlete výsledné zdrojové soubory CPP a H (neposílejte knihovny).
+posun (translace) 
+změna měřítka (scale)
+otáčení (rotace)  
+Vyzkoušejte si na cvičení všechny tři transformace (posun a změnu měřítka jsme již zkoušeli minulý týden) 
 
-Přiložte prosím screeny obrazovky s jednotlivými úkoly a pojmenujte je login_1.png ... až login_8.png (každý k jednomu bodu zadání).
+Vyjdeme z rotace v rovině, kdy rotaci bodu A=[x,y] kolem středu souřadné soustavy (počátku) S=[0,0] o úhel α proti směru hodinových ručiček získáme bod A'=[x',y'], který spočteme jako: 
+x' =  x*cos(α) - y*sin(α)
+y' =  x*sin(α) + y*cos(α)
+
+Rotace bodu A=[x,y,z] v prostoru kolem osy y vypočteme jako (bližší vysvětlení na přednášce):
+
+x' =  cos(α) * x + sin(α) * z 
+y' =  y
+z' = -sin(α) * x + cos(α) * z
+
+Ověřte si funkčnost všech tří transformací na cvičeních a využijte možnosti uniformních proměnných v shaderu a vytvořte ovládání pomocí kláves. 
+Nepoužívejte matice ale výše popsané rovnice. 
+
+Posílání proměnné
+
+Vytvoříme si v shader programu uniformní proměnnou, kterou budeme následně nastavovat.
+
+#version 330 core
+    uniform vec3 fragmentColor = vec3(1, 1, 0);
+void main()
+{
+    ...
+Pro nastavení proměnné v shaderu musíme nejdříve použít funkci glGetUniformLocation(), která vrátí location (číselný identifikátor) uniform proměnné v shader programu. Nezapomeňte přidat test na -1, kterou shader program vrátí pokud proměnnou nenašel.
+
+int varLocation = glGetUniformLocation(shaderProgram, "fragmentColor")
+Pošlete vektor s barvou do shader programu
+glUseProgram(shaderProgram);
+int varLocation = glGetUniformLocation(shaderProgram, "fragmentColor");
+glUniform3f(varLocation, 1.0f, 0.0f, 0.0f);
+glUseProgram(0);
+ 
+K čemu a proč je dobré používat příkaz glUseProgram(0)?
+
+glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M[0][0]);
+
+//location, count, transpose, *value
+
+Příště budeme potřebovat:
+
+M = glm::mat4(1.0f);
+GLint matrixLocation = glGetUniformLocation(shaderProgram, "modelMatrix");
+glUniformMatrix4fv(matrixLocation, 1, GL_FALSE, glm::value_ptr(M));
+
+M = glm::lookAt(glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+matrixLocation = glGetUniformLocation(shaderProgram, "viewMatrix");
+glUniformMatrix4fv(matrixLocation, 1, GL_FALSE, glm::value_ptr(M));
+
+M = glm::perspective(glm::radians(45.0f), 800.f / 600.f, 0.1f, 100.0f);
+matrixLocation = glGetUniformLocation(shaderProgram, "projectMatrix");
+glUniformMatrix4fv(matrixLocation, 1, GL_FALSE, glm::value_ptr(M));
+Vytvořte si 3D model vašeho loginu a vložte ho do scény. Login si můžete vymodelovat sami nebo využít AI pro vygenerování. 
+
+
+
+Upravte si vhodně zdrojový kód a přidejte třídu Scene, která bude reprezentovat scénu a bude možné je za běhu přepínat. 
+
+Ve zdrojovém kódu je povoleno používat pouze angličtinu, a to včetně komentářů. Použití nevhodných nebo vulgárních výrazů bude hodnoceno jako neodevzdaný úkol.
+Pokud používáte cizí soubory (např. moje modely v hlavičkových souborech), nesmíte do nich zasahovat ani je upravovat.
+Pokud některou část programu nevytvoříte sami (např. ji vygeneruje AI), musí být tato skutečnost řádně označena. V opačném případě může být práce považována za plagiátorství.
+Vlastní zdrojové soubory (např. soubory obsahující vlastní třídy) by měly obsahovat hlavičku se jménem a loginem autora.
+Úkoly na cvičení
+
+V případě kuličky, kdy normály zobrazujeme jako barvu, použijte na výslednou barvu absolutní hodnotou. 
+Prakticky si otestujte základní transformace (přidejte si ovládání pomocí kláves). 
+Vytvořte si vlastní model loginu (můžete použít AI pro vygenerování) a použijte ho ve scéně. 
+Upravte si třídy a metody podle domluvy na přednášce a cvičeních.

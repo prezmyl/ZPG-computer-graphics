@@ -1,246 +1,704 @@
+/*
+ * Author: YOUR NAME
+ * Login: YOUR LOGIN
+ *
+ * ZPG - Exercise 3
+ * Basic transformations using shader uniforms.
+ *
+ * AI assistance was used when preparing this source code.
+ */
+
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include <vector>
-#include <memory>
 
-// GLEW před GLFW
-#include <GL/glew.h>
+// GLAD - implementation must be defined only once
+#define GLAD_GL_IMPLEMENTATION
+#include <glad/gl.h>
+
+// GLFW
 #include <GLFW/glfw3.h>
 
-// GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+// Model
+#include "Models/sphere.h"
 
-// MODELY (pozice + normála, 6 floatů na vrchol)
-#include "Models/plain.h"        // glDrawArrays(..., 6)       — „rovina“ (2 trojúhelníky)
-#include "Models/sphere.h"       // glDrawArrays(..., 2880)    — koule (smooth)
-#include "Models/suzi_smooth.h"  // glDrawArrays(..., 2904)    — opička (smooth)
 
-// --- util: kontrola GL chyb (volitelné)
-static void glCheck(const char* where){
-  GLenum e = glGetError();
-  if(e!=GL_NO_ERROR){ std::fprintf(stderr,"[GL] error %x at %s\n", e, where); }
+static void errorCallback(int error, const char* description)
+{
+    std::fprintf(
+        stderr,
+        "GLFW error %d: %s\n",
+        error,
+        description
+    );
 }
 
-static void error_callback(int, const char* d){ std::fprintf(stderr, "GLFW error: %s\n", d); }
 
-// --- kompilace/link shaderů
-static GLuint compile(GLenum type, const char* src){
-  GLuint s = glCreateShader(type);
-  glShaderSource(s, 1, &src, nullptr);
-  glCompileShader(s);
-  GLint ok = GL_FALSE; glGetShaderiv(s, GL_COMPILE_STATUS, &ok);
-  if(!ok){
-    GLint len=0; glGetShaderiv(s, GL_INFO_LOG_LENGTH, &len);
-    std::string log(len, '\0'); glGetShaderInfoLog(s, len, nullptr, log.data());
-    std::fprintf(stderr,"Shader compile error:\n%s\n", log.c_str());
-  }
-  return s;
-}
-static GLuint link(GLuint vs, GLuint fs){
-  GLuint p = glCreateProgram();
-  glAttachShader(p, vs); glAttachShader(p, fs);
-  glLinkProgram(p);
-  GLint ok = GL_FALSE; glGetProgramiv(p, GL_LINK_STATUS, &ok);
-  if(!ok){
-    GLint len=0; glGetProgramiv(p, GL_INFO_LOG_LENGTH, &len);
-    std::string log(len, '\0'); glGetProgramInfoLog(p, len, nullptr, log.data());
-    std::fprintf(stderr,"Program link error:\n%s\n", log.c_str());
-  }
-  return p;
-}
+static GLuint compileShader(GLenum shaderType, const char* source)
+{
+    GLuint shader = glCreateShader(shaderType);
 
-// --- mini Shader wrapper (drží si lokace uniformů)
-struct Shader {
-  GLuint id = 0;
-  GLint  uModel = -1, uView = -1, uProj = -1, uColor = -1;
-  void use() const { glUseProgram(id); }
-};
+    glShaderSource(
+        shader,
+        1,
+        &source,
+        nullptr
+    );
 
-// --- shadery
-static const char* VS_PN = R"GLSL(
-#version 330 core
-layout(location=0) in vec3 aPos;
-layout(location=1) in vec3 aNormal;
-uniform mat4 uModel, uView, uProj;
-out vec3 vNormal;
-void main(){
-    vNormal = aNormal; // (pro jednoduchost v objekt. prostoru)
-    gl_Position = uProj * uView * uModel * vec4(aPos, 1.0);
-}
-)GLSL";
+    glCompileShader(shader);
 
-static const char* FS_NORMALCOLOR = R"GLSL(
-#version 330 core
-in vec3 vNormal;
-out vec4 fragColor;
-void main(){
-    vec3 n = normalize(vNormal);
-    fragColor = vec4(n*0.5+0.5, 1.0); // map [-1,1] -> [0,1]
-}
-)GLSL";
+    GLint success = GL_FALSE;
 
-static const char* FS_FLATCOLOR = R"GLSL(
-#version 330 core
-uniform vec3 uColor;
-out vec4 fragColor;
-void main(){ fragColor = vec4(uColor, 1.0); }
-)GLSL";
+    glGetShaderiv(
+        shader,
+        GL_COMPILE_STATUS,
+        &success
+    );
 
-// --- Mesh: VAO/VBO + počet vrcholů
-struct Mesh {
-  GLuint vao=0, vbo=0;
-  GLsizei count=0; // počet vrcholů
-  void draw() const {
-    glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, count);
-  }
-};
+    if (!success)
+    {
+        GLint length = 0;
 
-template <size_t N>
-Mesh makeMeshPN(const float (&data)[N]){
-  Mesh m{};
-  const GLsizeiptr BYTES = sizeof(data);
-  const GLsizei floats = (GLsizei)(N);
-  const GLsizei stride = 6; // pos(3)+normal(3)
-  m.count = floats / stride;
+        glGetShaderiv(
+            shader,
+            GL_INFO_LOG_LENGTH,
+            &length
+        );
 
-  glGenVertexArrays(1, &m.vao);
-  glGenBuffers(1, &m.vbo);
+        std::string log(length, '\0');
 
-  glBindVertexArray(m.vao);
-  glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
-  glBufferData(GL_ARRAY_BUFFER, BYTES, data, GL_STATIC_DRAW);
+        glGetShaderInfoLog(
+            shader,
+            length,
+            nullptr,
+            log.data()
+        );
 
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
+        std::fprintf(
+            stderr,
+            "Shader compilation error:\n%s\n",
+            log.c_str()
+        );
 
-  glBindVertexArray(0);
-  return m;
-}
-
-// --- Kompozitní uzel scény (Composite)
-struct Node {
-  Mesh* mesh = nullptr;         // co kreslím (volitelné)
-  Shader* shader = nullptr;     // jak kreslím (volitelné)
-  glm::mat4 local = glm::mat4(1);
-  std::vector<std::unique_ptr<Node>> children;
-
-  void draw(const glm::mat4& parent, const glm::mat4& view, const glm::mat4& proj){
-    glm::mat4 M = parent * local;
-    if(mesh && shader){
-      shader->use();
-      if(shader->uModel!=-1) glUniformMatrix4fv(shader->uModel, 1, GL_FALSE, glm::value_ptr(M));
-      if(shader->uView !=-1) glUniformMatrix4fv(shader->uView , 1, GL_FALSE, glm::value_ptr(view));
-      if(shader->uProj !=-1) glUniformMatrix4fv(shader->uProj , 1, GL_FALSE, glm::value_ptr(proj));
-      mesh->draw();
+        glDeleteShader(shader);
+        std::exit(EXIT_FAILURE);
     }
-    for(auto& ch : children) ch->draw(M, view, proj);
-  }
-};
 
-int main(){
-  glfwSetErrorCallback(error_callback);
-  if(!glfwInit()){ std::fprintf(stderr,"ERROR: could not start GLFW3\n"); return EXIT_FAILURE; }
+    return shader;
+}
 
-  // Core profile 3.3+ (doporučeno pro moderní OpenGL / cv02):
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow* win = glfwCreateWindow(1200, 800, "ZPG — složitější modely", nullptr, nullptr);
-  if(!win){ glfwTerminate(); return EXIT_FAILURE; }
-  glfwMakeContextCurrent(win);
-  glfwSwapInterval(1);
+static GLuint createShaderProgram()
+{
+    const char* vertexShaderSource = R"GLSL(
+#version 330 core
 
-  glewExperimental = GL_TRUE;
-  if(glewInit()!=GLEW_OK){ std::fprintf(stderr,"ERROR: glewInit()\n"); return EXIT_FAILURE; }
-  glGetError(); // GLEW po sobě často zanechá GL_INVALID_ENUM
+layout(location = 0) in vec3 aPosition;
+layout(location = 1) in vec3 aNormal;
 
-  // Info
-  std::printf("OpenGL %s | GLSL %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
+uniform vec3 uTranslation;
+uniform float uScale;
+uniform float uAngle;
 
-  // --- Depth test
-  glEnable(GL_DEPTH_TEST);
+out vec3 vNormal;
 
-  // --- Shadery
-  GLuint vs = compile(GL_VERTEX_SHADER, VS_PN);
-  GLuint fsN = compile(GL_FRAGMENT_SHADER, FS_NORMALCOLOR);
-  GLuint fsC = compile(GL_FRAGMENT_SHADER, FS_FLATCOLOR);
+void main()
+{
+    vec3 p = aPosition;
 
-  Shader shNormal{ link(vs, fsN) };
-  Shader shColor { link(vs, fsC) };
+    // Scale
+    p.x = p.x * uScale;
+    p.y = p.y * uScale;
+    p.z = p.z * uScale;
 
-  auto fetchUniforms = [](Shader& s){
-    s.uModel = glGetUniformLocation(s.id, "uModel");
-    s.uView  = glGetUniformLocation(s.id, "uView");
-    s.uProj  = glGetUniformLocation(s.id, "uProj");
-    s.uColor = glGetUniformLocation(s.id, "uColor"); // u normal shaderu bude -1, to je OK
-  };
-  fetchUniforms(shNormal);
-  fetchUniforms(shColor);
+    // Rotation around Y axis
+    float x = cos(uAngle) * p.x + sin(uAngle) * p.z;
+    float y = p.y;
+    float z = -sin(uAngle) * p.x + cos(uAngle) * p.z;
 
-  // --- Meshy (pozice+normála, stride 6)
-  Mesh ground = makeMeshPN(plain);        // 6 vrcholů
-  Mesh ball   = makeMeshPN(sphere);       // 2880 vrcholů
-  Mesh suzi   = makeMeshPN(suziSmooth);   // 2904 vrcholů
+    p.x = x;
+    p.y = y;
+    p.z = z;
 
-  // --- Projekce + kamera (pohled)
-  int w, h; glfwGetFramebufferSize(win, &w, &h);
-  glViewport(0, 0, w, h);
-  glm::mat4 P = glm::perspective(glm::radians(60.f), float(w)/float(h), 0.1f, 100.f);
-  glm::mat4 V = glm::translate(glm::mat4(1.f), glm::vec3(0, -0.3f, -4.0f)); // kamera kouká po -Z
+    // Translation
+    p.x = p.x + uTranslation.x;
+    p.y = p.y + uTranslation.y;
+    p.z = p.z + uTranslation.z;
 
-  // --- Scéna (kompozit)
-  auto root = std::make_unique<Node>();
+    gl_Position = vec4(p, 1.0);
 
-  // Zem (plain): zvětšíme a položíme do Y= -1
-  auto nGround = std::make_unique<Node>();
-  nGround->mesh   = &ground;
-  nGround->shader = &shNormal; // normála jako barva
-  nGround->local  = glm::translate(glm::mat4(1), glm::vec3(0,-1,0)) * glm::scale(glm::mat4(1), glm::vec3(5,1,5));
-  root->children.push_back(std::move(nGround));
+    vNormal = aNormal;
+}
+)GLSL";
 
-  // Koule vlevo
-  auto nBall = std::make_unique<Node>();
-  nBall->mesh   = &ball;
-  nBall->shader = &shNormal;
-  nBall->local  = glm::translate(glm::mat4(1), glm::vec3(-1.2f, 0.0f, 0.0f));
-  root->children.push_back(std::move(nBall));
 
-  // Suzi vpravo (plná barva, točí se)
-  auto nSuzi = std::make_unique<Node>();
-  Node* suziPtr = nSuzi.get(); // abychom aktualizovali rotaci
-  nSuzi->mesh   = &suzi;
-  nSuzi->shader = &shColor;
-  nSuzi->local  = glm::translate(glm::mat4(1), glm::vec3(1.2f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1), glm::vec3(0.7f));
-  root->children.push_back(std::move(nSuzi));
+    const char* fragmentShaderSource = R"GLSL(
+#version 330 core
 
-  float angle = 0.f;
-  while(!glfwWindowShouldClose(win)){
-    glfwPollEvents();
-    angle += 0.6f * 0.016f; // ~0.6 rad/s
+in vec3 vNormal;
 
-    // suzi rotace + barva shaderu
-    shColor.use();
-    if(shColor.uColor!=-1) glUniform3f(shColor.uColor, 0.95f, 0.35f, 0.15f);
-    suziPtr->local = glm::translate(glm::mat4(1), glm::vec3(1.2f, 0.0f, 0.0f))
-                   * glm::rotate(glm::mat4(1), angle, glm::vec3(0,1,0))
-                   * glm::scale(glm::mat4(1), glm::vec3(0.7f));
+out vec4 fragColor;
 
-    glClearColor(0.06f, 0.07f, 0.09f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void main()
+{
+    vec3 n = normalize(vNormal);
 
-    root->draw(glm::mat4(1), V, P);
+    // Display normal as color using absolute value
+    fragColor = vec4(abs(n), 1.0);
+}
+)GLSL";
 
-    glfwSwapBuffers(win);
-  }
 
-  glfwTerminate();
-  return EXIT_SUCCESS;
+    GLuint vertexShader =
+        compileShader(
+            GL_VERTEX_SHADER,
+            vertexShaderSource
+        );
+
+    GLuint fragmentShader =
+        compileShader(
+            GL_FRAGMENT_SHADER,
+            fragmentShaderSource
+        );
+
+
+    GLuint shaderProgram =
+        glCreateProgram();
+
+    glAttachShader(
+        shaderProgram,
+        vertexShader
+    );
+
+    glAttachShader(
+        shaderProgram,
+        fragmentShader
+    );
+
+    glLinkProgram(shaderProgram);
+
+
+    GLint success = GL_FALSE;
+
+    glGetProgramiv(
+        shaderProgram,
+        GL_LINK_STATUS,
+        &success
+    );
+
+    if (!success)
+    {
+        GLint length = 0;
+
+        glGetProgramiv(
+            shaderProgram,
+            GL_INFO_LOG_LENGTH,
+            &length
+        );
+
+        std::string log(length, '\0');
+
+        glGetProgramInfoLog(
+            shaderProgram,
+            length,
+            nullptr,
+            log.data()
+        );
+
+        std::fprintf(
+            stderr,
+            "Shader program linking error:\n%s\n",
+            log.c_str()
+        );
+
+        glDeleteProgram(shaderProgram);
+        std::exit(EXIT_FAILURE);
+    }
+
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return shaderProgram;
+}
+
+
+int main()
+{
+    glfwSetErrorCallback(errorCallback);
+
+
+    // -----------------------------------------------------
+    // GLFW initialization
+    // -----------------------------------------------------
+
+    if (!glfwInit())
+    {
+        std::fprintf(
+            stderr,
+            "Unable to initialize GLFW.\n"
+        );
+
+        return EXIT_FAILURE;
+    }
+
+
+    glfwWindowHint(
+        GLFW_CONTEXT_VERSION_MAJOR,
+        3
+    );
+
+    glfwWindowHint(
+        GLFW_CONTEXT_VERSION_MINOR,
+        3
+    );
+
+    glfwWindowHint(
+        GLFW_OPENGL_PROFILE,
+        GLFW_OPENGL_CORE_PROFILE
+    );
+
+    glfwWindowHint(
+        GLFW_OPENGL_FORWARD_COMPAT,
+        GL_TRUE
+    );
+
+
+    GLFWwindow* window =
+        glfwCreateWindow(
+            800,
+            600,
+            "ZPG - Transformations",
+            nullptr,
+            nullptr
+        );
+
+
+    if (!window)
+    {
+        glfwTerminate();
+
+        return EXIT_FAILURE;
+    }
+
+
+    glfwMakeContextCurrent(window);
+
+    glfwSwapInterval(1);
+
+
+    // -----------------------------------------------------
+    // GLAD initialization
+    // -----------------------------------------------------
+
+    if (!gladLoadGL(
+            (GLADloadfunc) glfwGetProcAddress
+        ))
+    {
+        std::fprintf(
+            stderr,
+            "Unable to initialize GLAD.\n"
+        );
+
+        glfwDestroyWindow(window);
+        glfwTerminate();
+
+        return EXIT_FAILURE;
+    }
+
+
+    std::printf(
+        "OpenGL: %s\n",
+        glGetString(GL_VERSION)
+    );
+
+    std::printf(
+        "GLSL: %s\n",
+        glGetString(GL_SHADING_LANGUAGE_VERSION)
+    );
+
+
+    // -----------------------------------------------------
+    // Viewport and depth test
+    // -----------------------------------------------------
+
+    int width;
+    int height;
+
+    glfwGetFramebufferSize(
+        window,
+        &width,
+        &height
+    );
+
+    glViewport(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    glEnable(GL_DEPTH_TEST);
+
+
+    // -----------------------------------------------------
+    // VBO
+    // -----------------------------------------------------
+
+    GLuint VBO = 0;
+
+    glGenBuffers(
+        1,
+        &VBO
+    );
+
+    glBindBuffer(
+        GL_ARRAY_BUFFER,
+        VBO
+    );
+
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        sizeof(sphere),
+        sphere,
+        GL_STATIC_DRAW
+    );
+
+
+    // -----------------------------------------------------
+    // VAO
+    // -----------------------------------------------------
+
+    GLuint VAO = 0;
+
+    glGenVertexArrays(
+        1,
+        &VAO
+    );
+
+    glBindVertexArray(VAO);
+
+
+    glBindBuffer(
+        GL_ARRAY_BUFFER,
+        VBO
+    );
+
+
+    // Position: x, y, z
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(
+        0,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        6 * sizeof(float),
+        (void*) 0
+    );
+
+
+    // Normal: nx, ny, nz
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        6 * sizeof(float),
+        (void*) (3 * sizeof(float))
+    );
+
+
+    // -----------------------------------------------------
+    // Shader program
+    // -----------------------------------------------------
+
+    GLuint shaderProgram =
+        createShaderProgram();
+
+
+    glUseProgram(shaderProgram);
+
+
+    GLint translationLocation =
+        glGetUniformLocation(
+            shaderProgram,
+            "uTranslation"
+        );
+
+    GLint scaleLocation =
+        glGetUniformLocation(
+            shaderProgram,
+            "uScale"
+        );
+
+    GLint angleLocation =
+        glGetUniformLocation(
+            shaderProgram,
+            "uAngle"
+        );
+
+
+    if (translationLocation == -1)
+    {
+        std::fprintf(
+            stderr,
+            "Uniform uTranslation was not found.\n"
+        );
+    }
+
+    if (scaleLocation == -1)
+    {
+        std::fprintf(
+            stderr,
+            "Uniform uScale was not found.\n"
+        );
+    }
+
+    if (angleLocation == -1)
+    {
+        std::fprintf(
+            stderr,
+            "Uniform uAngle was not found.\n"
+        );
+    }
+
+
+    // -----------------------------------------------------
+    // Transformation values
+    // -----------------------------------------------------
+
+    float translationX = 0.0f;
+    float translationY = 0.0f;
+    float translationZ = 0.0f;
+
+    float scale = 0.5f;
+
+    float angle = 0.0f;
+
+
+    double previousTime =
+        glfwGetTime();
+
+
+    // -----------------------------------------------------
+    // Rendering loop
+    // -----------------------------------------------------
+
+    while (!glfwWindowShouldClose(window))
+    {
+        double currentTime =
+            glfwGetTime();
+
+        float deltaTime =
+            static_cast<float>(
+                currentTime - previousTime
+            );
+
+        previousTime =
+            currentTime;
+
+
+        glfwPollEvents();
+
+
+        // -------------------------------------------------
+        // Keyboard control
+        // -------------------------------------------------
+
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_ESCAPE
+            ) == GLFW_PRESS)
+        {
+            glfwSetWindowShouldClose(
+                window,
+                GLFW_TRUE
+            );
+        }
+
+
+        // Translation
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_LEFT
+            ) == GLFW_PRESS)
+        {
+            translationX -=
+                0.5f * deltaTime;
+        }
+
+
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_RIGHT
+            ) == GLFW_PRESS)
+        {
+            translationX +=
+                0.5f * deltaTime;
+        }
+
+
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_UP
+            ) == GLFW_PRESS)
+        {
+            translationY +=
+                0.5f * deltaTime;
+        }
+
+
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_DOWN
+            ) == GLFW_PRESS)
+        {
+            translationY -=
+                0.5f * deltaTime;
+        }
+
+
+        // Scale
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_EQUAL
+            ) == GLFW_PRESS)
+        {
+            scale +=
+                0.5f * deltaTime;
+        }
+
+
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_MINUS
+            ) == GLFW_PRESS)
+        {
+            scale -=
+                0.5f * deltaTime;
+        }
+
+
+        if (scale < 0.05f)
+        {
+            scale = 0.05f;
+        }
+
+
+        // Rotation around Y axis
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_A
+            ) == GLFW_PRESS)
+        {
+            angle +=
+                1.5f * deltaTime;
+        }
+
+
+        if (glfwGetKey(
+                window,
+                GLFW_KEY_D
+            ) == GLFW_PRESS)
+        {
+            angle -=
+                1.5f * deltaTime;
+        }
+
+
+        // -------------------------------------------------
+        // Send transformation values to shader
+        // -------------------------------------------------
+
+        glUseProgram(shaderProgram);
+
+
+        if (translationLocation != -1)
+        {
+            glUniform3f(
+                translationLocation,
+                translationX,
+                translationY,
+                translationZ
+            );
+        }
+
+
+        if (scaleLocation != -1)
+        {
+            glUniform1f(
+                scaleLocation,
+                scale
+            );
+        }
+
+
+        if (angleLocation != -1)
+        {
+            glUniform1f(
+                angleLocation,
+                angle
+            );
+        }
+
+
+        // -------------------------------------------------
+        // Rendering
+        // -------------------------------------------------
+
+        glClearColor(
+            0.1f,
+            0.1f,
+            0.1f,
+            1.0f
+        );
+
+        glClear(
+            GL_COLOR_BUFFER_BIT |
+            GL_DEPTH_BUFFER_BIT
+        );
+
+
+        glBindVertexArray(VAO);
+
+
+        glDrawArrays(
+            GL_TRIANGLES,
+            0,
+            2880
+        );
+
+
+        glfwSwapBuffers(window);
+    }
+
+
+    // -----------------------------------------------------
+    // Cleanup
+    // -----------------------------------------------------
+
+    glDeleteProgram(
+        shaderProgram
+    );
+
+    glDeleteVertexArrays(
+        1,
+        &VAO
+    );
+
+    glDeleteBuffers(
+        1,
+        &VBO
+    );
+
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+
+    return EXIT_SUCCESS;
 }

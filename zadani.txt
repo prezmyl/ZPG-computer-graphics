@@ -1,0 +1,10 @@
+Zadání
+
+Vytvořte a zprovozněte základní projekt podle doporučení z cvičení. Výchozí verze projektu používá OpenGL fixed pipeline a vykreslí zadaný model (upravte na čtverec).
+Výchozí projekt upravte z fixed pipeline na programovatelnou pipeline. Model bude uložen do VBO a využijeme VAO. Vykreslování bude probíhat prostřednictvím shader programu (vertex a fragment). Vše jsme si ukázali na tutoriálu.
+Projekt vhodně rozdělte do tříd. Funkce main() má obsahovat pouze vytvoření a případné základní nastavení objektu např. Application a spuštění aplikace. Doplňte si další třídy pro modely, shadery atd. Základní požadavky byly probrány na tutoriálu.
+Odevzdání úkolu
+
+Odešlete zdrojové soubory CPP a H (neposílejte knihovny).
+
+Přiložte screeny obrazovky s výslednými modely (login_1.png, login_2.png atd.).

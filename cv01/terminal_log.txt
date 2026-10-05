@@ -1,0 +1,186 @@
+]0;xpolas@eduroam-235-79:~/banska/ZPG/cv01]3008;end=a4ac703f-d561-4dd7-8bef-f4afdbe6f371;exit=success\]3008;start=94f39db1-9f2a-4ccf-adc9-f7f2b8de195d;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=shell;cwd=/home/xpolas/banska/ZPG/cv01\]666;vte.shell.postexec=0\]666;vte.shell.precmd!\]7;file://eduroam-235-79.vsb.cz/home/xpolas/banska/ZPG/cv01\[?2004h[1;36m[xpolas@eduroam-235-79.vsb.cz cv01 03:23 PM]$ [m exec > >(tee -a terminal_log.txt) 2>&1[9@nv -u WAYLAND_DISPLAY ./cmake-build-debug/cv0[C[27Pcd ~/banska/ZPG[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[7mcd ~/banska/ZPG/cv01[27m
+
+[7menv -u WAYLAND_DISPLAY ./cmake-build-debug/cv01[27m[A[A[C[C[C[C[C[C[C[C[C[Ccd ~/banska/ZPG/cv01
+
+env -u WAYLAND_DISPLAY ./cmake-build-debug/cv01
+[?2004l]133;C\]666;vte.shell.preexec!\]3008;start=49453d98-740e-41c2-9c5f-2b5c40373ab0;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=command;cwd=/home/xpolas/banska/ZPG/cv01\cmake-build-debug
+CMakeLists.txt
+cv01.txt
+cviceni_1.pdf
+main.cpp
+previousMainVersion
+terminal_log.txt
+]133;C\]666;vte.shell.preexec!\]3008;start=49453d98-740e-41c2-9c5f-2b5c40373ab0;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=command;cwd=/home/xpolas/banska/ZPG/cv01\GLEW init error: Unknown error
+]0;xpolas@eduroam-235-79:~/banska/ZPG/cv01]3008;end=49453d98-740e-41c2-9c5f-2b5c40373ab0;exit=failure;status=1\]3008;start=94f39db1-9f2a-4ccf-adc9-f7f2b8de195d;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=shell;cwd=/home/xpolas/banska/ZPG/cv01\]666;vte.shell.postexec=0\]666;vte.shell.precmd!\]7;file://eduroam-235-79.vsb.cz/home/xpolas/banska/ZPG/cv01\[?2004h[1;36m[xpolas@eduroam-235-79.vsb.cz cv01 03:23 PM]$ [m [7mrpm -q glfw glfw-devel glew glew-devel mesa-libGL mesa-libEGL[27m
+
+[7mecho "---- LDD ----"[27m
+[7mldd ./cmake-build-debug/cv01 | grep -Ei 'glfw|glew|GL|EGL|wayland|X11'[27m[A[A[Arpm -q glfw glfw-devel glew glew-devel mesa-libGL mesa-libEGL
+
+echo "---- LDD ----"
+ldd ./cmake-build-debug/cv01 | grep -Ei 'glfw|glew|GL|EGL|wayland|X11'
+[?2004l]133;C\]666;vte.shell.preexec!\]3008;start=5f0c2ce0-7018-40f4-86cb-e86d8dffd305;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=command;cwd=/home/xpolas/banska/ZPG/cv01\glfw-3.4-6.fc44.x86_64
+glfw-devel-3.4-6.fc44.x86_64
+glew-2.2.0-12.fc44.x86_64
+glew-devel-2.2.0-12.fc44.x86_64
+mesa-libGL-26.1.8-1.fc44.x86_64
+mesa-libEGL-26.1.8-1.fc44.x86_64
+]133;C\]666;vte.shell.preexec!\]3008;start=5f0c2ce0-7018-40f4-86cb-e86d8dffd305;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=command;cwd=/home/xpolas/banska/ZPG/cv01\---- LDD ----
+]133;C\]666;vte.shell.preexec!\]3008;start=5f0c2ce0-7018-40f4-86cb-e86d8dffd305;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=command;cwd=/home/xpolas/banska/ZPG/cv01\	libglfw.so.3 => /lib64/libglfw.so.3 (0x00007f6b207ab000)
+	libGLEW.so.2.2 => /lib64/libGLEW.so.2.2 (0x00007f6b206e8000)
+	libGLX.so.0 => /lib64/libGLX.so.0 (0x00007f6b206b7000)
+	libOpenGL.so.0 => /lib64/libOpenGL.so.0 (0x00007f6b20693000)
+	libGL.so.1 => /lib64/libGL.so.1 (0x00007f6b204da000)
+	libX11.so.6 => /lib64/libX11.so.6 (0x00007f6b1feb1000)
+	libGLdispatch.so.0 => /lib64/libGLdispatch.so.0 (0x00007f6b1fe39000)
+]0;xpolas@eduroam-235-79:~/banska/ZPG/cv01]3008;end=5f0c2ce0-7018-40f4-86cb-e86d8dffd305;exit=success\]3008;start=94f39db1-9f2a-4ccf-adc9-f7f2b8de195d;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=shell;cwd=/home/xpolas/banska/ZPG/cv01\]666;vte.shell.postexec=0\]666;vte.shell.precmd!\]7;file://eduroam-235-79.vsb.cz/home/xpolas/banska/ZPG/cv01\[?2004h[1;36m[xpolas@eduroam-235-79.vsb.cz cv01 03:23 PM]$ [m [7mdnf info installed glfw glfw-devel glew glew-devel[27mdnf info installed glfw glfw-devel glew glew-devel
+[?2004l]133;C\]666;vte.shell.preexec!\]3008;start=51eb3525-57b0-4dde-9863-69fb2a02f949;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=command;cwd=/home/xpolas/banska/ZPG/cv01\Updating and loading repositories:
+ Fedora 44 - x86_64 - Updates           100% |  10.3 KiB/s |  10.9 KiB |  00m01s
+ RPM Fusion for Fedora 44 - Nonfree - U 100% |   8.0 KiB/s |   8.5 KiB |  00m01s
+ RPM Fusion for Fedora 44 - Nonfree - S 100% |   8.0 KiB/s |   8.4 KiB |  00m01s
+ RPM Fusion for Fedora 44 - Nonfree     100% |  10.5 KiB/s |   9.2 KiB |  00m01s
+ RPM Fusion for Fedora 44 - Free - Upda 100% |  12.6 KiB/s |   8.2 KiB |  00m01s
+ RPM Fusion for Fedora 44 - Free        100% |  14.0 KiB/s |   8.9 KiB |  00m01s
+ google-chrome                          100% |   3.0 KiB/s |   1.3 KiB |  00m00s
+ Fedora 44 openh264 (From Cisco) - x86_ 100% |   1.8 KiB/s | 986.0   B |  00m01s
+ Fedora 44 - x86_64                     100% |  38.3 KiB/s |  19.9 KiB |  00m01s
+ Copr repo for PyCharm owned by phracek 100% |   4.9 KiB/s |   2.1 KiB |  00m00s
+ Visual Studio Code                     100% |   3.5 KiB/s |   1.5 KiB |  00m00s
+ Adoptium                               100% |   4.6 KiB/s |   1.7 KiB |  00m00s
+ ChatGPT                                100% |  28.5 KiB/s |   3.8 KiB |  00m00s
+Importing OpenPGP key 0x6C4660E4:
+ UserID     : "Codex Linux Repository"
+ Fingerprint: 3BFA0E4AE8B8CC16A2D9BA684A3B4A566C4660E4
+ From       : file:///etc/pki/rpm-gpg/RPM-GPG-KEY-chatgpt-3BFA0E4AE8B8CC16A2D9BA684A3B4A566C4660E4.asc
+Is this ok [y/N]: The key was successfully imported.
+Repositories loaded.
+Installed packages
+Name            : glew
+Epoch           : 0
+Version         : 2.2.0
+Release         : 12.fc44
+Architecture    : x86_64
+Installed size  : 645.8 KiB
+Source          : glew-2.2.0-12.fc44.src.rpm
+From repository : fedora
+Summary         : The OpenGL Extension Wrangler Library
+URL             : https://github.com/nigels-com/glew
+License         : LicenseRef-Callaway-BSD AND LicenseRef-Callaway-MIT
+Description     : The OpenGL Extension Wrangler Library (GLEW) is a cross-platform C/C++
+                : extension loading library. GLEW provides efficient run-time mechanisms for
+                : determining which OpenGL extensions are supported on the target platform.
+                : OpenGL core and extension functionality is exposed in a single header file.
+                : GLEW is available for a variety of operating systems, including Windows, Linux,
+                : Mac OS X, FreeBSD, Irix, and Solaris.
+                : 
+                : This package contains the demo GLEW utilities.  The libraries themselves
+                : are in libGLEW.
+Vendor          : Fedora Project
+
+Name            : glew-devel
+Epoch           : 0
+Version         : 2.2.0
+Release         : 12.fc44
+Architecture    : x86_64
+Installed size  : 1.8 MiB
+Source          : glew-2.2.0-12.fc44.src.rpm
+From repository : fedora
+Summary         : Development files for glew
+URL             : https://github.com/nigels-com/glew
+License         : LicenseRef-Callaway-BSD AND LicenseRef-Callaway-MIT
+Description     : Development files for glew
+Vendor          : Fedora Project
+
+Name            : glfw
+Epoch           : 1
+Version         : 3.4
+Release         : 6.fc44
+Architecture    : x86_64
+Installed size  : 386.1 KiB
+Source          : glfw-3.4-6.fc44.src.rpm
+From repository : fedora
+Summary         : A cross-platform multimedia library
+URL             : http://www.glfw.org/index.html
+License         : Zlib
+Description     : GLFW is a free, Open Source, multi-platform library for OpenGL application
+                : development that provides a powerful API for handling operating system specific
+                : tasks such as opening an OpenGL window, reading keyboard, mouse, joystick and
+                : time input, creating threads, and more.
+Vendor          : Fedora Project
+
+Name            : glfw-devel
+Epoch           : 1
+Version         : 3.4
+Release         : 6.fc44
+Architecture    : x86_64
+Installed size  : 265.0 KiB
+Source          : glfw-3.4-6.fc44.src.rpm
+From repository : fedora
+Summary         : Development files for glfw
+URL             : http://www.glfw.org/index.html
+License         : Zlib
+Description     : The glfw-devel package contains header files for developing glfw
+                : applications.
+Vendor          : Fedora Project
+
+Available packages
+Name           : glew-devel
+Epoch          : 0
+Version        : 2.2.0
+Release        : 12.fc44
+Architecture   : i686
+Download size  : 221.2 KiB
+Installed size : 1.8 MiB
+Source         : glew-2.2.0-12.fc44.src.rpm
+Repository     : fedora
+Summary        : Development files for glew
+URL            : https://github.com/nigels-com/glew
+License        : LicenseRef-Callaway-BSD AND LicenseRef-Callaway-MIT
+Description    : Development files for glew
+Vendor         : Fedora Project
+
+Name           : glfw
+Epoch          : 1
+Version        : 3.4
+Release        : 6.fc44
+Architecture   : i686
+Download size  : 138.2 KiB
+Installed size : 407.9 KiB
+Source         : glfw-3.4-6.fc44.src.rpm
+Repository     : fedora
+Summary        : A cross-platform multimedia library
+URL            : http://www.glfw.org/index.html
+License        : Zlib
+Description    : GLFW is a free, Open Source, multi-platform library for OpenGL application
+               : development that provides a powerful API for handling operating system specific
+               : tasks such as opening an OpenGL window, reading keyboard, mouse, joystick and
+               : time input, creating threads, and more.
+Vendor         : Fedora Project
+
+Name           : glfw-devel
+Epoch          : 1
+Version        : 3.4
+Release        : 6.fc44
+Architecture   : i686
+Download size  : 50.0 KiB
+Installed size : 265.0 KiB
+Source         : glfw-3.4-6.fc44.src.rpm
+Repository     : fedora
+Summary        : Development files for glfw
+URL            : http://www.glfw.org/index.html
+License        : Zlib
+Description    : The glfw-devel package contains header files for developing glfw
+               : applications.
+Vendor         : Fedora Project
+]0;xpolas@eduroam-235-79:~/banska/ZPG/cv01]3008;end=51eb3525-57b0-4dde-9863-69fb2a02f949;exit=success\]3008;start=94f39db1-9f2a-4ccf-adc9-f7f2b8de195d;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=shell;cwd=/home/xpolas/banska/ZPG/cv01\]666;vte.shell.postexec=0\]666;vte.shell.precmd!\]7;file://eduroam-235-79.vsb.cz/home/xpolas/banska/ZPG/cv01\[?2004h[1;36m[xpolas@eduroam-235-79.vsb.cz cv01 03:24 PM]$ [m dnf info installed glfw glfw-devel glew glew-devel[Kla
+[?2004l]133;C\]666;vte.shell.preexec!\]3008;start=20c1ad80-ad53-4bc8-8724-c5797c8cafb2;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=command;cwd=/home/xpolas/banska/ZPG/cv01\.
+..
+cmake-build-debug
+CMakeLists.txt
+cv01.txt
+cviceni_1.pdf
+.idea
+main.cpp
+main_org.cpp
+previousMainVersion
+terminal_log.txt
+]0;xpolas@eduroam-235-79:~/banska/ZPG/cv01]3008;end=20c1ad80-ad53-4bc8-8724-c5797c8cafb2;exit=success\]3008;start=94f39db1-9f2a-4ccf-adc9-f7f2b8de195d;machineid=9ecc09f85e6a4ae19ecd90566abdea22;user=xpolas;hostname=eduroam-235-79.vsb.cz;bootid=d8e1315c-cb5c-4868-bce5-34251ab409a8;pid=00000000000000031438;type=shell;cwd=/home/xpolas/banska/ZPG/cv01\]666;vte.shell.postexec=0\]666;vte.shell.precmd!\]7;file://eduroam-235-79.vsb.cz/home/xpolas/banska/ZPG/cv01\[?2004h[1;36m[xpolas@eduroam-235-79.vsb.cz cv01 04:43 PM]$ [m [?2004l[?2004l
