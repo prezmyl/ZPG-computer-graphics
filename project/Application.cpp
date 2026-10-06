@@ -2,8 +2,34 @@
 // Created by xpolas on 10/5/26.
 //
 
+#define GLAD_GL_IMPLEMENTATION
+#include <glad/gl.h>
+
+#include <GLFW/glfw3.h>
+
+#include <cstdio>
+#include <cstdlib>
+
 #include "Application.h"
 
+//static - original callbacks
+static void error_callback(int error, const char* description)
+{
+    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+}
+
+static void key_callback(GLFWwindow* window, int key,
+                         int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+
+static void window_size_callback(GLFWwindow* window,
+                                 int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
 
 bool Application::initialize() {
     // GLFW error callback
@@ -34,7 +60,7 @@ bool Application::initialize() {
     );
 
     // Window creation
-    GLFWwindow* window = glfwCreateWindow(
+    this->window = glfwCreateWindow(
         800,
         600,
         "ZPG - cv02 - triangle",
@@ -67,7 +93,7 @@ bool Application::initialize() {
         glfwDestroyWindow(window);
         glfwTerminate();
 
-        return EXIT_FAILURE;
+        return false;
     }
 
 
@@ -81,6 +107,8 @@ bool Application::initialize() {
         window,
         window_size_callback
     );
+
+    return true;
 }
 
 void Application::run() {
@@ -103,11 +131,11 @@ void Application::run() {
 
 
         // use shader program
-        glUseProgram(shaderProgram);
+        //glUseProgram(shaderProgram);
 
 
         // use VAO of the model
-        glBindVertexArray(VAO);
+        //glBindVertexArray(VAO);
 
 
         // Draw
@@ -116,11 +144,11 @@ void Application::run() {
         // 0            = začínáme prvním vrcholem
         // 3            = máme tři vrcholy
         //
-        glDrawArrays(
+        /*glDrawArrays(
             GL_TRIANGLES,
             0,
             2880
-        );
+        );*/
 
 
         // display result
