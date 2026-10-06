@@ -39,7 +39,7 @@ bool Application::initialize() {
     if (!glfwInit())
     {
         fprintf(stderr, "GLFW initialization failed\n");
-        return EXIT_FAILURE;
+        return false;
     }
 
 
@@ -71,7 +71,7 @@ bool Application::initialize() {
     if (!window)
     {
         glfwTerminate();
-        return EXIT_FAILURE;
+        return false;
     }
 
 

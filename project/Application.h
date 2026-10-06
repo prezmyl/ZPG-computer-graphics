@@ -5,6 +5,7 @@
 #ifndef PROJECT_APPLICATION_H
 #define PROJECT_APPLICATION_H
 
+struct GLFWwindow; //forward declaration -> main includes app.h, but does not know GLFWwindow
 
 class Application {
 public:
