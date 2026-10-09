@@ -20,7 +20,7 @@ Model::Model(const float *points, GLsizei vertexCount) : vertexCount(vertexCount
         this->VBO
     );
 
-    GLsizeiptr dataSize = this->vertexCount * sizeof(float);
+    GLsizeiptr dataSize = this->vertexCount * 6 * sizeof(float);
 
     glBufferData(
        GL_ARRAY_BUFFER,
