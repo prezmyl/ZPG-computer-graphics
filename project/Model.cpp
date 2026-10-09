@@ -4,8 +4,8 @@
 
 #include "Model.h"
 
-Model::Model(const float *points, GLsizei vertexCount) {
-    this->vertexCount = vertexCount;
+Model::Model(const float *points, GLsizei vertexCount) : vertexCount(vertexCount) {
+
 
     // =====================================================
     // VBO - Vertex Buffer Object
@@ -20,9 +20,11 @@ Model::Model(const float *points, GLsizei vertexCount) {
         this->VBO
     );
 
+    GLsizeiptr dataSize = this->vertexCount * sizeof(float);
+
     glBufferData(
        GL_ARRAY_BUFFER,
-       sizeof(points),
+       dataSize,
        points,
        GL_STATIC_DRAW
    );
