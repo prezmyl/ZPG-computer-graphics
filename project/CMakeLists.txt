@@ -11,6 +11,7 @@ find_package(glfw3 REQUIRED)
 add_executable(project
         main.cpp
         Application.cpp
+        Model.cpp
 )
 
 target_include_directories(project PRIVATE

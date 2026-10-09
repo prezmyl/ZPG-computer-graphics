@@ -8,12 +8,13 @@
 struct GLFWwindow; //forward declaration -> main includes app.h, but does not know GLFWwindow
 
 class Application {
+private:
+    GLFWwindow *window = nullptr;
+
 public:
     bool initialize();
     void run();
 
-private:
-    GLFWwindow *window = nullptr;
 };
 
 
