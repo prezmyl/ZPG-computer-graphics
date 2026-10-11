@@ -16,7 +16,7 @@ private:
 
 public:
     ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
-    void use();
+    void use() const;
 };
 
 
