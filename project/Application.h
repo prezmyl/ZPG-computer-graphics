@@ -4,14 +4,21 @@
 
 #ifndef PROJECT_APPLICATION_H
 #define PROJECT_APPLICATION_H
+#include <memory>
 
-struct GLFWwindow; //forward declaration -> main includes app.h, but does not know GLFWwindow
+//forward declarations
+struct GLFWwindow; // -> main includes app.h, but does not know GLFWwindow
+class Model;
+class ShaderProgram;
 
 class Application {
 private:
     GLFWwindow *window = nullptr;
+    std::unique_ptr<Model> model;
+    std::unique_ptr<ShaderProgram> shaderProgram;
 
 public:
+    ~Application();
     bool initialize();
     void run();
 

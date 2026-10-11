@@ -31,6 +31,9 @@ static void window_size_callback(GLFWwindow* window,
     glViewport(0, 0, width, height);
 }
 
+Application::~Application() {
+}
+
 bool Application::initialize() {
     // GLFW error callback
     glfwSetErrorCallback(error_callback);
