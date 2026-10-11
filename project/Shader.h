@@ -14,6 +14,7 @@ private:
 
 public:
     Shader(GLenum shaderType, const char *shaderPath);
+    ~Shader();
     GLuint get_id() const;
 };
 

@@ -15,6 +15,7 @@ private:
 
 public:
     Model(const float *points, GLsizei vertexCount);
+    ~Model();
     void draw() const; 
 };
 

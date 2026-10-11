@@ -79,6 +79,10 @@ GLuint Shader::createShaderFromFile(GLenum shaderType, const char *shaderFile) {
 Shader::Shader(GLenum shaderType, const char *shaderPath) : id(createShaderFromFile(shaderType, shaderPath)) {
 }
 
+Shader::~Shader() {
+    glDeleteShader(id);
+}
+
 GLuint Shader::get_id() const {
     return id;
 }

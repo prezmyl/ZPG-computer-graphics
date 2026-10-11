@@ -80,6 +80,11 @@ Model::Model(const float *points, GLsizei vertexCount) : vertexCount(vertexCount
     );
 }
 
+Model::~Model() {
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+}
+
 
 void Model::draw() const {
     glBindVertexArray(VAO);

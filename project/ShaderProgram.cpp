@@ -41,6 +41,10 @@ ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentS
 
 }
 
+ShaderProgram::~ShaderProgram() {
+    glDeleteProgram(id);
+}
+
 void ShaderProgram::use() const{
     glUseProgram(id);
 }
