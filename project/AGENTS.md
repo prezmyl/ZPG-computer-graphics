@@ -70,6 +70,21 @@ Stručně zachyť:
 - co způsobilo změnu pohledu,
 - jak student princip chápe na konci etapy.
 
+### Generalizovatelné poučení / nejvyšší abstrakce
+Každý checkpoint má, pokud se v dané etapě objevil skutečně zobecnitelný princip, výslovně pojmenovat nejvyšší užitečnou abstrakci, kterou lze přenést i mimo aktuální OpenGL úlohu.
+
+Nezůstávej pouze u konkrétního API nebo konkrétní třídy. Zformuluj obecné pravidlo pro další programování a návrh a krátce ukaž, jak se projevilo v aktuálním kódu.
+
+Typické příklady:
+- životnost informace určuje, zda má být lokální proměnnou, parametrem nebo stavem objektu;
+- odpovědnost má být u objektu, který má k danému důvodu změny nejblíže;
+- vlastnictví má odpovídat životnímu cyklu prostředku;
+- koordinátor rozhoduje **kdy/co**, specializovaný objekt zná **jak**;
+- při návrhu rozhraní je nutné rozlišovat významové jednotky API (např. počet prvků vs. počet bajtů);
+- abstrakce se má zavádět až tehdy, když řeší konkrétní opakující se problém.
+
+Pokud v etapě takový princip nevznikl, nevymýšlej jej uměle; napiš „bez nové generalizovatelné poučky“.
+
 ### Potřebuje upevnit
 Co je stále nejisté, opakovaně problematické nebo zatím nebylo samostatně prokázáno.
 
@@ -86,4 +101,5 @@ Uveď relevantní commit hash, změnu kódu nebo bod z diskuse, pokud pomáhá z
 - Pokud nejsou dostatečné důkazy, napiš „zatím nevyhodnoceno“ místo odhadu.
 - Zachovávej užitečné omyly a slepé cesty, pokud vysvětlují vývoj mentálního modelu.
 - Root `project/README.md` je aktuální mapa stavu, nikoli chronologický deník.
+- V `project/README.md` průběžně udržuj také stručný seznam generalizovatelných programovacích a návrhových principů, které už se v projektu opakovaně prokázaly jako důležité.
 - Datované checkpointy tvoří historii vývoje pochopení.
