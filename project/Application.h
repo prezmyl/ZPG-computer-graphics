@@ -19,6 +19,7 @@ private:
 
     void createResources();
 public:
+    Application();
     ~Application();
     bool initialize();
     void run();

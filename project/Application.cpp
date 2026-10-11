@@ -75,6 +75,8 @@ void Application::createResources() {
 
 }
 
+Application::Application() = default;
+
 
 bool Application::initialize() {
     // GLFW error callback
