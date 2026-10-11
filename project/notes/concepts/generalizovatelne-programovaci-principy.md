@@ -152,3 +152,58 @@ Z těchto dvou vztahů se často odvozuje správné pořadí konstrukce a destru
 Forward declaration umožňuje v hlavičce pracovat s pointerem nebo referencí bez načtení celé definice typu. Implementace ale musí mít úplný typ ve chvíli, kdy potřebuje znát jeho velikost, členy nebo provést destrukci přes `std::unique_ptr`.
 
 To je obecná technika pro omezení závislostí mezi hlavičkami: rozhraní ví jen tolik, kolik skutečně potřebuje; implementace si načte úplné definice.
+
+
+## Pořadí konstrukce a destrukce odvozuj ze závislostí
+
+Pokud objekt `B` potřebuje `A` při konstrukci nebo při cleanupu, musí tomu odpovídat jejich životní cyklus.
+
+Obecně:
+
+```text
+A vznikne
+↓
+B může vzniknout
+...
+B zanikne
+↓
+A může zaniknout
+```
+
+V ZPG:
+
+- `ShaderProgram` vzniká až po jednotlivých shaderech;
+- OpenGL resources vznikají až po contextu a musí zaniknout před ním.
+
+## Scope je součást návrhu životnosti
+
+Lokální proměnná, členská proměnná a dynamicky vlastněný objekt nejsou jen syntaktické varianty. Vyjadřují, jak dlouho má daná věc existovat.
+
+Pokud objekt potřebujeme pouze během jedné fáze, je lokální scope často nejpřesnější řešení.
+
+Příklad: jednotlivé `Shader` objekty jsou lokální v `createResources()`, protože po linkování programu už nejsou potřeba. `ShaderProgram` a `Model` musí přežít render loop, proto jsou stavem `Application`.
+
+## Odděluj fáze, které se mění z jiných důvodů
+
+Nová odpovědnost nemusí automaticky znamenat novou třídu.
+
+Nejdříve může stačit samostatná metoda, pokud pouze odděluje fázi práce se samostatným důvodem ke změně.
+
+V `Application`:
+
+- `initialize()` řeší infrastrukturu a OpenGL context;
+- `createResources()` řeší konkrétní GPU obsah aplikace.
+
+## Debugging compiler chyby sleduje řetězec závislostí
+
+U komplikované compiler chyby nezačínej opravou posledního viditelného řádku. Sleduj:
+
+1. který typ nebo symbol je skutečně problémový;
+2. odkud byl includován nebo instancován;
+3. jaký compile-time mechanismus je aktivní;
+4. která předchozí návrhová volba tuto situaci vytvořila.
+
+Příklady z projektu:
+
+- redefinition GLAD symbolů vznikla kvůli přetrvávajícímu preprocesorovému makru v jednom translation unit;
+- `sizeof` na incomplete type uvnitř `unique_ptr` vznikl při implicitním generování speciální členské funkce v místě, kde byl pointee typ pouze forward-declared.

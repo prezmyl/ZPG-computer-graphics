@@ -79,4 +79,28 @@ To je základní důvod, proč později vznikne potřeba odlišit geometrii od k
 
 ## Životní cyklus
 
-Pokud třída vytvoří OpenGL prostředek pomocí `glGen*`, je přirozeným kandidátem také na jeho uvolnění pomocí odpovídajícího `glDelete*`. Konkrétní RAII řešení bude doplněno až v další etapě; zatím není považováno za zvládnuté.
+Aktuální implementace už používá základní RAII:
+
+- `Model` uvolňuje VAO/VBO ve svém destruktoru;
+- `Shader` uvolňuje shader ID;
+- `ShaderProgram` uvolňuje program ID;
+- resource-owning typy mají zakázané kopírování, aby dva C++ objekty nevlastnily stejný OpenGL handle;
+- `Application` vlastní dlouhodobý `Model` a `ShaderProgram` přes `std::unique_ptr`;
+- jednotlivé `Shader` objekty jsou lokální pouze při linkování programu;
+- `Application::~Application()` explicitně zničí GPU resources před zničením GLFW window/contextu.
+
+Aktuální pořadí je:
+
+```text
+context vznikne
+↓
+Model + ShaderProgram vzniknou
+↓
+render loop
+↓
+ShaderProgram + Model zaniknou
+↓
+window/context zanikne
+```
+
+Toto pořadí je nutné, protože OpenGL cleanup funkce potřebují platný context.

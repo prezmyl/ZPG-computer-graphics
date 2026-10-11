@@ -30,16 +30,16 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 ### Potřebuje upevnit
 
 - Samostatné odvození stride a offsetů u jiného vertex layoutu než současného `position + color`.
-- RAII je rozpracované: `Model`, `Shader` a `ShaderProgram` už vlastní cleanup; zbývá dokončit jejich pořadí vůči OpenGL contextu.
-- `Shader` i `ShaderProgram` jsou implementované; potřebuje upevnit jejich ownership, cleanup a pořadí životních cyklů po linkování.
+- Základní RAII lifecycle pro DU1 je funkční: GPU resources vznikají po vytvoření contextu a jsou explicitně zničeny před zničením window/contextu.
+- Ownership/lifecycle `Shader`, `ShaderProgram` a `Model` je prakticky implementovaný, ale zatím převážně pochopený s vedením; je potřeba jej později samostatně zopakovat.
 - Uniformy: rozdíl mezi location uloženou vůči programu a významovou hodnotou vlastněnou objektem/scénou.
 - `Application` nyní vyjadřuje jednoznačné vlastnictví `Model` a `ShaderProgram` přes `std::unique_ptr`; případné skutečné shared ownership je zatím nevyhodnoceno.
 
 ### Další procvičení
 
 - U dalšího vertex layoutu samostatně určit počet hodnot, velikost v bajtech, stride a offsety.
-- Doplnit a obhájit životní cyklus `Shader` a `ShaderProgram`: kdo co vlastní, kdy lze jednotlivé shader objekty odstranit a kdy se maže program.
-- Doplnit korektní uvolnění VAO/VBO a obhájit pořadí destrukce vůči OpenGL contextu.
+- U dalšího resource-owning typu samostatně odvodit ownership, konstrukční závislosti, copy/move politiku a pořadí destrukce.
+- Později nahradit `exit(EXIT_FAILURE)` propagací chyby kompatibilní s RAII.
 - Až vznikne více objektů, znovu posoudit potřebu `DrawableObject` a `Scene` podle skutečných odpovědností.
 
 ## Generalizovatelné programovací a návrhové principy
@@ -56,6 +56,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - **Typ pointeru je důsledek ownershipu a životnosti:** `unique_ptr` vyjadřuje jednoho vlastníka a umožňuje odložený vznik/zánik objektu.
 - **Ownership a dependency jsou odlišné vztahy:** objekt může resource vlastnit a současně při jeho cleanupu záviset na jiném živém systému.
 - **Konstrukce a destrukce mají pořadí odvozené ze závislostí:** OpenGL resources musí vzniknout po contextu a zaniknout před ním.
+- **Scope modeluje životnost:** krátkodobé objekty mají zůstat lokální, dlouhodobý stav má být uložen jen tam, kde je skutečně potřeba.
+- **Fáze s různým důvodem ke změně lze oddělit metodou dříve než novou třídou:** `initialize()` řeší infrastrukturu, `createResources()` GPU obsah.
+- **Compiler chyby analyzuj přes include/instantiation řetězec:** hledej skutečný mechanismus chyby, ne pouze poslední řádek diagnostiky.
 
 ## Aktuální architektonický stav
 
@@ -101,6 +104,7 @@ Aktuálně:
 - `2026-10-11--shader.md`
 - `2026-10-11--shader-program.md`
 - `2026-10-11--raii-ownership-lifecycle-mezistav.md`
+- `2026-10-11--funkcni-oop-render-pipeline.md`
 
 Checkpoint se v učitelském chatu spouští slovem:
 
