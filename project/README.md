@@ -30,10 +30,10 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 ### Potřebuje upevnit
 
 - Samostatné odvození stride a offsetů u jiného vertex layoutu než současného `position + color`.
-- RAII a destrukce OpenGL prostředků v návaznosti na životní cyklus contextu.
+- RAII je rozpracované: `Model`, `Shader` a `ShaderProgram` už vlastní cleanup; zbývá dokončit jejich pořadí vůči OpenGL contextu.
 - `Shader` i `ShaderProgram` jsou implementované; potřebuje upevnit jejich ownership, cleanup a pořadí životních cyklů po linkování.
 - Uniformy: rozdíl mezi location uloženou vůči programu a významovou hodnotou vlastněnou objektem/scénou.
-- Konkrétní C++ reprezentace sdíleného vlastnictví modelů a shader programů je zatím nevyhodnocena.
+- `Application` nyní vyjadřuje jednoznačné vlastnictví `Model` a `ShaderProgram` přes `std::unique_ptr`; případné skutečné shared ownership je zatím nevyhodnoceno.
 
 ### Další procvičení
 
@@ -52,12 +52,16 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - **Procedurální kód převádět do OOP podle odpovědností, ne podle bloků řádků:** najít důvod ke změně, vstupy, závislosti, ownership, trvalý stav a minimální veřejné rozhraní.
 - **Použití není vlastnictví:** objekt nemá řídit životní cyklus závislosti jen proto, že ji při své práci potřebuje.
 - **Cleanup následuje ownership:** prostředek má být uvolněn vlastníkem v okamžiku odpovídajícím jeho životnímu cyklu.
+- **RAII není jen destruktor:** resource-owning typ musí řešit i copy/move semantiku a závislosti potřebné při destrukci.
+- **Typ pointeru je důsledek ownershipu a životnosti:** `unique_ptr` vyjadřuje jednoho vlastníka a umožňuje odložený vznik/zánik objektu.
+- **Ownership a dependency jsou odlišné vztahy:** objekt může resource vlastnit a současně při jeho cleanupu záviset na jiném živém systému.
+- **Konstrukce a destrukce mají pořadí odvozené ze závislostí:** OpenGL resources musí vzniknout po contextu a zaniknout před ním.
 
 ## Aktuální architektonický stav
 
 Pro první domácí úkol je pracovní minimum:
 
-`main → Application → Model + Shader + ShaderProgram`
+`main → Application → unique ownership Model + ShaderProgram; Shader je krátkodobý konstrukční prostředek`
 
 `Scene`, `DrawableObject`, transformace a další vrstvy jsou záměrně odložené, dokud pro ně nevznikne praktická potřeba.
 
@@ -96,6 +100,7 @@ Aktuálně:
 - `2026-10-09--vertex-layout-vbo-vao.md`
 - `2026-10-11--shader.md`
 - `2026-10-11--shader-program.md`
+- `2026-10-11--raii-ownership-lifecycle-mezistav.md`
 
 Checkpoint se v učitelském chatu spouští slovem:
 

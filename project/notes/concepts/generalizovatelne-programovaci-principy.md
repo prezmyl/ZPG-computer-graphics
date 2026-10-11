@@ -98,3 +98,57 @@ Cleanup má provádět vlastník prostředku ve správný okamžik jeho životn�
 `const` metoda slibuje, že nemění pozorovatelný/logický stav daného C++ objektu. Nemusí nutně znamenat „nemá žádný vedlejší účinek nikde v systému“.
 
 `ShaderProgram::use() const` mění globální OpenGL stav, ale nemění vlastní program ID ani jiný členský stav objektu.
+
+
+## RAII je návrh ownershipu, ne pouze destruktor
+
+RAII svazuje vlastnictví resource s životním cyklem C++ objektu. Samotný destruktor ale nestačí. U resource-owning typu je třeba řešit také kopírování, přesun, závislosti a pořadí destrukce.
+
+Praktické otázky:
+
+1. Kdo resource vytváří?
+2. Kdo jej vlastní?
+3. Smí být vlastník kopírován?
+4. Na čem resource závisí?
+5. Co musí při jeho destrukci ještě existovat?
+
+OpenGL příklad: `Model` vlastní VAO/VBO, ale jejich cleanup vyžaduje stále platný OpenGL context.
+
+## Resource-owning typ a Rule of Three/Five/Zero
+
+Pokud typ vlastní externí resource a definuje vlastní destruktor, je nutné vědomě posoudit také copy/move operace.
+
+Prosté zkopírování handle obvykle neznamená vytvoření nového resource. Pokud není definována korektní deep copy nebo transfer ownershipu, je bezpečnější kopírování zakázat.
+
+Aktuální `Model`, `Shader` a `ShaderProgram` proto používají deleted copy constructor a copy assignment.
+
+## Typ pointeru je důsledek ownershipu a životnosti
+
+Pointer mechanismus se nemá volit podle zvyku.
+
+- reference: typicky dočasné použití bez ownershipu;
+- `unique_ptr`: právě jeden vlastník, možnost řídit okamžik vzniku a zániku;
+- shared ownership má smysl pouze tehdy, pokud skutečně existuje více vlastníků.
+
+`Application` používá `unique_ptr<Model>` a `unique_ptr<ShaderProgram>`, protože tyto objekty vlastní, ale mohou vzniknout až po vytvoření OpenGL contextu.
+
+## Ownership a dependency jsou různé vztahy
+
+Objekt může resource vlastnit, ale jeho použití nebo destrukce může záviset na jiném živém systému.
+
+`Model` vlastní VBO/VAO, ale jejich OpenGL cleanup závisí na existujícím contextu.
+
+Proto je při návrhu životního cyklu nutné sledovat obojí:
+
+```text
+kdo koho vlastní?
+na kom je kdo funkčně závislý?
+```
+
+Z těchto dvou vztahů se často odvozuje správné pořadí konstrukce a destrukce.
+
+## Forward declaration odděluje rozhraní od potřeby úplného typu
+
+Forward declaration umožňuje v hlavičce pracovat s pointerem nebo referencí bez načtení celé definice typu. Implementace ale musí mít úplný typ ve chvíli, kdy potřebuje znát jeho velikost, členy nebo provést destrukci přes `std::unique_ptr`.
+
+To je obecná technika pro omezení závislostí mezi hlavičkami: rozhraní ví jen tolik, kolik skutečně potřebuje; implementace si načte úplné definice.
