@@ -11,6 +11,8 @@
 #include <cstdlib>
 
 #include "Application.h"
+#include "Model.h"
+#include "ShaderProgram.h"
 
 //static - original callbacks
 static void error_callback(int error, const char* description)
@@ -32,6 +34,10 @@ static void window_size_callback(GLFWwindow* window,
 }
 
 Application::~Application() {
+    shaderProgram.reset();
+    model.reset();
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }
 
 bool Application::initialize() {
@@ -73,7 +79,7 @@ bool Application::initialize() {
 
     if (!window)
     {
-        glfwTerminate();
+        fprintf(stderr, "Window creattion failed\n");
         return false;
     }
 
@@ -93,8 +99,9 @@ bool Application::initialize() {
             "GLAD initialization failed\n"
         );
 
-        glfwDestroyWindow(window);
-        glfwTerminate();
+        // clean up uz pres centralni mechanismus destruktoru
+      //  glfwDestroyWindow(window);
+      //  glfwTerminate();
 
         return false;
     }
