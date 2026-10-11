@@ -24,19 +24,20 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - Rozdíl mezi počtem vertexů, počtem `float` hodnot a velikostí dat v bajtech; pro aktuální layout je jeden vertex `6 * sizeof(float)`.
 - Význam `stride` a `offset` v `glVertexAttribPointer` pro layout `position.xyz + color.rgb`.
 - Použití `const float*` a member initializer listu v konstruktoru `Model`.
+- U `Shader` rozlišení trvalého stavu (`id`) od dočasných dat konstrukce (typ, cesta, source, compile status, log).
 
 ### Potřebuje upevnit
 
 - Samostatné odvození stride a offsetů u jiného vertex layoutu než současného `position + color`.
 - RAII a destrukce OpenGL prostředků v návaznosti na životní cyklus contextu.
-- Praktické rozdělení `Shader` a `ShaderProgram`, jejich ownership a životní cyklus.
+- `Shader` je implementovaný; potřebuje upevnit hlavně jeho životní cyklus po linkování. `ShaderProgram` zatím implementovaný není.
 - Uniformy: rozdíl mezi location uloženou vůči programu a významovou hodnotou vlastněnou objektem/scénou.
 - Konkrétní C++ reprezentace sdíleného vlastnictví modelů a shader programů je zatím nevyhodnocena.
 
 ### Další procvičení
 
 - U dalšího vertex layoutu samostatně určit počet hodnot, velikost v bajtech, stride a offsety.
-- Implementovat `Shader` a `ShaderProgram` bez přesunu jejich odpovědností zpět do `Application`.
+- Implementovat `ShaderProgram` nad hotovým `Shader` a vysvětlit rozdíl kompilace vs. linkování.
 - Doplnit korektní uvolnění VAO/VBO a obhájit pořadí destrukce vůči OpenGL contextu.
 - Až vznikne více objektů, znovu posoudit potřebu `DrawableObject` a `Scene` podle skutečných odpovědností.
 
@@ -80,6 +81,7 @@ Datované checkpointy jsou v:
 Aktuálně:
 - `2026-10-09--application-a-model.md`
 - `2026-10-09--vertex-layout-vbo-vao.md`
+- `2026-10-11--shader.md`
 
 Checkpoint se v učitelském chatu spouští slovem:
 

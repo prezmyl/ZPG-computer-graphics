@@ -50,10 +50,11 @@ VAO proto patří ke geometrické reprezentaci, ne k shader programu. Mezi VAO a
 
 ## Shader a ShaderProgram
 
-Pracovní rozdělení, které bude teprve implementováno:
+Aktuální pracovní rozdělení:
 
-- `Shader` reprezentuje jeden kompilovaný shader (např. vertex nebo fragment);
-- `ShaderProgram` reprezentuje slinkovaný GPU program sestavený z shaderů;
+- `Shader` je už implementovaný a reprezentuje jeden kompilovaný shader (např. vertex nebo fragment);
+- jeho trvalým stavem je OpenGL shader ID; typ shaderu, cesta k souboru, source code, compile status a log jsou jen dočasné údaje potřebné při konstrukci;
+- `ShaderProgram` zatím implementovaný není a bude reprezentovat slinkovaný GPU program sestavený z shaderů;
 - `ShaderProgram` může znát mechanismus `use()` a práci s uniform locations;
 - vyšší vrstva rozhoduje, kdy má být konkrétní program aktivován.
 
