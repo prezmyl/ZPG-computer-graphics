@@ -6,7 +6,17 @@
 #define PROJECT_SHADERPROGRAM_H
 
 
+#include "Shader.h"
+#include "glad/gl.h"
+
+
 class ShaderProgram {
+private:
+    GLuint id = 0;
+
+public:
+    ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
+    void use();
 };
 
 
