@@ -54,8 +54,9 @@ Aktuální pracovní rozdělení:
 
 - `Shader` je už implementovaný a reprezentuje jeden kompilovaný shader (např. vertex nebo fragment);
 - jeho trvalým stavem je OpenGL shader ID; typ shaderu, cesta k souboru, source code, compile status a log jsou jen dočasné údaje potřebné při konstrukci;
-- `ShaderProgram` zatím implementovaný není a bude reprezentovat slinkovaný GPU program sestavený z shaderů;
-- `ShaderProgram` může znát mechanismus `use()` a práci s uniform locations;
+- `ShaderProgram` je implementovaný jako slinkovaný GPU program sestavený ze dvou `Shader` objektů;
+- při konstrukci shadery pouze používá přes `const&`; neukládá je jako svůj stav ani zatím nepřebírá jejich ownership;
+- `ShaderProgram` uchovává vlastní program ID a zná mechanismus `use()`; práce s uniform locations přijde později;
 - vyšší vrstva rozhoduje, kdy má být konkrétní program aktivován.
 
 Uniform location patří ke konkrétnímu slinkovanému programu. Významová hodnota typu `modelMatrix` ale typicky popisuje konkrétní objekt, nikoli samotný shader program.

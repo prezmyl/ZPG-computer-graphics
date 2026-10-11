@@ -59,3 +59,42 @@ Správný návrh a API vyžadují pracovat s jejich **významem**, ne jen s C++ 
 Nová vrstva nebo třída není automaticky lepší návrh.
 
 `Scene` a `DrawableObject` byly v DU1 odloženy, protože zatím neměly dostatečnou samostatnou odpovědnost. Přidají se až ve chvíli, kdy více objektů, transformace nebo řízení scény vytvoří skutečný důvod jejich existence.
+
+
+## Převod procedurálního kódu do objektového návrhu
+
+Při refaktoringu procedurálního kódu nevytvářej třídy mechanicky podle délky nebo pozice bloků kódu. Postupuj podle významu:
+
+1. najdi soudržnou odpovědnost a její důvod ke změně;
+2. urč vstupy, výstupy a závislosti;
+3. u každé závislosti rozhodni, zda ji objekt vlastní, dlouhodobě používá, nebo ji potřebuje jen během jedné operace;
+4. odděl trvalý stav od lokálních pomocných dat;
+5. z aktuálních požadavků odvoď minimální veřejné rozhraní;
+6. zkontroluj, kdo odpovídá za vytvoření a zánik prostředků;
+7. odstraň závislosti na subsystémech, které třída ke své odpovědnosti nepotřebuje.
+
+Příklad: původní blok `glCreateProgram → glAttachShader → glLinkProgram → glUseProgram` se stal `ShaderProgram`, protože operace společně pracují s jedním slinkovaným programem. Naopak GLFW cleanup do něj nepatří, protože se mění z jiného důvodu a program okno nevlastní.
+
+## Použití objektu není vlastnictví
+
+To, že objekt potřebuje jiný objekt, automaticky neznamená, že jej vlastní.
+
+Při návrhu vztahu se ptej:
+
+> Potřebuji objekt jen během operace, potřebuji na něj odkazovat déle, nebo řídím jeho životní cyklus?
+
+Tato odpověď má předcházet volbě mezi hodnotou, referencí, pointerem a smart pointerem.
+
+V `ShaderProgram` jsou `Shader` objekty pouze vstupní závislosti pro linkování, proto jsou předány jako `const&`. Program nemá právo rozhodovat o jejich zániku.
+
+## Cleanup následuje ownership, ne pouhou dostupnost
+
+Fakt, že třída technicky dokáže nějaký prostředek zničit, není důvod, aby to dělala.
+
+Cleanup má provádět vlastník prostředku ve správný okamžik jeho životního cyklu. `ShaderProgram` proto nemá při vlastní chybě ničit GLFW window/context; ty patří do jiné odpovědnosti.
+
+## Const-correctness popisuje logický stav objektu
+
+`const` metoda slibuje, že nemění pozorovatelný/logický stav daného C++ objektu. Nemusí nutně znamenat „nemá žádný vedlejší účinek nikde v systému“.
+
+`ShaderProgram::use() const` mění globální OpenGL stav, ale nemění vlastní program ID ani jiný členský stav objektu.

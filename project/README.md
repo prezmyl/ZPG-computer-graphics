@@ -25,19 +25,20 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - Význam `stride` a `offset` v `glVertexAttribPointer` pro layout `position.xyz + color.rgb`.
 - Použití `const float*` a member initializer listu v konstruktoru `Model`.
 - U `Shader` rozlišení trvalého stavu (`id`) od dočasných dat konstrukce (typ, cesta, source, compile status, log).
+- U `ShaderProgram` rozlišení kompilovaného shaderu od slinkovaného programu, použití vstupních `Shader` objektů přes `const&` a hranice cleanupu podle ownershipu.
 
 ### Potřebuje upevnit
 
 - Samostatné odvození stride a offsetů u jiného vertex layoutu než současného `position + color`.
 - RAII a destrukce OpenGL prostředků v návaznosti na životní cyklus contextu.
-- `Shader` je implementovaný; potřebuje upevnit hlavně jeho životní cyklus po linkování. `ShaderProgram` zatím implementovaný není.
+- `Shader` i `ShaderProgram` jsou implementované; potřebuje upevnit jejich ownership, cleanup a pořadí životních cyklů po linkování.
 - Uniformy: rozdíl mezi location uloženou vůči programu a významovou hodnotou vlastněnou objektem/scénou.
 - Konkrétní C++ reprezentace sdíleného vlastnictví modelů a shader programů je zatím nevyhodnocena.
 
 ### Další procvičení
 
 - U dalšího vertex layoutu samostatně určit počet hodnot, velikost v bajtech, stride a offsety.
-- Implementovat `ShaderProgram` nad hotovým `Shader` a vysvětlit rozdíl kompilace vs. linkování.
+- Doplnit a obhájit životní cyklus `Shader` a `ShaderProgram`: kdo co vlastní, kdy lze jednotlivé shader objekty odstranit a kdy se maže program.
 - Doplnit korektní uvolnění VAO/VBO a obhájit pořadí destrukce vůči OpenGL contextu.
 - Až vznikne více objektů, znovu posoudit potřebu `DrawableObject` a `Scene` podle skutečných odpovědností.
 
@@ -48,12 +49,15 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - **Odpovědnost má následovat důvod ke změně:** VBO/VAO patří ke geometrii, protože se mění spolu s reprezentací modelu; transformační stav naopak popisuje konkrétní instanci objektu.
 - **Rozhraní musí respektovat významové jednotky API:** počet vertexů, počet hodnot a počet bajtů nejsou zaměnitelné, i když jsou všechny reprezentovány číslem.
 - **Nezavádět abstrakci bez problému, který řeší:** `Scene` a `DrawableObject` byly odloženy, dokud pro ně nevznikne skutečná odpovědnost.
+- **Procedurální kód převádět do OOP podle odpovědností, ne podle bloků řádků:** najít důvod ke změně, vstupy, závislosti, ownership, trvalý stav a minimální veřejné rozhraní.
+- **Použití není vlastnictví:** objekt nemá řídit životní cyklus závislosti jen proto, že ji při své práci potřebuje.
+- **Cleanup následuje ownership:** prostředek má být uvolněn vlastníkem v okamžiku odpovídajícím jeho životnímu cyklu.
 
 ## Aktuální architektonický stav
 
 Pro první domácí úkol je pracovní minimum:
 
-`main → Application → Model + budoucí ShaderProgram`
+`main → Application → Model + Shader + ShaderProgram`
 
 `Scene`, `DrawableObject`, transformace a další vrstvy jsou záměrně odložené, dokud pro ně nevznikne praktická potřeba.
 
@@ -91,6 +95,7 @@ Aktuálně:
 - `2026-10-09--application-a-model.md`
 - `2026-10-09--vertex-layout-vbo-vao.md`
 - `2026-10-11--shader.md`
+- `2026-10-11--shader-program.md`
 
 Checkpoint se v učitelském chatu spouští slovem:
 
