@@ -1,5 +1,5 @@
 //
-// Created by xpolas on 10/5/26.
+// Created by pol0511 on 10/5/26.
 //
 
 #define GLAD_GL_IMPLEMENTATION
@@ -35,37 +35,39 @@ static void window_size_callback(GLFWwindow* window,
     glViewport(0, 0, width, height);
 }
 
-float points[] = {
 
-    // 1. trojúhelník
-    // levý horní
-    -0.5f,  0.5f, 0.0f,
-     1.0f,  0.0f, 0.0f,
-
-    // pravý horní
-     0.5f,  0.5f, 0.0f,
-     0.0f,  1.0f, 0.0f,
-
-    // pravý dolní
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.0f, 1.0f,
-
-
-    // 2. trojúhelník
-    // levý horní
-    -0.5f,  0.5f, 0.0f,
-     1.0f,  0.0f, 0.0f,
-
-    // pravý dolní
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.0f, 1.0f,
-
-    // levý dolní
-    -0.5f, -0.5f, 0.0f,
-     1.0f,  1.0f, 0.0f
-};
 
 void Application::createResources() {
+    float points[] = {
+
+        // 1. trojúhelník
+        // levý horní
+        -0.5f,  0.5f, 0.0f,
+         1.0f,  0.0f, 0.0f,
+
+        // pravý horní
+         0.5f,  0.5f, 0.0f,
+         0.0f,  1.0f, 0.0f,
+
+        // pravý dolní
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.0f, 1.0f,
+
+
+        // 2. trojúhelník
+        // levý horní
+        -0.5f,  0.5f, 0.0f,
+         1.0f,  0.0f, 0.0f,
+
+        // pravý dolní
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.0f, 1.0f,
+
+        // levý dolní
+        -0.5f, -0.5f, 0.0f,
+         1.0f,  1.0f, 0.0f
+    };
+
     model = std::make_unique<Model>(points,6);
 
     Shader vertexShader(GL_VERTEX_SHADER,"shaders/basic.vert");
