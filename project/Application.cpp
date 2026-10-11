@@ -33,12 +33,46 @@ static void window_size_callback(GLFWwindow* window,
     glViewport(0, 0, width, height);
 }
 
-Application::~Application() {
-    shaderProgram.reset();
-    model.reset();
-    glfwDestroyWindow(window);
-    glfwTerminate();
+float points[] = {
+
+    // 1. trojúhelník
+    // levý horní
+    -0.5f,  0.5f, 0.0f,
+     1.0f,  0.0f, 0.0f,
+
+    // pravý horní
+     0.5f,  0.5f, 0.0f,
+     0.0f,  1.0f, 0.0f,
+
+    // pravý dolní
+     0.5f, -0.5f, 0.0f,
+     0.0f,  0.0f, 1.0f,
+
+
+    // 2. trojúhelník
+    // levý horní
+    -0.5f,  0.5f, 0.0f,
+     1.0f,  0.0f, 0.0f,
+
+    // pravý dolní
+     0.5f, -0.5f, 0.0f,
+     0.0f,  0.0f, 1.0f,
+
+    // levý dolní
+    -0.5f, -0.5f, 0.0f,
+     1.0f,  1.0f, 0.0f
+};
+
+void Application::createResources() {
+    model = std::make_unique<Model>(points,6);
+
+    Shader vertexShader(GL_VERTEX_SHADER,"shaders/basic.vert");
+    Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/basic.frag");
+
+    shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
+    
 }
+
 
 bool Application::initialize() {
     // GLFW error callback
@@ -99,10 +133,6 @@ bool Application::initialize() {
             "GLAD initialization failed\n"
         );
 
-        // clean up uz pres centralni mechanismus destruktoru
-      //  glfwDestroyWindow(window);
-      //  glfwTerminate();
-
         return false;
     }
 
@@ -118,7 +148,19 @@ bool Application::initialize() {
         window_size_callback
     );
 
+    createResources();
+
     return true;
+}
+
+Application::~Application() {
+    shaderProgram.reset();
+    model.reset();
+    if (window != nullptr) {
+        glfwDestroyWindow(window);
+        window = nullptr;
+    }
+    glfwTerminate();
 }
 
 void Application::run() {

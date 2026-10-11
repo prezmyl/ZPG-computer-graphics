@@ -17,6 +17,7 @@ private:
     std::unique_ptr<Model> model;
     std::unique_ptr<ShaderProgram> shaderProgram;
 
+    void createResources();
 public:
     ~Application();
     bool initialize();
