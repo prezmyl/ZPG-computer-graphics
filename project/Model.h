@@ -16,6 +16,10 @@ private:
 public:
     Model(const float *points, GLsizei vertexCount);
     ~Model();
+
+    Model(const Model&) = delete;
+    Model& operator=(const Model&) = delete;
+
     void draw() const; 
 };
 

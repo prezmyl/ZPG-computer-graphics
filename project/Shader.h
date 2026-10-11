@@ -15,6 +15,11 @@ private:
 public:
     Shader(GLenum shaderType, const char *shaderPath);
     ~Shader();
+
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
+
+
     GLuint get_id() const;
 };
 

@@ -17,6 +17,13 @@ private:
 public:
     ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
     ~ShaderProgram();
+
+    //ban the flat copy -> otherwise not 2 program, but 2 c++ object would exist that would own the same resources
+    //if it would context appropriate we would have to create rela deep copy of GPU resources or transfare owenrship
+    //for now I just ban the copy via overload constructor
+    ShaderProgram(const ShaderProgram&) = delete;
+    ShaderProgram& operator=(const ShaderProgram&) = delete;
+
     void use() const;
 };
 
