@@ -12,6 +12,7 @@
 
 #include "Application.h"
 #include "Model.h"
+#include "Shader.h"
 #include "ShaderProgram.h"
 
 //static - original callbacks
@@ -70,7 +71,7 @@ void Application::createResources() {
     Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/basic.frag");
 
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
-    
+
 }
 
 
@@ -181,27 +182,9 @@ void Application::run() {
             GL_DEPTH_BUFFER_BIT
         );
 
-
-        // use shader program
-        //glUseProgram(shaderProgram);
-
-
-        // use VAO of the model
-        //glBindVertexArray(VAO);
-
-
-        // Draw
-        //
-        // GL_TRIANGLES = kreslíme trojúhelníky
-        // 0            = začínáme prvním vrcholem
-        // 3            = máme tři vrcholy
-        //
-        /*glDrawArrays(
-            GL_TRIANGLES,
-            0,
-            2880
-        );*/
-
+        // using made oop interfaces
+        shaderProgram->use();
+        model->draw();
 
         // display result
         glfwSwapBuffers(window);
