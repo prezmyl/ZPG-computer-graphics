@@ -12,6 +12,7 @@ add_executable(project
         main.cpp
         Application.cpp
         Model.cpp
+        Shader.cpp
 )
 
 target_include_directories(project PRIVATE
