@@ -25,7 +25,6 @@ GLuint Shader::createShaderFromFile(GLenum shaderType, const char *shaderFile) {
 
     if (!file.is_open()) {
         std::cout << "Unable to open file " << shaderFile << std::endl;
-        exit(EXIT_FAILURE);
 
         glDeleteShader(shaderID);
         exit(EXIT_FAILURE);
@@ -77,10 +76,7 @@ GLuint Shader::createShaderFromFile(GLenum shaderType, const char *shaderFile) {
 
 }
 
-Shader::Shader(GLenum shaderType, const char *shaderPath) {
-
-   this->id = createShaderFromFile(shaderType, shaderPath);
-
+Shader::Shader(GLenum shaderType, const char *shaderPath) : id(createShaderFromFile(shaderType, shaderPath)) {
 }
 
 GLuint Shader::get_id() const {
