@@ -4,6 +4,7 @@
 
 #define GLAD_GL_IMPLEMENTATION
 #include <glad/gl.h>
+#undef GLAD_GL_IMPLEMENTATION
 
 #include <GLFW/glfw3.h>
 
