@@ -16,6 +16,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Pochopeno s vedením
 
+- DU02 (návrh): samostatně rozpoznána potřeba polymorfní kolekce transformací a skládání; konkrétní podoba Composite a rozhraní `getMatrix()` zatím diskutovány s vedením.
+- DU02 (návrh): samostatně zdůvodněno oddělení výpočtu transformační matice od jejího použití při vykreslování; rozpoznána potřeba nezávislého mutable transformačního stavu objektů.
+
 - Rozlišení „koordinátor rozhoduje co/kdy“ vs. „specializovaný objekt ví jak“.
 - Forward declaration pro `GLFWwindow*` a omezení závislostí hlaviček.
 - Rozdíl mezi lokální a členskou proměnnou na příkladu zastínění `window`.
@@ -29,6 +32,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Potřebuje upevnit
 
+- DU02: vztahy typový (IS-A), strukturální (HAS-A/USES-A) a ownership/lifetime, polymorfní vlastnictví prostřednictvím abstraktní třídy – vysvětleno s vedením, samostatné použití zatím neověřeno.
+- DU02: návrh `CompositeTransformation::getMatrix()`, pořadí matic, statické/dynamické transformace a finální ownership hierarchie – zatím nevyhodnoceno.
+
 - Samostatné odvození stride a offsetů u jiného vertex layoutu než současného `position + color`.
 - Základní RAII lifecycle pro DU1 je funkční: GPU resources vznikají po vytvoření contextu a jsou explicitně zničeny před zničením window/contextu.
 - Ownership/lifecycle `Shader`, `ShaderProgram` a `Model` je prakticky implementovaný, ale zatím převážně pochopený s vedením; je potřeba jej později samostatně zopakovat.
@@ -36,6 +42,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - `Application` nyní vyjadřuje jednoznačné vlastnictví `Model` a `ShaderProgram` přes `std::unique_ptr`; případné skutečné shared ownership je zatím nevyhodnoceno.
 
 ### Další procvičení
+
+- DU02: samostatně navrhnout a otestovat algoritmus skládání matic a porovnat `T*R` proti `R*T`.
+- DU02: rozhodnout životní cyklus složených transformací a navrhnout aktualizaci dynamické rotace; následně teprve implementovat.
 
 - U dalšího vertex layoutu samostatně určit počet hodnot, velikost v bajtech, stride a offsety.
 - U dalšího resource-owning typu samostatně odvodit ownership, konstrukční závislosti, copy/move politiku a pořadí destrukce.
@@ -60,13 +69,16 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - **Fáze s různým důvodem ke změně lze oddělit metodou dříve než novou třídou:** `initialize()` řeší infrastrukturu, `createResources()` GPU obsah.
 - **Compiler chyby analyzuj přes include/instantiation řetězec:** hledej skutečný mechanismus chyby, ne pouze poslední řádek diagnostiky.
 
+- **Rozlišuj typ, vazbu a vlastnictví:** IS-A určuje substituovatelnost, HAS-A/USES-A spolupráci a ownership zánik; v DU02 byl princip vysvětlen na `DrawableObject` a `Transformation`, samostatné upevnění ještě čeká.
+- **Stejné parametry nejsou stejná instance:** dvě rotace o stejném úhlu mohou být nezávislé, sdílená mutable rotace přenáší změny mezi uživateli.
+
 ## Aktuální architektonický stav
 
 Pro první domácí úkol je pracovní minimum:
 
 `main → Application → unique ownership Model + ShaderProgram; Shader je krátkodobý konstrukční prostředek`
 
-`Scene`, `DrawableObject`, transformace a další vrstvy jsou záměrně odložené, dokud pro ně nevznikne praktická potřeba.
+Pro DU01 byly `Scene`, `DrawableObject` a transformace záměrně odloženy. DU02 nyní přinesl důvod tyto odpovědnosti navrhovat; zatím jde o **teoretický návrh**, nikoli implementované vrstvy. Pracovní směr: `DrawableObject` používá model, shader program a transformaci; polymorfní `Transformation` poskytuje matici a `CompositeTransformation` ji skládá. Ownership zatím není definitivně uzavřen.
 
 ## Oblasti
 
@@ -105,6 +117,7 @@ Aktuálně:
 - `2026-10-11--shader-program.md`
 - `2026-10-11--raii-ownership-lifecycle-mezistav.md`
 - `2026-10-11--funkcni-oop-render-pipeline.md`
+- `2026-10-13--du02-navrh-transformaci-a-ownership.md` (teoretický návrh, bez implementace)
 
 Checkpoint se v učitelském chatu spouští slovem:
 
