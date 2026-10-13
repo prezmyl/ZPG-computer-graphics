@@ -38,7 +38,7 @@ static void window_size_callback(GLFWwindow* window,
 
 
 void Application::createResources() {
-    float points[] = {
+    const float points[] = {
 
         // 1. trojúhelník
         // levý horní
@@ -112,7 +112,7 @@ bool Application::initialize() {
     this->window = glfwCreateWindow(
         800,
         600,
-        "ZPG - cv02 - triangle",
+        "ZPG - DU01 - square",
         nullptr,
         nullptr
     );
