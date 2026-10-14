@@ -14,6 +14,9 @@ add_executable(project
         Model.cpp
         Shader.cpp
         ShaderProgram.cpp
+        Transformation.h
+        Translation.cpp
+        Translation.h
 )
 
 target_include_directories(project PRIVATE
