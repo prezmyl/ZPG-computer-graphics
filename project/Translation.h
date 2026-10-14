@@ -13,8 +13,7 @@ private:
 
 public:
     Translation(glm::vec3 translation);
-    //virtual ~Translation(); nemusi byt nepotrebuje li specialni clean up, uz je v predkovi
-    virtual glm::mat4 getMatrix() const override;
+    glm::mat4 getMatrix() const override; //override covers meaning of viirtual + compilator checks corret ovverriding
 
 };
 
