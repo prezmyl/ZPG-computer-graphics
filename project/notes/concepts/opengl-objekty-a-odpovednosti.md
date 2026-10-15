@@ -56,7 +56,7 @@ Aktuální pracovní rozdělení:
 - jeho trvalým stavem je OpenGL shader ID; typ shaderu, cesta k souboru, source code, compile status a log jsou jen dočasné údaje potřebné při konstrukci;
 - `ShaderProgram` je implementovaný jako slinkovaný GPU program sestavený ze dvou `Shader` objektů;
 - při konstrukci shadery pouze používá přes `const&`; neukládá je jako svůj stav ani zatím nepřebírá jejich ownership;
-- `ShaderProgram` uchovává vlastní program ID a zná mechanismus `use()`; práce s uniform locations přijde později;
+- `ShaderProgram` uchovává vlastní program ID a zná mechanismus `use()` i obecnou operaci `setMat4(name, matrix)` (`glGetUniformLocation` a `glUniformMatrix4fv`);
 - vyšší vrstva rozhoduje, kdy má být konkrétní program aktivován.
 
 Uniform location patří ke konkrétnímu slinkovanému programu. Významová hodnota typu `modelMatrix` ale typicky popisuje konkrétní objekt, nikoli samotný shader program.
@@ -75,7 +75,7 @@ Každý objekt ale může mít vlastní:
 - měřítko,
 - výslednou modelovou transformaci.
 
-To je základní důvod, proč později vznikne potřeba odlišit geometrii od konkrétního vykreslovaného objektu. Pro DU1 však tato další vrstva zatím není nutná.
+Tento rozdíl byl využit v DU02: `DrawableObject` již existuje a koordinuje použití geometrie, shader programu a jedné vlastní transformace.
 
 ## Životní cyklus
 
@@ -85,9 +85,10 @@ Aktuální implementace už používá základní RAII:
 - `Shader` uvolňuje shader ID;
 - `ShaderProgram` uvolňuje program ID;
 - resource-owning typy mají zakázané kopírování, aby dva C++ objekty nevlastnily stejný OpenGL handle;
-- `Application` vlastní dlouhodobý `Model` a `ShaderProgram` přes `std::unique_ptr`;
+- `Application` vlastní dlouhodobý `Model`, `ShaderProgram` a od DU02 i `DrawableObject` přes `std::unique_ptr`;
 - jednotlivé `Shader` objekty jsou lokální pouze při linkování programu;
-- `Application::~Application()` explicitně zničí GPU resources před zničením GLFW window/contextu.
+- `DrawableObject` vlastní `unique_ptr<Transformation>`, zatímco `Model*` a `ShaderProgram*` používá nevlastnicky;
+- `Application::~Application()` nejprve zničí `DrawableObject`, pak GPU resources a nakonec GLFW window/context.
 
 Aktuální pořadí je:
 
@@ -96,7 +97,11 @@ context vznikne
 ↓
 Model + ShaderProgram vzniknou
 ↓
-render loop
+DrawableObject vznikne a získá nevlastnící pointery a vlastněnou Transformation
+↓
+render loop volá DrawableObject::draw()
+↓
+DrawableObject zanikne
 ↓
 ShaderProgram + Model zaniknou
 ↓
@@ -104,3 +109,12 @@ window/context zanikne
 ```
 
 Toto pořadí je nutné, protože OpenGL cleanup funkce potřebují platný context.
+
+
+## Aktualizace DU02: konkrétní vykreslovaná instance a uniformy
+
+`DrawableObject::draw()` aktivuje `ShaderProgram`, získá aktuální `Transformation::getMatrix()`, nahraje ji jako `modelMatrix` a deleguje vykreslení geometrie na `Model::draw()`. Význam matice patří instanci objektu, **technika** uploadu patří `ShaderProgram`.
+
+V aktuálním `Application::~Application()` je zavádějící komentář, že `DrawableObject` vlastní `Model` a `ShaderProgram`. Ve skutečnosti je **nevlastní**. Pořadí destrukce je správné, vysvětlení ve zdrojovém komentáři nikoli; jde o bod k upevnění, kód se během checkpointu nemění.
+
+Podrobné volání uniformů, sémantika `.get()` / `std::move()`, slepé cesty a problém se starým GLSL souborem jsou v `uniformy-a-drawableobject.md`.

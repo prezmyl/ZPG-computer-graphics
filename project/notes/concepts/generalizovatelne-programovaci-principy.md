@@ -230,3 +230,16 @@ Přenositelný princip: **společné rozhraní dává smysl, když klient potře
 ## Vlastnictví není oprávnění k přístupu (DU02)
 
 `CompositeTransformation` vlastní transformace pomocí `unique_ptr`; koordinující scéna by je mohla nevlastnicky nastavovat. To jsou samostatné vztahy: „kdo zničí“ a „kdo smí používat/měnit“. Při předání adresy nevlastníkovi musí být zajištěn lifecycle; `shared_ptr` naopak mění samotnou sémantiku vlastnictví.
+
+
+## Významový stav a technický přenos odděluj (DU02 – uniformy)
+
+`DrawableObject` rozhoduje, jaká modelová transformace náleží konkrétní instanci; `ShaderProgram` zná obecný přenos uniformu typu `mat4` a `Model` zná vlastní draw call. **To, že objekt umí pracovat s daty, neznamená, že má být jejich vlastníkem či zdrojem jejich významu.** V praxi se tím bráníme tomu, aby `ShaderProgram` byl svázaný s konkrétním objektem a aby `DrawableObject` sahal přímo do VAO/VBO.
+
+## Správné pořadí destrukce neprokazuje správný mentální model vlastnictví
+
+V `Application::~Application()` je nyní správně nejprve `drawableObject.reset()`, potom `shaderProgram.reset()` a `model.reset()`. Zdůvodnění komentářem „DrawableObject vlastní model a program“ je však chybné: používá je **nevlastnicky**. Obecné pravidlo: **před odvozením životnosti vždy rozliš vlastnící vztah a závislost na používaném objektu**. `.get()` nepřenáší vlastnictví; `std::move(unique_ptr)` ano.
+
+## Runtime závisí na skutečně nasazených souborech, nejen na zdroji
+
+Při DU02 byla správná transformace, ale vykreslení se neměnilo, protože v build adresáři zůstala starší kopie `basic.vert`. `file(COPY ...)` běží při konfiguraci CMake; překlad C++ sám o sobě nemusí překopírovat GLSL. **Debugging vede přes řetězec source → build/staging → runtime načtený soubor**. Zkontroluj artefakt, který proces opravdu používá.
