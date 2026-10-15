@@ -3,6 +3,7 @@
 //
 
 #include "CompositeTransformation.h"
+#include <utility>
 
 
 void CompositeTransformation::addTransformation(std::unique_ptr<Transformation> transformation) {
@@ -15,4 +16,6 @@ glm::mat4 CompositeTransformation::getMatrix() const {
     for (const auto& transformation : transformations) {
         result = transformation->getMatrix() * result;
     }
+
+    return result;
 }
