@@ -21,6 +21,8 @@
 #include "DrawableObject.h"
 #include "Rotation.h"
 #include "Scale.h"
+#include "Scene.h"
+
 
 //static - original callbacks
 static void error_callback(int error, const char* description)
@@ -82,12 +84,26 @@ void Application::createResources() {
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
 
-    auto composite = std::make_unique<CompositeTransformation>();
-    //composite->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.5f, 1.0f)));
-    composite->addTransformation(std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(45.0f)));
-    composite->addTransformation(std::make_unique<Translation>(glm::vec3(0.4f, 0.0f, 0.0f)));
+    auto composite1 = std::make_unique<CompositeTransformation>();
+    //composite1->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.5f, 1.0f)));
+    composite1->addTransformation(std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(45.0f)));
+    composite1->addTransformation(std::make_unique<Translation>(glm::vec3(0.4f, 0.0f, 0.0f)));
 
-    drawableObject = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(composite));
+
+    auto object1 = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(composite1));
+
+    auto composite2 = std::make_unique<CompositeTransformation>();
+    //composite2->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.5f, 1.0f)));
+    composite2->addTransformation(std::make_unique<Translation>(glm::vec3(-0.4f, 0.0f, 0.0f)));
+    composite2->addTransformation(std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(-45.0f)));
+
+
+    auto object2 = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(composite2));
+
+    scene = std::make_unique<Scene>();
+    scene->addObject(std::move(object1));
+    scene->addObject(std::move(object2));
+
 
 
 }
@@ -175,8 +191,7 @@ bool Application::initialize() {
 }
 
 Application::~Application() {
-    //drawable first, since it owns shaderPorgram and model
-    drawableObject.reset();
+    scene.reset();
     shaderProgram.reset();
     model.reset();
     if (window != nullptr) {
@@ -205,7 +220,7 @@ void Application::run() {
         );
 
         // == using made oop interfaces ==
-        drawableObject->draw();
+        scene->draw();
 
         // display result
         glfwSwapBuffers(window);

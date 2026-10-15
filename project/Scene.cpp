@@ -6,6 +6,8 @@
 
 #include "DrawableObject.h"
 
+Scene::~Scene() = default;
+
 void Scene::addObject(std::unique_ptr<DrawableObject> object) {
     objects.push_back(std::move(object));
 }

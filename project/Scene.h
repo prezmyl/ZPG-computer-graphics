@@ -15,6 +15,7 @@ private:
     std::vector<std::unique_ptr<DrawableObject>> objects;
 
 public:
+    ~Scene();
     void addObject(std::unique_ptr<DrawableObject> object);
     void draw() const;
 };

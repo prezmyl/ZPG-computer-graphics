@@ -6,6 +6,7 @@
 #define PROJECT_APPLICATION_H
 #include <memory>
 
+
 #include "Transformation.h"
 
 class DrawableObject;
@@ -13,13 +14,14 @@ class DrawableObject;
 struct GLFWwindow; // -> main includes app.h, but does not know GLFWwindow
 class Model;
 class ShaderProgram;
+class Scene;
 
 class Application {
 private:
     GLFWwindow *window = nullptr;
     std::unique_ptr<Model> model;
     std::unique_ptr<ShaderProgram> shaderProgram;
-    std::unique_ptr<DrawableObject> drawableObject;
+    std::unique_ptr<Scene> scene;
 
     void createResources();
 public:
