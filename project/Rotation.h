@@ -10,7 +10,7 @@
 class Rotation : public Transformation {
 private:
     glm::vec3 axis;
-    float angle;
+    float angle; //rads
 
 public:
     Rotation(glm::vec3 axis, float angle);
