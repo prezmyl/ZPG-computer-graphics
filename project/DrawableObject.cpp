@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <ranges>
 
-DrawableObject::DrawableObject(Model *model, ShaderProgram *shaderProgram, std::unique_ptr<Transformation> transformation) : model(model), shaderProgram(shaderProgram), transformation(std::move(transformation)) {}
+DrawableObject::DrawableObject(Model *model, ShaderProgram *shaderProgram, std::unique_ptr<Transformation> transformation) : transformation(std::move(transformation)), model(model), shaderProgram(shaderProgram) {}
 
 void DrawableObject::draw() const {
     shaderProgram->use();

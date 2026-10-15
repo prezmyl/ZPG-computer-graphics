@@ -16,6 +16,7 @@
 #include "Shader.h"
 #include "ShaderProgram.h"
 #include "Translation.h"
+#include "DrawableObject.h"
 
 //static - original callbacks
 static void error_callback(int error, const char* description)
@@ -75,6 +76,11 @@ void Application::createResources() {
     Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/basic.frag");
 
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
+
+
+    std::unique_ptr<Translation> move = std::make_unique<Translation>(Translation(glm::vec3(0.25f, 0.0f, 0.0f)));
+    drawableObject = std::make_unique<DrawableObject>(model, shaderProgram), std::move(move));
+
 
 }
 

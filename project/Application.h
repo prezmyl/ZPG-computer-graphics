@@ -6,6 +6,9 @@
 #define PROJECT_APPLICATION_H
 #include <memory>
 
+#include "Transformation.h"
+
+class DrawableObject;
 //forward declarations
 struct GLFWwindow; // -> main includes app.h, but does not know GLFWwindow
 class Model;
@@ -16,6 +19,7 @@ private:
     GLFWwindow *window = nullptr;
     std::unique_ptr<Model> model;
     std::unique_ptr<ShaderProgram> shaderProgram;
+    std::unique_ptr<DrawableObject> drawableObject;
 
     void createResources();
 public:
