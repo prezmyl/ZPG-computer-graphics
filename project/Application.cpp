@@ -22,7 +22,8 @@
 #include "Rotation.h"
 #include "Scale.h"
 #include "Scene.h"
-
+#include "Models/bushes.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 //static - original callbacks
 static void error_callback(int error, const char* description)
@@ -46,7 +47,7 @@ static void window_size_callback(GLFWwindow* window,
 
 
 void Application::createResources() {
-    const float points[] = {
+   /* const float points[] = {
 
         // 1. rectangle
         // left upper
@@ -74,9 +75,9 @@ void Application::createResources() {
         // left bottom
         -0.5f, -0.5f, 0.0f,
          1.0f,  1.0f, 0.0f
-    };
+    };*/
 
-    model = std::make_unique<Model>(points,3);
+    model = std::make_unique<Model>(bushes, static_cast<GLsizei>(sizeof(bushes) / (6 * sizeof(float))));
 
     Shader vertexShader(GL_VERTEX_SHADER,"shaders/normal.vert");
     Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/normal.frag");
@@ -84,7 +85,7 @@ void Application::createResources() {
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
 
-    auto composite1 = std::make_unique<CompositeTransformation>();
+  /*  auto composite1 = std::make_unique<CompositeTransformation>();
     //composite1->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.5f, 1.0f)));
     composite1->addTransformation(std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(45.0f)));
     composite1->addTransformation(std::make_unique<Translation>(glm::vec3(0.4f, 0.0f, 0.0f)));
@@ -102,7 +103,20 @@ void Application::createResources() {
 
     scene = std::make_unique<Scene>();
     scene->addObject(std::move(object1));
-    scene->addObject(std::move(object2));
+    scene->addObject(std::move(object2)); */
+
+    scene = std::make_unique<Scene>();
+
+    auto transform = std::make_unique<CompositeTransformation>();
+    transform->addTransformation(
+        std::make_unique<Scale>(glm::vec3(1.0f))
+    );
+
+    scene->addObject(std::make_unique<DrawableObject>(
+        model.get(),
+        shaderProgram.get(),
+        std::move(transform)
+    ));
 
 
 
@@ -161,7 +175,7 @@ bool Application::initialize() {
     // VSync
     glfwSwapInterval(1);
 
-
+    glEnable(GL_DEPTH_TEST); //depth test
     // Init GLAD
     if (!gladLoadGL((GLADloadfunc) glfwGetProcAddress))
     {
@@ -202,6 +216,22 @@ Application::~Application() {
 }
 
 void Application::run() {
+    glm::mat4 view = glm::lookAt(
+    glm::vec3(1.5f, 1.2f, 2.5f),  // cam position
+    glm::vec3(0.0f, 0.2f, 0.0f), // point we look at
+    glm::vec3(0.0f, 1.0f, 0.0f)  // direction up
+);
+
+    glm::mat4 projection = glm::perspective(
+        glm::radians(45.0f),
+        800.0f / 600.0f,
+        0.1f,
+        100.0f
+    );
+
+    shaderProgram->use();
+    shaderProgram->setMat4("viewMatrix", view);
+    shaderProgram->setMat4("projectionMatrix", projection);
     while (!glfwWindowShouldClose(window))
     {
         // background color

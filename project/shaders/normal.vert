@@ -6,6 +6,8 @@ layout (location = 1) in vec3 normal;
 out vec3 vertexColor;
 
 uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
 
 void main()
 {
@@ -13,5 +15,5 @@ void main()
     vertexColor = normal * 0.5 + 0.5;
 
     // Transform vertex into clip space
-    gl_Position = modelMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 }
