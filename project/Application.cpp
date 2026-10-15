@@ -12,11 +12,14 @@
 #include <cstdlib>
 
 #include "Application.h"
+
+#include "CompositeTransformation.h"
 #include "Model.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
 #include "Translation.h"
 #include "DrawableObject.h"
+#include "Scale.h"
 
 //static - original callbacks
 static void error_callback(int error, const char* description)
@@ -42,30 +45,30 @@ static void window_size_callback(GLFWwindow* window,
 void Application::createResources() {
     const float points[] = {
 
-        // 1. trojúhelník
-        // levý horní
+        // 1. rectangle
+        // left upper
         -0.5f,  0.5f, 0.0f,
          1.0f,  0.0f, 0.0f,
 
-        // pravý horní
+        // right upper
          0.5f,  0.5f, 0.0f,
          0.0f,  1.0f, 0.0f,
 
-        // pravý dolní
+        // right bottom
          0.5f, -0.5f, 0.0f,
          0.0f,  0.0f, 1.0f,
 
 
-        // 2. trojúhelník
-        // levý horní
+        // 2. rectangle
+        // left upper
         -0.5f,  0.5f, 0.0f,
          1.0f,  0.0f, 0.0f,
 
-        // pravý dolní
+        // right bottom
          0.5f, -0.5f, 0.0f,
          0.0f,  0.0f, 1.0f,
 
-        // levý dolní
+        // left bottom
         -0.5f, -0.5f, 0.0f,
          1.0f,  1.0f, 0.0f
     };
@@ -78,8 +81,10 @@ void Application::createResources() {
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
 
-    auto move = std::make_unique<Translation>(glm::vec3(0.25f, 0.0f, 0.0f));
-    drawableObject = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(move));
+    auto composite = std::make_unique<CompositeTransformation>();
+    composite->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.0f, 0.0f)));
+    composite->addTransformation(std::make_unique<Translation>(glm::vec3(0.35f, 0.0f, 0.0f)));
+    drawableObject = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(composite));
 
 
 }
