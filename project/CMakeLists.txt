@@ -17,6 +17,8 @@ add_executable(project
         Transformation.h
         Translation.cpp
         Translation.h
+        Rotation.cpp
+        Rotation.h
 )
 
 target_include_directories(project PRIVATE

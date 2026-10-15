@@ -73,8 +73,6 @@ class C_0008808924239730370349 {
 +initialize() : bool
 +run() : void
 __
--model : std::unique_ptr<Model>
--shaderProgram : std::unique_ptr<ShaderProgram>
 -window : GLFWwindow *
 }
 class "GLFWwindow" as C_0008434725962297335764
@@ -102,7 +100,6 @@ class C_0017401563024334194039 {
 ..
 +getMatrix() const : glm::mat4
 __
--translation : glm::vec3
 }
 C_0009272917675807370667 ..> C_0014899929896336503560
 C_0005429747195776422453 ..> C_0013243640185453418494
