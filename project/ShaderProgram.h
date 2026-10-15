@@ -6,6 +6,8 @@
 #define PROJECT_SHADERPROGRAM_H
 
 
+#include <glm/ext/matrix_float4x4.hpp>
+
 #include "Shader.h"
 #include "glad/gl.h"
 
@@ -27,6 +29,7 @@ public:
     ShaderProgram& operator=(const ShaderProgram&) = delete;
 
     void use() const;
+    void setMat4(const char* name, const glm::mat4& matrix) const; // transfer matrix to shader
 };
 
 

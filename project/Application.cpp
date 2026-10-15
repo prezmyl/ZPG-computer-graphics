@@ -189,6 +189,10 @@ void Application::run() {
 
         // using made oop interfaces
         shaderProgram->use();
+
+        glm::mat4 matrix(1.0f);
+        shaderProgram->setMat4("modelMatrix", matrix);
+
         model->draw();
 
         // display result

@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <glm/gtc/type_ptr.hpp>
 
 ShaderProgram::ShaderProgram(const Shader &vertexShader, const Shader &fragmentShader) {
     id = glCreateProgram();
@@ -47,4 +48,11 @@ ShaderProgram::~ShaderProgram() {
 
 void ShaderProgram::use() const{
     glUseProgram(id);
+}
+
+void ShaderProgram::setMat4(const char *name, const glm::mat4 &matrix) const {
+    GLint location = glGetUniformLocation(id, name);
+    const float* ptr = glm::value_ptr(matrix);
+    glUniformMatrix4fv(location, 1, GL_FALSE, ptr);
+
 }
