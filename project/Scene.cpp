@@ -5,6 +5,7 @@
 #include "Scene.h"
 
 #include "DrawableObject.h"
+#include <utility>
 
 Scene::~Scene() = default;
 
