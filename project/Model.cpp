@@ -52,10 +52,7 @@ Model::Model(const float *points, GLsizei vertexCount) : vertexCount(vertexCount
         this->VBO
     );
 
-    // Position:
-    //
-    // x y z
-    //
+    // Vertex attribute 0
     glVertexAttribPointer(
         0,                  // atribute index
         3,                  // x, y, z
@@ -66,10 +63,7 @@ Model::Model(const float *points, GLsizei vertexCount) : vertexCount(vertexCount
     );
 
 
-    // Color:
-    //
-    // r g b
-    //
+    // Vertex attribute 1
     glVertexAttribPointer(
         1,                         // atribute index
         3,                         // r, g, b

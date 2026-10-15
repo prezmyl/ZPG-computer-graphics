@@ -78,8 +78,8 @@ void Application::createResources() {
 
     model = std::make_unique<Model>(points,3);
 
-    Shader vertexShader(GL_VERTEX_SHADER,"shaders/basic.vert");
-    Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/basic.frag");
+    Shader vertexShader(GL_VERTEX_SHADER,"shaders/normal.vert");
+    Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/normal.frag");
 
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
