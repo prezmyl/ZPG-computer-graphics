@@ -15,6 +15,7 @@
 #include "Model.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
+#include "Translation.h"
 
 //static - original callbacks
 static void error_callback(int error, const char* description)
@@ -187,10 +188,12 @@ void Application::run() {
             GL_DEPTH_BUFFER_BIT
         );
 
-        // using made oop interfaces
+        // == using made oop interfaces ==
         shaderProgram->use();
 
-        glm::mat4 matrix(1.0f);
+        // transfer matrix to GPU using uniforms
+        Translation move(glm::vec3(0.25f, 0.0f, 0.0f));
+        glm::mat4 matrix = move.getMatrix();
         shaderProgram->setMat4("modelMatrix", matrix);
 
         model->draw();
