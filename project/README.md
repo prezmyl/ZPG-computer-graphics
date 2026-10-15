@@ -8,6 +8,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Samostatně prokázáno
 
+- DU02: správně vysvětlena asociativita a jednotková matice jako neutrální prvek; rozlišen parametr posunu od jeho matice a aplikace na vrchol.
+- DU02: u vnořeného Composite rozpoznáno, že stejné polymorfní rozhraní `getMatrix()` stačí i bez rozpoznávání konkrétního potomka; zvolen přístup `Rotation` dostává nový úhel zvenčí.
+
 - Rozdělení monolitického OpenGL programu podle odpovědností: režie aplikace, geometrie, shadery, shader program a vyšší koordinace vykreslování.
 - VAO/VBO jsou součástí geometrické reprezentace; `modelMatrix` naopak popisuje konkrétní instanci objektu.
 - Geometrie a shader program mohou být sdílené mezi více objekty, zatímco transformační stav je per-instance.
@@ -16,8 +19,10 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Pochopeno s vedením
 
-- DU02 (návrh): samostatně rozpoznána potřeba polymorfní kolekce transformací a skládání; konkrétní podoba Composite a rozhraní `getMatrix()` zatím diskutovány s vedením.
-- DU02 (návrh): samostatně zdůvodněno oddělení výpočtu transformační matice od jejího použití při vykreslování; rozpoznána potřeba nezávislého mutable transformačního stavu objektů.
+- DU02: vytvořeny konkrétní `Transformation`, `Translation`, `Rotation`, `Scale` a `CompositeTransformation`; podoba rozhraní, GLM API a algoritmus Composite však byly z velké části dodány s vedením.
+- DU02: samostatně zdůvodněno oddělení výpočtu transformační matice od jejího použití při vykreslování; rozpoznána potřeba nezávislého mutable transformačního stavu objektů.
+- DU02: s vedením opraveno chybné rozhraní první `Translation` (`mat4` a `getTranslation()`), osvojeny `glm::vec3`, jednotková `glm::mat4`, `getMatrix() const override`, radiány a přenos ownershipu přes `std::move`.
+- DU02: správné pořadí násobení v Composite bylo zvoleno mezi předloženými variantami a implementováno; první chybějící `return result;` odhalil asistent a student opravil.
 
 - Rozlišení „koordinátor rozhoduje co/kdy“ vs. „specializovaný objekt ví jak“.
 - Forward declaration pro `GLFWwindow*` a omezení závislostí hlaviček.
@@ -33,7 +38,8 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 ### Potřebuje upevnit
 
 - DU02: vztahy typový (IS-A), strukturální (HAS-A/USES-A) a ownership/lifetime, polymorfní vlastnictví prostřednictvím abstraktní třídy – vysvětleno s vedením, samostatné použití zatím neověřeno.
-- DU02: návrh `CompositeTransformation::getMatrix()`, pořadí matic, statické/dynamické transformace a finální ownership hierarchie – zatím nevyhodnoceno.
+- DU02: `CompositeTransformation::getMatrix()` už existuje a vrací matici, ale samostatné odvození algoritmu i jeho jednotkové/běhové testy jsou zatím nevyhodnocené.
+- DU02: reálná animace a aktualizace úhlu v čase, propojení s `DrawableObject`, `ShaderProgram`, `modelMatrix` v GLSL a finální ownership scény – zatím nevyhodnoceno.
 
 - Samostatné odvození stride a offsetů u jiného vertex layoutu než současného `position + color`.
 - Základní RAII lifecycle pro DU1 je funkční: GPU resources vznikají po vytvoření contextu a jsou explicitně zničeny před zničením window/contextu.
@@ -43,8 +49,8 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Další procvičení
 
-- DU02: samostatně navrhnout a otestovat algoritmus skládání matic a porovnat `T*R` proti `R*T`.
-- DU02: rozhodnout životní cyklus složených transformací a navrhnout aktualizaci dynamické rotace; následně teprve implementovat.
+- DU02: bez nápovědy vysvětlit a otestovat pořadí `T*R` proti `R*T` na konkrétním vrcholu, prázdný a vnořený Composite.
+- DU02: doplnit CPU testy transformací; propojit `DrawableObject`, `ShaderProgram` a `modelMatrix`; potom prakticky vyzkoušet změnu úhlu přes `Rotation::setAngle()` a lifetime nevlastnících odkazů.
 
 - U dalšího vertex layoutu samostatně určit počet hodnot, velikost v bajtech, stride a offsety.
 - U dalšího resource-owning typu samostatně odvodit ownership, konstrukční závislosti, copy/move politiku a pořadí destrukce.
@@ -72,13 +78,16 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - **Rozlišuj typ, vazbu a vlastnictví:** IS-A určuje substituovatelnost, HAS-A/USES-A spolupráci a ownership zánik; v DU02 byl princip vysvětlen na `DrawableObject` a `Transformation`, samostatné upevnění ještě čeká.
 - **Stejné parametry nejsou stejná instance:** dvě rotace o stejném úhlu mohou být nezávislé, sdílená mutable rotace přenáší změny mezi uživateli.
 
+- **Parametry jsou zdrojem pravdy, matice je odvozený výsledek:** u elementárních transformací DU02 jsou uloženy `vec3`/`float`, `getMatrix()` vypočítá `mat4`.
+- **Pořadí je součástí kontraktu skládání:** výsledek transformací závisí na pořadí členů; Composite používá jednotné polymorfní rozhraní pro část i celek.
+
 ## Aktuální architektonický stav
 
 Pro první domácí úkol je pracovní minimum:
 
 `main → Application → unique ownership Model + ShaderProgram; Shader je krátkodobý konstrukční prostředek`
 
-Pro DU01 byly `Scene`, `DrawableObject` a transformace záměrně odloženy. DU02 nyní přinesl důvod tyto odpovědnosti navrhovat; zatím jde o **teoretický návrh**, nikoli implementované vrstvy. Pracovní směr: `DrawableObject` používá model, shader program a transformaci; polymorfní `Transformation` poskytuje matici a `CompositeTransformation` ji skládá. Ownership zatím není definitivně uzavřen.
+DU02 má nyní **implementovanou samostatnou transformační hierarchii**: `Transformation` → `Translation`, `Rotation`, `Scale`, `CompositeTransformation`. Composite vlastní potomky přes `vector<unique_ptr<Transformation>>`, sestavuje matici v definovaném pořadí a podporuje vnořené kompozity. **Není zatím otestována běhovým testem ani propojena s vykreslováním.** `DrawableObject` a `Scene` jsou stále pracovní návrh; finální vztahy k modelům, shaderům a lifetime zůstávají otevřené.
 
 ## Oblasti
 
@@ -103,6 +112,7 @@ Obecně použitelné poznatky jsou v:
 Aktuálně:
 - `opengl-objekty-a-odpovednosti.md`
 - `generalizovatelne-programovaci-principy.md`
+- `transformace-a-composite.md`
 
 ## Learning checkpointy
 
@@ -118,6 +128,7 @@ Aktuálně:
 - `2026-10-11--raii-ownership-lifecycle-mezistav.md`
 - `2026-10-11--funkcni-oop-render-pipeline.md`
 - `2026-10-13--du02-navrh-transformaci-a-ownership.md` (teoretický návrh, bez implementace)
+- `2026-10-15--du02-transformace-a-composite-implementace.md` (kód vytvořen, integrace s vykreslováním a testy čekají)
 
 Checkpoint se v učitelském chatu spouští slovem:
 

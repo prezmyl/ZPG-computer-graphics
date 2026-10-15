@@ -207,3 +207,26 @@ Příklady z projektu:
 
 - redefinition GLAD symbolů vznikla kvůli přetrvávajícímu preprocesorovému makru v jednom translation unit;
 - `sizeof` na incomplete type uvnitř `unique_ptr` vznikl při implicitním generování speciální členské funkce v místě, kde byl pointee typ pouze forward-declared.
+
+
+## Parametry jako stav, matice jako odvozený výsledek (DU02)
+
+V `Translation` jsme nejprve váhali mezi uchováním hotové `mat4` a významového vektoru `vec3`. Pracovní volba je uchovávat **minimální parametry, které se mohou měnit**, a matici odvodit metodou `getMatrix()`.
+
+Obecná otázka: **jaká data jsou zdrojem pravdy a která lze reprodukovat výpočtem?** Vyhneme se nekonzistenci mezi parametry a zastaralou mezipamětí. U často opakovaného nákladného výpočtu může mít cache smysl, ale až s pravidlem její invalidace.
+
+## Kontrakt kompozice zahrnuje pořadí, nikoli jen typ výsledku
+
+V `CompositeTransformation` vrací každý potomek `glm::mat4`, ale to samo nestačí. Pro sloupcové vektory jsme určili, že pořadí vložení má odpovídat pořadí působení na vrchol: `result = child->getMatrix() * result`. Asociativita dovoluje přeskupit závorky, nikoli pořadí transformací.
+
+Přenositelný princip: **pokud skládání operací není komutativní, musí API jasně dokumentovat a testovat pořadí vyhodnocení.**
+
+## Abstrakce Composite – práce s částí i celkem jednotně
+
+`Transformation::getMatrix()` je společný kontrakt elementární transformace a kompozitu. Vnější Composite nepátrá po typu potomka; i vnořený Composite vrátí matici skrze stejnou virtuální metodu.
+
+Přenositelný princip: **společné rozhraní dává smysl, když klient potřebuje tutéž operaci nad prvkem i jeho skupinou**. V DU02 pro to vznikl konkrétní požadavek; není to důvod používat Composite všude.
+
+## Vlastnictví není oprávnění k přístupu (DU02)
+
+`CompositeTransformation` vlastní transformace pomocí `unique_ptr`; koordinující scéna by je mohla nevlastnicky nastavovat. To jsou samostatné vztahy: „kdo zničí“ a „kdo smí používat/měnit“. Při předání adresy nevlastníkovi musí být zajištěn lifecycle; `shared_ptr` naopak mění samotnou sémantiku vlastnictví.
