@@ -82,7 +82,7 @@ void Application::createResources() {
 
 
     auto composite = std::make_unique<CompositeTransformation>();
-    composite->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.0f, 0.0f)));
+    composite->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.5f, 1.0f)));
     composite->addTransformation(std::make_unique<Translation>(glm::vec3(0.35f, 0.0f, 0.0f)));
     drawableObject = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(composite));
 
