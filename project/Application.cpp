@@ -81,6 +81,7 @@ void Application::createResources() {
     scene->addObject(std::move(object1));
     scene->addObject(std::move(object2)); */
     // lambda func temporary for transforamtion
+    scene = std::make_unique<Scene>();
     auto addInstance = [&](Model* mesh, glm::vec3 position, float size) {
         auto transform = std::make_unique<CompositeTransformation>();
 
@@ -195,6 +196,7 @@ bool Application::initialize() {
 Application::~Application() {
     scene.reset();
     shaderProgram.reset();
+    treeModel.reset();
     model.reset();
     if (window != nullptr) {
         glfwDestroyWindow(window);
