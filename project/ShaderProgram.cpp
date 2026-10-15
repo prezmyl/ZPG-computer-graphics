@@ -52,6 +52,10 @@ void ShaderProgram::use() const{
 
 void ShaderProgram::setMat4(const char *name, const glm::mat4 &matrix) const {
     GLint location = glGetUniformLocation(id, name);
+    if (location == -1) {
+        std::cerr << "Uniform not found: " << name << '\n';
+        return;
+    }
     const float* ptr = glm::value_ptr(matrix);
     glUniformMatrix4fv(location, 1, GL_FALSE, ptr);
 

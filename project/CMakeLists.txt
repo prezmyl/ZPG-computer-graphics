@@ -23,6 +23,8 @@ add_executable(project
         Scale.h
         CompositeTransformation.cpp
         CompositeTransformation.h
+        DrawableObject.cpp
+        DrawableObject.h
 )
 
 target_include_directories(project PRIVATE

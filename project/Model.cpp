@@ -85,6 +85,18 @@ Model::~Model() {
     glDeleteBuffers(1, &VBO);
 }
 
+GLuint Model::getVBO() const {
+    return this->VBO;
+}
+
+GLuint Model::getVAO() const {
+    return this->VAO;
+}
+
+GLsizei Model::getVertexCount() const {
+    return this->vertexCount;
+}
+
 
 void Model::draw() const {
     glBindVertexArray(VAO);
