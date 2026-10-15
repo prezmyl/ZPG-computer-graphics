@@ -175,7 +175,7 @@ bool Application::initialize() {
     // VSync
     glfwSwapInterval(1);
 
-    glEnable(GL_DEPTH_TEST); //depth test
+
     // Init GLAD
     if (!gladLoadGL((GLADloadfunc) glfwGetProcAddress))
     {
@@ -187,7 +187,8 @@ bool Application::initialize() {
         return false;
     }
 
-
+    glEnable(GL_DEPTH_TEST); //depth test
+    
     // Callbacks
     glfwSetKeyCallback(
         window,
