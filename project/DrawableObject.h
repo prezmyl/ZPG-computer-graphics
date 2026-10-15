@@ -14,14 +14,12 @@
 
 class DrawableObject {
 private:
-    std::vector<std::unique_ptr<Transformation>> transformations;
+    std::unique_ptr<Transformation> transformation;
     Model* model;
     ShaderProgram* shaderProgram;
 
 public:
-    DrawableObject(Model* model, ShaderProgram* shaderProgram);
-   // ~DrawableObject();
-    void addTransformation(std::unique_ptr<Transformation> transformation);
+    DrawableObject(Model* model, ShaderProgram* shaderProgram, std::unique_ptr<Transformation> transformation);
     void draw() const;
 
 };

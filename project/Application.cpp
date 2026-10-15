@@ -189,14 +189,7 @@ void Application::run() {
         );
 
         // == using made oop interfaces ==
-        shaderProgram->use();
 
-        // transfer matrix to GPU using uniforms
-        Translation move(glm::vec3(0.25f, 0.0f, 0.0f));
-        glm::mat4 matrix = move.getMatrix();
-        shaderProgram->setMat4("modelMatrix", matrix);
-
-        model->draw();
 
         // display result
         glfwSwapBuffers(window);

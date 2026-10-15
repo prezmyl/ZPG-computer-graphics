@@ -7,15 +7,15 @@
 #include <algorithm>
 #include <ranges>
 
-DrawableObject::DrawableObject(Model *model, ShaderProgram *shaderProgram) : model(model), shaderProgram(shaderProgram) {}
+DrawableObject::DrawableObject(Model *model, ShaderProgram *shaderProgram, std::unique_ptr<Transformation> transformation) : model(model), shaderProgram(shaderProgram), transformation(std::move(transformation)) {}
 
+void DrawableObject::draw() const {
+    shaderProgram->use();
 
-void DrawableObject::addTransformation(std::unique_ptr<Transformation> transformation) {
-    transformations.push_back(std::move(transformation));
+    // transfer matrix to GPU using uniforms
+    //Translation move(glm::vec3(0.25f, 0.0f, 0.0f));
+    glm::mat4 matrix = transformation->getMatrix();
+    shaderProgram->setMat4("modelMatrix", matrix);
 
-}
-
-void DrawableObject::draw() const{
-    glBindVertexArray(model->getVAO());
-    glDrawArrays(GL_TRIANGLES, 0, model->getVertexCount());
+    model->draw();
 }

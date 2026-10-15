@@ -20,9 +20,6 @@ public:
     Model(const Model&) = delete;
     Model& operator=(const Model&) = delete;
 
-    GLuint getVBO() const;
-    GLuint getVAO() const;
-    GLsizei getVertexCount() const;
     void draw() const; 
 };
 
