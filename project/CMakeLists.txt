@@ -25,6 +25,8 @@ add_executable(project
         CompositeTransformation.h
         DrawableObject.cpp
         DrawableObject.h
+        Scene.cpp
+        Scene.h
 )
 
 target_include_directories(project PRIVATE
