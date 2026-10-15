@@ -13,7 +13,7 @@ private:
 
 public:
     Translation(glm::vec3 translation);
-    glm::mat4 getMatrix() const override; //override covers meaning of viirtual + compilator checks corret ovverriding
+    glm::mat4 getMatrix() const override; 
 
 };
 

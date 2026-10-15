@@ -3,7 +3,6 @@
 //
 
 #include "Translation.h"
-#include <glm/ext/matrix_transform.hpp>
 
 Translation::Translation(glm::vec3 translation) : translation(translation) {
 }

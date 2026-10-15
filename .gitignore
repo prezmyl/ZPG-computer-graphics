@@ -30,3 +30,6 @@ build/
 wilhem_git/
 
 #.pdf
+#uml
+.clang-uml
+

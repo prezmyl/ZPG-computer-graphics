@@ -1,0 +1,119 @@
+@startuml
+enum "khronos_boolean_enum_t" as C_0014616433944762754393
+enum C_0014616433944762754393 {
+KHRONOS_FALSE
+KHRONOS_TRUE
+KHRONOS_BOOLEAN_ENUM_FORCE_SIZE
+}
+class "Shader" as C_0014899929896336503560
+class C_0014899929896336503560 {
++Shader(GLenum shaderType, const char * shaderPath) : void
++Shader(const Shader &) = deleted : void
++~Shader() : void
+..
++operator=(const Shader &) = deleted : Shader &
+..
+-createShaderFromFile(GLenum shaderType, const char * shaderFile) : GLuint
++get_id() const : GLuint
+__
+-id : GLuint
+}
+class "ShaderProgram" as C_0009272917675807370667
+class C_0009272917675807370667 {
++ShaderProgram(const Shader & vertexShader, const Shader & fragmentShader) : void
++ShaderProgram(const ShaderProgram &) = deleted : void
++~ShaderProgram() : void
+..
++operator=(const ShaderProgram &) = deleted : ShaderProgram &
+..
++use() const : void
+__
+-id : GLuint
+}
+class "std::unique_ptr<Model>" as C_0005429747195776422453
+class C_0005429747195776422453 {
+__
+}
+class "std::unique_ptr<ShaderProgram>" as C_0002291808102789227029
+class C_0002291808102789227029 {
+__
+}
+class "_cl_context" as C_0005505353034777529899
+class C_0005505353034777529899 {
+__
+}
+class "__GLsync" as C_0005656535728663299924
+class C_0005656535728663299924 {
+__
+}
+class "_cl_event" as C_0016742860404031477541
+class C_0016742860404031477541 {
+__
+}
+class "Model" as C_0013243640185453418494
+class C_0013243640185453418494 {
++Model(const float * points, GLsizei vertexCount) : void
++Model(const Model &) = deleted : void
++~Model() : void
+..
++operator=(const Model &) = deleted : Model &
+..
++draw() const : void
+__
+-VAO : GLuint
+-VBO : GLuint
+-vertexCount : GLsizei
+}
+class "Application" as C_0008808924239730370349
+class C_0008808924239730370349 {
++Application() : void
++~Application() : void
+..
+-createResources() : void
++initialize() : bool
++run() : void
+__
+-model : std::unique_ptr<Model>
+-shaderProgram : std::unique_ptr<ShaderProgram>
+-window : GLFWwindow *
+}
+class "GLFWwindow" as C_0008434725962297335764
+class C_0008434725962297335764 {
+__
+}
+class "glm::mat<4,4,float,defaultp>" as C_0010357790864569679796
+class C_0010357790864569679796 {
+__
+}
+class "glm::vec<3,float,defaultp>" as C_0005836985577823843820
+class C_0005836985577823843820 {
+__
+}
+abstract "Transformation" as C_0011135272028013465752
+abstract C_0011135272028013465752 {
++~Transformation() constexpr = default : void
+..
+{abstract} +getMatrix() const = 0 : glm::mat4
+__
+}
+class "Translation" as C_0017401563024334194039
+class C_0017401563024334194039 {
++Translation(glm::vec3 translation) : void
+..
++getMatrix() const : glm::mat4
+__
+-translation : glm::vec3
+}
+C_0009272917675807370667 ..> C_0014899929896336503560
+C_0005429747195776422453 ..> C_0013243640185453418494
+C_0002291808102789227029 ..> C_0009272917675807370667
+C_0008808924239730370349 o-- C_0005429747195776422453 : -model
+C_0008808924239730370349 o-- C_0002291808102789227029 : -shaderProgram
+C_0011135272028013465752 ..> C_0010357790864569679796
+C_0017401563024334194039 ..> C_0010357790864569679796
+C_0017401563024334194039 o-- C_0005836985577823843820 : -translation
+C_0011135272028013465752 <|-- C_0017401563024334194039
+
+'Generated with clang-uml, version 0.6.3
+'LLVM version clang version 22.1.8 (Fedora 22.1.8-4.fc44)
+@enduml
