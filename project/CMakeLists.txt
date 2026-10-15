@@ -21,6 +21,8 @@ add_executable(project
         Rotation.h
         Scale.cpp
         Scale.h
+        CompositeTransformation.cpp
+        CompositeTransformation.h
 )
 
 target_include_directories(project PRIVATE
