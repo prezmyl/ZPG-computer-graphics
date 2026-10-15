@@ -78,8 +78,8 @@ void Application::createResources() {
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
 
-    std::unique_ptr<Translation> move = std::make_unique<Translation>(Translation(glm::vec3(0.25f, 0.0f, 0.0f)));
-    drawableObject = std::make_unique<DrawableObject>(model, shaderProgram), std::move(move));
+    auto move = std::make_unique<Translation>(glm::vec3(0.25f, 0.0f, 0.0f));
+    drawableObject = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(move));
 
 
 }
@@ -167,6 +167,8 @@ bool Application::initialize() {
 }
 
 Application::~Application() {
+    //drawable first, since it owns shaderPorgram and model
+    drawableObject.reset();
     shaderProgram.reset();
     model.reset();
     if (window != nullptr) {
@@ -195,7 +197,7 @@ void Application::run() {
         );
 
         // == using made oop interfaces ==
-
+        drawableObject->draw();
 
         // display result
         glfwSwapBuffers(window);
