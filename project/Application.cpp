@@ -26,6 +26,7 @@
 
 #include "Models/bushes.h"
 #include "Models/tree.h"
+#include <random>
 
 //static - original callbacks
 static void error_callback(int error, const char* description)
@@ -80,9 +81,11 @@ void Application::createResources() {
     scene = std::make_unique<Scene>();
     scene->addObject(std::move(object1));
     scene->addObject(std::move(object2)); */
-    // lambda func temporary for transforamtion
+    
     scene = std::make_unique<Scene>();
-    auto addInstance = [&](Model* mesh, glm::vec3 position, float size) {
+    //==== GENERETED AI =====
+    // lambda func temporary for transforamtion
+        auto addInstance = [&](Model* mesh, glm::vec3 position, float size) {
         auto transform = std::make_unique<CompositeTransformation>();
 
         transform->addTransformation(
@@ -100,11 +103,29 @@ void Application::createResources() {
         ));
     };
 
-    addInstance(treeModel.get(), {-1.0f, 0.0f, 0.0f}, 1.0f);
-    addInstance(treeModel.get(), { 1.0f, 0.0f, 0.0f}, 0.8f);
+    std::mt19937 rng(42);  // pevný seed pro opakovatelnou scénu
 
-    addInstance(model.get(), {-0.5f, 0.0f, 1.0f}, 3.0f);
-    addInstance(model.get(), { 0.5f, 0.0f, 1.0f}, 2.5f);
+    std::uniform_real_distribution<float> pos(-3.5f, 3.5f);
+    std::uniform_real_distribution<float> treeSize(0.20f, 0.35f);
+    std::uniform_real_distribution<float> bushSize(1.0f, 2.0f);
+
+    // Trees
+    for (int i = 0; i < 20; ++i) {
+        addInstance(
+            treeModel.get(),
+            glm::vec3(pos(rng), 0.0f, pos(rng)),
+            treeSize(rng)
+        );
+    }
+
+    // Bushes
+    for (int i = 0; i < 30; ++i) {
+        addInstance(
+            model.get(),
+            glm::vec3(pos(rng), 0.0f, pos(rng)),
+            bushSize(rng)
+        );
+    }
 
 
 
@@ -207,10 +228,10 @@ Application::~Application() {
 
 void Application::run() {
     glm::mat4 view = glm::lookAt(
-    glm::vec3(0.0f, 2.5f, 7.0f),  // camera
-    glm::vec3(0.0f, 0.5f, 0.0f),  // target
-    glm::vec3(0.0f, 1.0f, 0.0f)   // up
-    );
+    glm::vec3(0.0f, 4.0f, 12.0f),
+    glm::vec3(0.0f, 0.5f, 0.0f),
+    glm::vec3(0.0f, 1.0f, 0.0f)
+);
 
     glm::mat4 projection = glm::perspective(
         glm::radians(45.0f),
