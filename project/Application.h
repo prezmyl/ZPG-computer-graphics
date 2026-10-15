@@ -20,6 +20,7 @@ class Application {
 private:
     GLFWwindow *window = nullptr;
     std::unique_ptr<Model> model;
+    std::unique_ptr<Model> treeModel;
     std::unique_ptr<ShaderProgram> shaderProgram;
     std::unique_ptr<Scene> scene;
 

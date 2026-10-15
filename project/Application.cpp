@@ -22,8 +22,10 @@
 #include "Rotation.h"
 #include "Scale.h"
 #include "Scene.h"
-#include "Models/bushes.h"
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "Models/bushes.h"
+#include "Models/tree.h"
 
 //static - original callbacks
 static void error_callback(int error, const char* description)
@@ -47,37 +49,9 @@ static void window_size_callback(GLFWwindow* window,
 
 
 void Application::createResources() {
-   /* const float points[] = {
-
-        // 1. rectangle
-        // left upper
-        -0.5f,  0.5f, 0.0f,
-         1.0f,  0.0f, 0.0f,
-
-        // right upper
-         0.5f,  0.5f, 0.0f,
-         0.0f,  1.0f, 0.0f,
-
-        // right bottom
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.0f, 1.0f,
-
-
-        // 2. rectangle
-        // left upper
-        -0.5f,  0.5f, 0.0f,
-         1.0f,  0.0f, 0.0f,
-
-        // right bottom
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.0f, 1.0f,
-
-        // left bottom
-        -0.5f, -0.5f, 0.0f,
-         1.0f,  1.0f, 0.0f
-    };*/
 
     model = std::make_unique<Model>(bushes, static_cast<GLsizei>(sizeof(bushes) / (6 * sizeof(float))));
+    treeModel = std::make_unique<Model>(tree, static_cast<GLsizei>(sizeof(tree) / (6 * sizeof(float))));
 
     Shader vertexShader(GL_VERTEX_SHADER,"shaders/normal.vert");
     Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/normal.frag");
@@ -85,7 +59,9 @@ void Application::createResources() {
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
 
-  /*  auto composite1 = std::make_unique<CompositeTransformation>();
+
+  /*  task 4
+   *  auto composite1 = std::make_unique<CompositeTransformation>();
     //composite1->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.5f, 1.0f)));
     composite1->addTransformation(std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(45.0f)));
     composite1->addTransformation(std::make_unique<Translation>(glm::vec3(0.4f, 0.0f, 0.0f)));
@@ -104,19 +80,30 @@ void Application::createResources() {
     scene = std::make_unique<Scene>();
     scene->addObject(std::move(object1));
     scene->addObject(std::move(object2)); */
+    // lambda func temporary for transforamtion
+    auto addInstance = [&](Model* mesh, glm::vec3 position, float size) {
+        auto transform = std::make_unique<CompositeTransformation>();
 
-    scene = std::make_unique<Scene>();
+        transform->addTransformation(
+            std::make_unique<Scale>(glm::vec3(size))
+        );
 
-    auto transform = std::make_unique<CompositeTransformation>();
-    transform->addTransformation(
-        std::make_unique<Scale>(glm::vec3(1.0f))
-    );
+        transform->addTransformation(
+            std::make_unique<Translation>(position)
+        );
 
-    scene->addObject(std::make_unique<DrawableObject>(
-        model.get(),
-        shaderProgram.get(),
-        std::move(transform)
-    ));
+        scene->addObject(std::make_unique<DrawableObject>(
+            mesh,
+            shaderProgram.get(),
+            std::move(transform)
+        ));
+    };
+
+    addInstance(treeModel.get(), {-1.0f, 0.0f, 0.0f}, 1.0f);
+    addInstance(treeModel.get(), { 1.0f, 0.0f, 0.0f}, 0.8f);
+
+    addInstance(model.get(), {-0.5f, 0.0f, 1.0f}, 3.0f);
+    addInstance(model.get(), { 0.5f, 0.0f, 1.0f}, 2.5f);
 
 
 
@@ -188,7 +175,7 @@ bool Application::initialize() {
     }
 
     glEnable(GL_DEPTH_TEST); //depth test
-    
+
     // Callbacks
     glfwSetKeyCallback(
         window,
@@ -218,10 +205,10 @@ Application::~Application() {
 
 void Application::run() {
     glm::mat4 view = glm::lookAt(
-    glm::vec3(1.5f, 1.2f, 2.5f),  // cam position
-    glm::vec3(0.0f, 0.2f, 0.0f), // point we look at
-    glm::vec3(0.0f, 1.0f, 0.0f)  // direction up
-);
+    glm::vec3(0.0f, 2.5f, 7.0f),  // camera
+    glm::vec3(0.0f, 0.5f, 0.0f),  // target
+    glm::vec3(0.0f, 1.0f, 0.0f)   // up
+    );
 
     glm::mat4 projection = glm::perspective(
         glm::radians(45.0f),
