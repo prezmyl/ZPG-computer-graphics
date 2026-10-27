@@ -288,7 +288,7 @@ void Application::addScene(std::unique_ptr<Scene> scene) {
 }
 
 void Application::setActiveScene(std::size_t idx) {
-    if (activeSceneIdx < scenes.size()) {
+    if (idx < scenes.size()) {
         activeSceneIdx = idx;
     }
 }
