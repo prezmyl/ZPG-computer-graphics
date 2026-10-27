@@ -60,33 +60,10 @@ void Application::createResources() {
 
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
-
-
-  /*  task 4
-   *  auto composite1 = std::make_unique<CompositeTransformation>();
-    //composite1->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.5f, 1.0f)));
-    composite1->addTransformation(std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(45.0f)));
-    composite1->addTransformation(std::make_unique<Translation>(glm::vec3(0.4f, 0.0f, 0.0f)));
-
-
-    auto object1 = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(composite1));
-
-    auto composite2 = std::make_unique<CompositeTransformation>();
-    //composite2->addTransformation(std::make_unique<Scale>(glm::vec3(0.5f, 0.5f, 1.0f)));
-    composite2->addTransformation(std::make_unique<Translation>(glm::vec3(-0.4f, 0.0f, 0.0f)));
-    composite2->addTransformation(std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(-45.0f)));
-
-
-    auto object2 = std::make_unique<DrawableObject>(model.get(), shaderProgram.get(), std::move(composite2));
-
-    scene = std::make_unique<Scene>();
-    scene->addObject(std::move(object1));
-    scene->addObject(std::move(object2)); */
-
     scene = std::make_unique<Scene>();
     //==== GENERETED AI =====
     // lambda func temporary for transforamtion
-        auto addInstance = [&](Model* mesh, glm::vec3 position, float size, bool animate = false) {
+    auto addInstance = [&](Model* mesh, glm::vec3 position, float size, bool animate = false) {
         auto transform = std::make_unique<CompositeTransformation>();
 
         transform->addTransformation(
@@ -96,7 +73,6 @@ void Application::createResources() {
 
             auto rotation = std::make_unique<Rotation>(glm::vec3(0.0f, 1.0f, 0.0f), 0.0f);
             auto animation = std::make_unique<RotationAnimation>(rotation.get(), 2.0f); //same rotation
-            //animatedRotation = rotation.get();
             scene->addAnimation(std::move(animation)); //this is the use of the same rotation for animations colection
             transform->addTransformation(std::move(rotation)); //same rotation
 
@@ -105,9 +81,7 @@ void Application::createResources() {
         transform->addTransformation(
             std::make_unique<Translation>(position)
         );
-
-
-
+        
         scene->addObject(std::make_unique<DrawableObject>(
             mesh,
             shaderProgram.get(),
