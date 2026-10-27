@@ -7,7 +7,7 @@
 
 class Animation {
 public:
-    virtual void update(float time) const = 0;
+    virtual void update(float time) = 0;
     virtual ~Animation() = default;
 };
 

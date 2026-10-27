@@ -7,6 +7,6 @@
 RotationAnimation::RotationAnimation(Rotation *rotation, float angularSpeed) : rotation(rotation), angularSpeed(angularSpeed){
 }
 
-void RotationAnimation::update(float time) const {
+void RotationAnimation::update(float time) {
     rotation->setAngle(angularSpeed * time);
 }

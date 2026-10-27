@@ -15,7 +15,7 @@ private:
 
 public:
     RotationAnimation(Rotation* rotation, float angularSpeed);
-    void update(float time) const override;
+    void update(float time) override;
 };
 
 

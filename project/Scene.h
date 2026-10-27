@@ -8,16 +8,20 @@
 #include <vector>
 
 
+class Animation;
 class DrawableObject;
 
 class Scene {
 private:
     std::vector<std::unique_ptr<DrawableObject>> objects;
+    std::vector<std::unique_ptr<Animation>> animations;
 
 public:
     ~Scene();
     void addObject(std::unique_ptr<DrawableObject> object);
+    void addAnimation(std::unique_ptr<Animation> animation);
     void draw() const;
+    void update(float time);
 };
 
 
