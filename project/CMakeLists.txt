@@ -27,6 +27,9 @@ add_executable(project
         DrawableObject.h
         Scene.cpp
         Scene.h
+        Animation.h
+        RotationAnimation.cpp
+        RotationAnimation.h
 )
 
 target_include_directories(project PRIVATE
