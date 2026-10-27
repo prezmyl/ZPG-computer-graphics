@@ -81,7 +81,7 @@ void Application::createResources() {
     scene = std::make_unique<Scene>();
     scene->addObject(std::move(object1));
     scene->addObject(std::move(object2)); */
-    
+
     scene = std::make_unique<Scene>();
     //==== GENERETED AI =====
     // lambda func temporary for transforamtion
@@ -228,8 +228,8 @@ Application::~Application() {
 
 void Application::run() {
     glm::mat4 view = glm::lookAt(
-    glm::vec3(0.0f, 4.0f, 12.0f),
-    glm::vec3(0.0f, 0.5f, 0.0f),
+    glm::vec3(5.0f, 1.0f, 12.0f),
+    glm::vec3(0.0f, 0.0f, 0.0f),
     glm::vec3(0.0f, 1.0f, 0.0f)
 );
 
