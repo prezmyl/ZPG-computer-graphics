@@ -85,20 +85,26 @@ void Application::createResources() {
     scene = std::make_unique<Scene>();
     //==== GENERETED AI =====
     // lambda func temporary for transforamtion
-        auto addInstance = [&](Model* mesh, glm::vec3 position, float size) {
+        auto addInstance = [&](Model* mesh, glm::vec3 position, float size, bool animate = false) {
         auto transform = std::make_unique<CompositeTransformation>();
 
         transform->addTransformation(
             std::make_unique<Scale>(glm::vec3(size))
         );
+        if (animate) {
+
+            auto rotation = std::make_unique<Rotation>(glm::vec3(0.0f, 1.0f, 0.0f), 0.0f);
+
+            animatedRotation = rotation.get();
+            transform->addTransformation(std::move(rotation));
+
+        }
 
         transform->addTransformation(
             std::make_unique<Translation>(position)
         );
 
-        transform->addTransformation(
-            std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(45.0f))
-        );
+
 
         scene->addObject(std::make_unique<DrawableObject>(
             mesh,
@@ -118,7 +124,8 @@ void Application::createResources() {
         addInstance(
             treeModel.get(),
             glm::vec3(pos(rng), 0.0f, pos(rng)),
-            treeSize(rng)
+            treeSize(rng),
+            i == 0
         );
     }
 
@@ -263,7 +270,11 @@ void Application::run() {
             GL_COLOR_BUFFER_BIT |
             GL_DEPTH_BUFFER_BIT
         );
-        animatedRotation->setAngle(static_cast<float>(glfwGetTime()));
+        if (animatedRotation) {
+            animatedRotation->setAngle(
+                static_cast<float>(glfwGetTime())
+            );
+        }
 
         // == using made oop interfaces ==
         scene->draw();
