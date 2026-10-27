@@ -96,6 +96,10 @@ void Application::createResources() {
             std::make_unique<Translation>(position)
         );
 
+        transform->addTransformation(
+            std::make_unique<Rotation>(glm::vec3(0.0f, 0.0f, 1.0f), glm::radians(45.0f))
+        );
+
         scene->addObject(std::make_unique<DrawableObject>(
             mesh,
             shaderProgram.get(),
@@ -259,6 +263,7 @@ void Application::run() {
             GL_COLOR_BUFFER_BIT |
             GL_DEPTH_BUFFER_BIT
         );
+        animatedRotation->setAngle(static_cast<float>(glfwGetTime()));
 
         // == using made oop interfaces ==
         scene->draw();

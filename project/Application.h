@@ -9,6 +9,7 @@
 
 #include "Transformation.h"
 
+class Rotation;
 class DrawableObject;
 //forward declarations
 struct GLFWwindow; // -> main includes app.h, but does not know GLFWwindow
@@ -23,6 +24,7 @@ private:
     std::unique_ptr<Model> treeModel;
     std::unique_ptr<ShaderProgram> shaderProgram;
     std::unique_ptr<Scene> scene;
+    Rotation* animatedRotation = nullptr;
 
     void createResources();
 public:
