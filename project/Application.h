@@ -24,7 +24,7 @@ private:
     std::unique_ptr<Model> treeModel;
     std::unique_ptr<ShaderProgram> shaderProgram;
     std::unique_ptr<Scene> scene;
-    Rotation* animatedRotation = nullptr;
+    //Rotation* animatedRotation = nullptr;
 
     void createResources();
 public:

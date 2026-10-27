@@ -22,6 +22,7 @@
 #include "Rotation.h"
 #include "Scale.h"
 #include "Scene.h"
+#include "RotationAnimation.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Models/bushes.h"
@@ -94,9 +95,10 @@ void Application::createResources() {
         if (animate) {
 
             auto rotation = std::make_unique<Rotation>(glm::vec3(0.0f, 1.0f, 0.0f), 0.0f);
-
-            animatedRotation = rotation.get();
-            transform->addTransformation(std::move(rotation));
+            auto animation = std::make_unique<RotationAnimation>(rotation.get(), 2.0f); //same rotation
+            //animatedRotation = rotation.get();
+            scene->addAnimation(std::move(animation)); //this is the use of the same rotation for animations colection
+            transform->addTransformation(std::move(rotation)); //same rotation
 
         }
 
@@ -270,13 +272,9 @@ void Application::run() {
             GL_COLOR_BUFFER_BIT |
             GL_DEPTH_BUFFER_BIT
         );
-        if (animatedRotation) {
-            animatedRotation->setAngle(
-                static_cast<float>(glfwGetTime())
-            );
-        }
 
         // == using made oop interfaces ==
+        scene->update(glfwGetTime()); //added
         scene->draw();
 
         // display result
