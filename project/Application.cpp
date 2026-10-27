@@ -27,6 +27,9 @@
 
 #include "Models/bushes.h"
 #include "Models/tree.h"
+
+#include "Models/sphere.h"
+
 #include <random>
 
 //static - original callbacks
@@ -53,6 +56,10 @@ static void key_callback(GLFWwindow* window, int key,
     if (app && key == GLFW_KEY_2 && action == GLFW_PRESS) {
         app->setActiveScene(1);
     }
+
+    if (app && key == GLFW_KEY_3 && action == GLFW_PRESS) {
+        app->setActiveScene(2);
+    }
 }
 
 static void window_size_callback(GLFWwindow* window,
@@ -67,6 +74,7 @@ void Application::createResources() {
 
     model = std::make_unique<Model>(bushes, static_cast<GLsizei>(sizeof(bushes) / (6 * sizeof(float))));
     treeModel = std::make_unique<Model>(tree, static_cast<GLsizei>(sizeof(tree) / (6 * sizeof(float))));
+    sphereModel = std::make_unique<Model>(sphere, static_cast<GLsizei>(sizeof(sphere) / (6 * sizeof(float))));
 
     Shader vertexShader(GL_VERTEX_SHADER,"shaders/normal.vert");
     Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/normal.frag");
@@ -133,6 +141,128 @@ void Application::createResources() {
 
     auto sceneLogin = std::make_unique<Scene>();
     addScene(std::move(sceneLogin));
+
+
+    auto sceneSolarSystem = std::make_unique<Scene>();
+
+    // ===== SUN =====
+    auto sunTransform = std::make_unique<CompositeTransformation>();
+
+    sunTransform->addTransformation(
+        std::make_unique<Scale>(glm::vec3(0.65f))
+    );
+
+    sceneSolarSystem->addObject(std::make_unique<DrawableObject>(
+        sphereModel.get(),
+        shaderProgram.get(),
+        std::move(sunTransform)
+    ));
+
+    // ===== EARTH =====
+    auto earthTransform = std::make_unique<CompositeTransformation>();
+
+    // 1. Size of Earth
+    earthTransform->addTransformation(
+        std::make_unique<Scale>(glm::vec3(0.25f))
+    );
+
+    // 2. Rotation around its own axis
+    auto earthSpin = std::make_unique<Rotation>(
+        glm::vec3(0.0f, 1.0f, 0.0f), 0.0f
+    );
+
+    sceneSolarSystem->addAnimation(
+        std::make_unique<RotationAnimation>(earthSpin.get(), 2.0f)
+    );
+
+    earthTransform->addTransformation(std::move(earthSpin));
+
+    // 3. Distance from Sun
+    earthTransform->addTransformation(
+        std::make_unique<Translation>(glm::vec3(2.5f, 0.0f, 0.0f))
+    );
+
+    // 4. Revolution around Sun
+    auto earthOrbit = std::make_unique<Rotation>(
+        glm::vec3(0.0f, 1.0f, 0.0f), 0.0f
+    );
+
+    sceneSolarSystem->addAnimation(
+        std::make_unique<RotationAnimation>(earthOrbit.get(), 0.5f)
+    );
+
+    earthTransform->addTransformation(std::move(earthOrbit));
+
+    // Register Earth
+    sceneSolarSystem->addObject(std::make_unique<DrawableObject>(
+        sphereModel.get(),
+        shaderProgram.get(),
+        std::move(earthTransform)
+    ));
+
+
+    // ===== MOON =====
+    auto moonTransform = std::make_unique<CompositeTransformation>();
+
+    // 1. Moon size
+    moonTransform->addTransformation(
+        std::make_unique<Scale>(glm::vec3(0.10f))
+    );
+
+    // 2. Distance from Earth
+    moonTransform->addTransformation(
+        std::make_unique<Translation>(
+            glm::vec3(0.55f, 0.0f, 0.0f)
+        )
+    );
+
+    // 3. Moon revolves around Earth
+    auto moonOrbit = std::make_unique<Rotation>(
+        glm::vec3(0.0f, 1.0f, 0.0f), 0.0f
+    );
+
+    sceneSolarSystem->addAnimation(
+        std::make_unique<RotationAnimation>(
+            moonOrbit.get(), 2.0f
+        )
+    );
+
+    moonTransform->addTransformation(std::move(moonOrbit));
+
+    // 4. Earth distance from Sun
+    moonTransform->addTransformation(
+        std::make_unique<Translation>(
+            glm::vec3(2.5f, 0.0f, 0.0f)
+        )
+    );
+
+    // 5. Moon follows Earth's orbit around Sun
+    auto earthOrbitForMoon = std::make_unique<Rotation>(
+        glm::vec3(0.0f, 1.0f, 0.0f), 0.0f
+    );
+
+    sceneSolarSystem->addAnimation(
+        std::make_unique<RotationAnimation>(
+            earthOrbitForMoon.get(), 0.5f
+        )
+    );
+
+    moonTransform->addTransformation(std::move(earthOrbitForMoon));
+
+    // Register Moon
+    sceneSolarSystem->addObject(
+        std::make_unique<DrawableObject>(
+            sphereModel.get(),
+            shaderProgram.get(),
+            std::move(moonTransform)
+        )
+    );
+
+
+    // Transfer ownership of completed scene
+    addScene(std::move(sceneSolarSystem));
+
+
 
 
 }
@@ -227,6 +357,7 @@ Application::~Application() {
     shaderProgram.reset();
     treeModel.reset();
     model.reset();
+    sphereModel.reset();
     if (window != nullptr) {
         glfwDestroyWindow(window);
         window = nullptr;
