@@ -8,6 +8,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Samostatně prokázáno
 
+- **DU02 (27. 10. – dynamická transformace):** student vlastními slovy správně popsal ownership `Scene → DrawableObject → Transformation/Composite → Rotation`, rozlišil použití sdílených `Model*/ShaderProgram*` a navrhl nevlastnící přístup nebo alternativu getterů.
+- **DU02 (27. 10.):** bez podání hotového řešení zrekonstruoval tok `Scene::draw → DrawableObject::draw → Transformation::getMatrix → ShaderProgram::setMat4 → Model::draw/glDrawArrays` a správně odvodil, proč po `setAngle` není nutný nový `setTransformation`.
+
 - DU02: správně vysvětlena asociativita a jednotková matice jako neutrální prvek; rozlišen parametr posunu od jeho matice a aplikace na vrchol.
 - DU02: u vnořeného Composite rozpoznáno, že stejné polymorfní rozhraní `getMatrix()` stačí i bez rozpoznávání konkrétního potomka; zvolen přístup `Rotation` dostává nový úhel zvenčí.
 
@@ -18,6 +21,8 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - Pro DU1 bylo vědomě rozhodnuto nezavádět `Scene` předčasně.
 
 ### Pochopeno s vedením
+
+- **DU02 (27. 10. – první animace):** rozlišení jednorázového `createResources()` od aktualizace v `run()`; použití nevlastnícího `Rotation*` získaného přes `.get()` před `std::move()`; oprava původního `nullptr` a změna pořadí matic na `T * R * S` (Scale → Rotation → Translation, osa Y). Konkrétní opravy poskytl asistent, student je integroval a funkčnost potvrdil.
 
 - DU02 (15. 10.): zprovozněno předání `modelMatrix` do vertex shaderu přes `ShaderProgram::setMat4()` a nové `DrawableObject::draw()`. Implementace vznikala po vysvětlení jednotlivých OpenGL funkcí a po nápovědách k rozdělení odpovědností.
 - DU02: v první verzi `DrawableObject` student duplikoval Composite kolekcí transformací a `Model` přímým OpenGL draw; s vedením opraveno na jedinou vlastněnou `Transformation` a volání `Model::draw()`.
@@ -44,7 +49,7 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - DU02: vztahy typový (IS-A), strukturální (HAS-A/USES-A) a ownership/lifetime, polymorfní vlastnictví prostřednictvím abstraktní třídy – vysvětleno s vedením, samostatné použití zatím neověřeno.
 - DU02: `CompositeTransformation::getMatrix()` už existuje a vrací matici, ale samostatné odvození algoritmu i jeho jednotkové/běhové testy jsou zatím nevyhodnocené.
 - DU02: propojení `DrawableObject` → `ShaderProgram` → `modelMatrix` už student vyzkoušel funkčně; samostatná obhajoba uniform API, lifecycle a ownershipu je stále k upevnění.
-- DU02: animace a aktualizace úhlu v čase, Composite v renderu, dvě nezávislé instance se sdíleným modelem a finální ownership scény – zatím nevyhodnoceno.
+- DU02: funkční jedna animovaná rotace v render loop a Composite použitý ve více instancích lesa; **k upevnění:** samostatný návrh aktualizace více objektů, životnost nevlastnících odkazů při změně scény a samostatné odvození správného pořadí matic.
 - DU02: důvod destrukce `DrawableObject` před `Model`/`ShaderProgram` – kód má správné pořadí, ale komentář mylně uvádí, že `DrawableObject` oba objekty vlastní; tento mentální model je potřeba ověřit a opravit.
 
 - Samostatné odvození stride a offsetů u jiného vertex layoutu než současného `position + color`.
@@ -56,16 +61,20 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 ### Další procvičení
 
 - DU02: bez nápovědy vysvětlit a otestovat pořadí `T*R` proti `R*T` na konkrétním vrcholu, prázdný a vnořený Composite.
-- DU02: doplnit CPU testy transformací a Composite; vyzkoušet `CompositeTransformation` v `DrawableObject`, více instancí a `Rotation::setAngle()`; ověřit lifetime nevlastnících odkazů.
+- DU02: doplnit CPU testy transformací a Composite (včetně vnoření), samostatně navrhnout aktualizaci více rotací a vyzkoušet změnu scény při existujícím nevlastnícím `Rotation*`.
 - DU02: bez nápovědy vysvětlit `.get()` vs. `std::move()`, uniform location vs. hodnotu a správnou příčinu pořadí destrukce.
 - Opravit deployment GLSL v CMake, aby změny shaderu nemusely vyžadovat ruční Reload CMake.
 
 - U dalšího vertex layoutu samostatně určit počet hodnot, velikost v bajtech, stride a offsety.
 - U dalšího resource-owning typu samostatně odvodit ownership, konstrukční závislosti, copy/move politiku a pořadí destrukce.
 - Později nahradit `exit(EXIT_FAILURE)` propagací chyby kompatibilní s RAII.
-- Až vznikne více objektů, znovu posoudit potřebu `DrawableObject` a `Scene` podle skutečných odpovědností.
+- Před rozšířením na více scén posoudit, kam patří `update()` a časová logika; současná `Scene` zná jen `addObject()` a `draw()`.
 
 ## Generalizovatelné programovací a návrhové principy
+
+- **Odděl změnu stavu od výpočtu odvozeného výsledku a jeho použití:** úhel `Rotation` se mění v čase, `getMatrix()` jej při kreslení převádí na matici a `DrawableObject` ji předává do GPU; není nutná duplicita uložené matice či nový `setTransformation()`.
+- **Vlastník a pozorovatel mohou být různé objekty:** `unique_ptr` řídí zánik, raw pointer umožní přístup; po přesunu `unique_ptr` pointee zůstává, po zániku vlastníka však pozorovatel nesmí být použit.
+- **Rozlišuj lokální rotaci a oběžný pohyb:** u sloupcových vektorů `T * R * S` značí jiný pohyb než `R * T * S`; pořadí skládání vyjadřuje požadovanou sémantiku, ne jen technický detail.
 
 - **Životnost informace určuje místo uložení:** co musí přežít jedno volání a tvoří stav objektu, patří typicky do členské proměnné; krátkodobé pomocné údaje patří do lokálních proměnných; vstup použitý jen pro jednu operaci nemusí objekt uchovávat.
 - **Koordinátor rozhoduje co a kdy, specializovaný objekt zná jak:** např. vyšší vrstva rozhodne, že se model vykreslí nebo shader použije, ale `Model` a `ShaderProgram` znají konkrétní OpenGL mechanismus.
@@ -93,13 +102,17 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ## Aktuální architektonický stav
 
-Pro první domácí úkol je pracovní minimum:
+**DU02 – les, Composite a první dynamická rotace (ověřeno 2026-10-27, code commit `da67ac4`):**
 
-`main → Application → unique ownership Model + ShaderProgram; Shader je krátkodobý konstrukční prostředek`
+- `main → Application`; `Application` vytváří/vlastní `Scene`, `Model` pro strom a keř a `ShaderProgram`. Krátkodobé `Shader` slouží k vytvoření programu.
+- `Scene` vlastní `vector<unique_ptr<DrawableObject>>`. Každý `DrawableObject` vlastní `unique_ptr<Transformation>` (zde převážně `CompositeTransformation`) a nevlastnicky používá `Model*` a `ShaderProgram*`.
+- `CompositeTransformation` vlastní jednotlivé `Translation`, `Rotation`, `Scale` a skládá matice podle pořadí vložení; v lese je využit pro individuální transformace více instancí sdílených modelů.
+- `Application` má **dočasně pro test** nevlastnící `Rotation* animatedRotation` k prvnímu stromu. V render loop mění úhel `setAngle(glfwGetTime())`; `DrawableObject::draw()` vyžádá aktuální `getMatrix()`, odešle `modelMatrix` do GLSL a vykreslí model. Vykreslenou funkčnost student potvrdil, nikoliv nezávislý build asistenta.
+- Pro lokální rotaci stromu je pořadí Scale → Rotation(Y) → Translation, tedy `M = T * R * S`.
+- Shaderové experimenty ze cvičení zůstávají aktivní: `gl_VertexID` rozděluje strom a fragment shader škáluje barvu podle `abs(normal.y)`. Nejde o plnohodnotný osvětlovací model.
+- **Ještě chybí:** obecný `Scene::update()` a přepínání scén, rotující model loginu, sluneční soustava (Slunce–Země–Měsíc), cílové více-programové osvětlení pro DU03 a kamera s dynamickým aspect ratio.
 
-DU02 má nyní **implementovanou transformační hierarchii**: `Transformation` → `Translation`, `Rotation`, `Scale`, `CompositeTransformation`. Composite vlastní potomky přes `vector<unique_ptr<Transformation>>` a skládá matice v definovaném pořadí; jeho chování v renderu ještě nebylo vyzkoušeno.
-
-**Nově funguje jedna instance `DrawableObject`:** `Application` vlastní `Model`, `ShaderProgram` a `DrawableObject`; ten vlastní jednu polymorfní `Transformation`, ale `Model` a `ShaderProgram` používá přes nevlastnící pointery. `draw()` nastaví modelovou matici jako GLSL uniform a zavolá `Model::draw()`. Student funkčnost potvrdil; samostatný test asistenta neproběhl. `Scene`, více objektů, animace a finální pravidla lifetime pro složitější graf zůstávají otevřené.
+**Pozor na lifetime:** `Rotation*` je nevlastnící. Při zániku scény/objektu by se mohl stát dangling; samotné `if (animatedRotation)` proti tomu nechrání. Další návrh animací musí tuto vazbu výslovně vyřešit.
 
 ## Oblasti
 
@@ -127,6 +140,8 @@ Aktuálně:
 - `transformace-a-composite.md`
 - `uniformy-a-drawableobject.md`
 
+Poznámka `transformace-a-composite.md` aktualizována 2026-10-27 o dynamickou rotaci a lifetime nevlastnících ukazatelů.
+
 ## Learning checkpointy
 
 Datované checkpointy jsou v:
@@ -143,6 +158,7 @@ Aktuálně:
 - `2026-10-13--du02-navrh-transformaci-a-ownership.md` (teoretický návrh, bez implementace)
 - `2026-10-15--du02-transformace-a-composite-implementace.md` (samostatná hierarchie transformací)
 - `2026-10-15--du02-drawableobject-a-prenos-matice-do-gpu.md` (uniformy, vlastnictví a první fungující DrawableObject)
+- `2026-10-27--du02-dynamicke-transformace-a-pristup-ke-stavu.md` (první animovaný strom, vlastnictví vs. pozorování, změna stavu vs. render)
 
 Checkpoint se v učitelském chatu spouští slovem:
 
