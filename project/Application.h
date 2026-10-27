@@ -5,6 +5,7 @@
 #ifndef PROJECT_APPLICATION_H
 #define PROJECT_APPLICATION_H
 #include <memory>
+#include <vector>
 
 
 #include "Transformation.h"
@@ -23,7 +24,8 @@ private:
     std::unique_ptr<Model> model;
     std::unique_ptr<Model> treeModel;
     std::unique_ptr<ShaderProgram> shaderProgram;
-    std::unique_ptr<Scene> scene;
+    std::vector<std::unique_ptr<Scene>> scenes;
+    std::size_t activeSceneIdx = 0;
     //Rotation* animatedRotation = nullptr;
 
     void createResources();
@@ -32,6 +34,9 @@ public:
     ~Application();
     bool initialize();
     void run();
+
+    void addScene(std::unique_ptr<Scene> scene);
+    void setActiveScene(std::size_t idx);
 
 };
 

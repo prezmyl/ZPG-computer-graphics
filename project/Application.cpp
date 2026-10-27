@@ -38,8 +38,21 @@ static void error_callback(int error, const char* description)
 static void key_callback(GLFWwindow* window, int key,
                          int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    auto* app = static_cast<Application*>(
+        glfwGetWindowUserPointer(window) //get the address of app instance, since this is static metod
+    );
+
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    }
+
+    if (app && key == GLFW_KEY_1 && action == GLFW_PRESS) {
+        app->setActiveScene(0);
+    }
+
+    if (app && key == GLFW_KEY_2 && action == GLFW_PRESS) {
+        app->setActiveScene(1);
+    }
 }
 
 static void window_size_callback(GLFWwindow* window,
@@ -60,7 +73,8 @@ void Application::createResources() {
 
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
-    scene = std::make_unique<Scene>();
+    auto sceneForest = std::make_unique<Scene>();
+    addScene(std::move(sceneForest));
     //==== GENERETED AI =====
     // lambda func temporary for transforamtion
     auto addInstance = [&](Model* mesh, glm::vec3 position, float size, bool animate = false) {
@@ -73,7 +87,7 @@ void Application::createResources() {
 
             auto rotation = std::make_unique<Rotation>(glm::vec3(0.0f, 1.0f, 0.0f), 0.0f);
             auto animation = std::make_unique<RotationAnimation>(rotation.get(), 2.0f); //same rotation
-            scene->addAnimation(std::move(animation)); //this is the use of the same rotation for animations colection
+            sceneForest->addAnimation(std::move(animation)); //this is the use of the same rotation for animations colection
             transform->addTransformation(std::move(rotation)); //same rotation
 
         }
@@ -81,8 +95,8 @@ void Application::createResources() {
         transform->addTransformation(
             std::make_unique<Translation>(position)
         );
-        
-        scene->addObject(std::make_unique<DrawableObject>(
+
+        sceneForest->addObject(std::make_unique<DrawableObject>(
             mesh,
             shaderProgram.get(),
             std::move(transform)
@@ -114,6 +128,9 @@ void Application::createResources() {
         );
     }
 
+
+    auto sceneLogin = std::make_unique<Scene>();
+    addScene(std::move(sceneLogin));
 
 
 }
@@ -164,6 +181,8 @@ bool Application::initialize() {
         return false;
     }
 
+    //set up user pointer for switichnig scenes (intant of application is regitred)
+    glfwSetWindowUserPointer(window, this);
 
     // OpenGL context setup
     glfwMakeContextCurrent(window);
@@ -202,7 +221,7 @@ bool Application::initialize() {
 }
 
 Application::~Application() {
-    scene.reset();
+    scenes[activeSceneIdx].reset();
     shaderProgram.reset();
     treeModel.reset();
     model.reset();
@@ -248,8 +267,10 @@ void Application::run() {
         );
 
         // == using made oop interfaces ==
-        scene->update(glfwGetTime()); //added
-        scene->draw();
+        Scene* activeScene = scenes[activeSceneIdx].get();
+
+        activeScene->update(glfwGetTime()); //added
+        activeScene->draw();
 
         // display result
         glfwSwapBuffers(window);
@@ -258,5 +279,13 @@ void Application::run() {
         // process events
         glfwPollEvents();
     }
+}
+
+void Application::addScene(std::unique_ptr<Scene> scene) {
+    scenes.push_back(std::move(scene));
+}
+
+void Application::setActiveScene(std::size_t idx) {
+    activeSceneIdx = idx;
 }
 
