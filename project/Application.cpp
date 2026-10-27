@@ -74,7 +74,7 @@ void Application::createResources() {
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
 
     auto sceneForest = std::make_unique<Scene>();
-    addScene(std::move(sceneForest));
+    //addScene(std::move(sceneForest)); uz bych predal vlastnictvi scenes[0] a to bych musel pouzivat dale -> tohle presunu az nokonec a tam lokalni forestScene predam az do scenes[0]
     //==== GENERETED AI =====
     // lambda func temporary for transforamtion
     auto addInstance = [&](Model* mesh, glm::vec3 position, float size, bool animate = false) {
@@ -127,6 +127,8 @@ void Application::createResources() {
             bushSize(rng)
         );
     }
+
+    addScene(std::move(sceneForest)); //az tady ji predam
 
 
     auto sceneLogin = std::make_unique<Scene>();
@@ -221,7 +223,7 @@ bool Application::initialize() {
 }
 
 Application::~Application() {
-    scenes[activeSceneIdx].reset();
+    scenes.clear(); //clear all scenes followed by destruction of all means
     shaderProgram.reset();
     treeModel.reset();
     model.reset();
@@ -286,6 +288,8 @@ void Application::addScene(std::unique_ptr<Scene> scene) {
 }
 
 void Application::setActiveScene(std::size_t idx) {
-    activeSceneIdx = idx;
+    if (activeSceneIdx < scenes.size()) {
+        activeSceneIdx = idx;
+    }
 }
 
