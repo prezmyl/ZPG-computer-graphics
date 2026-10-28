@@ -142,7 +142,7 @@ void Application::createResources() {
     auto sceneLogin = std::make_unique<Scene>();
     addScene(std::move(sceneLogin));
 
-
+// ======= SOLOAR SYSTEM============
     auto sceneSolarSystem = std::make_unique<Scene>();
 
     // ===== SUN =====
@@ -261,8 +261,6 @@ void Application::createResources() {
 
     // Transfer ownership of completed scene
     addScene(std::move(sceneSolarSystem));
-
-
 
 
 }
