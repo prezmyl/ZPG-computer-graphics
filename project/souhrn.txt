@@ -1,57 +1,46 @@
 # ZPG – DU02: Transformace (kombinovaná forma)
 **Login:** POL0511
+**Stav zdrojových souborů:** Git commit `b9a53b61f8d0825abc9ea42edd7e20186d68b567` (28. 10. 2026)
 
 ### 1. Splněno – Transformace v projektivním prostoru
-Aplikace byla rozšířena o transformace s využitím homogenních souřadnic a matic 4×4. Vertex shader používá uniformní proměnnou `modelMatrix`, prostřednictvím které se aplikují transformace objektů. Pro 3D scénu byly dále doplněny matice `viewMatrix` a `projectionMatrix`. Výsledná pozice vrcholu se vypočítává jako `projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0)`.
+Aplikace využívá homogenní souřadnice a matice 4×4. Vertex shader přijímá uniformní `modelMatrix`, `viewMatrix` a `projectionMatrix`. Poloha vrcholu se vypočítává jako `projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0)`. Modelová matice určuje transformaci konkrétní instance modelu.
 
-### 2. Splněno – Transformace ve třídě DrawableObject
-Každému objektu `DrawableObject` lze přiřadit transformaci prostřednictvím abstraktní třídy `Transformation`. Může jít o samostatnou transformaci nebo kombinaci více transformací pomocí `CompositeTransformation`. Vlastnictví transformace zajišťuje `std::unique_ptr`.
+### 2. Splněno – Transformace přiřazená DrawableObject
+`DrawableObject` vlastní `std::unique_ptr<Transformation>`, který může obsahovat elementární transformaci nebo `CompositeTransformation`. Metoda `draw()` získá aktuální matici, nahraje ji jako uniform `modelMatrix` a vykreslí geometrii. Model a shader program používá nevlastnicky, takže je může sdílet více objektů.
 
-### 3. Nesplněno v plném rozsahu – Statické a dynamické transformace
-Statické transformace jsou implementovány a ověřeny. Třídy `Translation`, `Rotation` a `Scale` umožňují vytvořit odpovídající transformační matice. Třída `Rotation` obsahuje také metodu `setAngle()`, která umožňuje změnu úhlu rotace. Pravidelná aktualizace transformací v čase však zatím není implementována ve vykreslovací smyčce. Dynamické transformace proto nejsou dokončeny.
+### 3. Splněno – Statické a dynamické transformace (dynamicky se mění rotace)
+`Translation`, `Rotation` a `Scale` poskytují statické transformační parametry. Dynamická rotace je zapojená do vykreslovací smyčky: `Application::run()` volá `Scene::update(glfwGetTime())`, `RotationAnimation::update(time)` mění úhel pomocí `Rotation::setAngle()` a `CompositeTransformation::getMatrix()` znovu vypočítá modelovou matici při kreslení. V lese se otáčí jeden strom; ve sluneční soustavě se animují rotace Země a oběh Měsíce. Dynamická translace ani změna měřítka implementovány nejsou – zadání však požaduje možnost dynamických transformací, což splňuje animovaná rotace.
 
-### 4. Splněno – Změna pořadí posunu a rotace
-Na trojúhelníku byly otestovány transformace posunu a rotace ve dvou různých pořadích.
+### 4. Splněno – Vliv pořadí posunu a rotace
+Dříve byly v základní scéně porovnány dvě varianty s trojúhelníkem:
+- Posun a poté rotace: `M = R * T`. Nejdříve posuneme trojúhelník a pak jeho posunutou polohu otočíme kolem počátku.
+- Rotace a poté posun: `M = T * R`. Nejdříve otočíme trojúhelník kolem počátku a pak jej posuneme v souřadnicích nadřazené soustavy.
 
-Při pořadí posun → rotace vzniká výsledná matice `M = R * T`. Trojúhelník se nejprve posune a následně se otočí kolem počátku souřadnic.
-
-Při pořadí rotace → posun vzniká matice `M = T * R`. Trojúhelník se nejprve otočí a potom posune ve směru zadané osy.
-
-Výsledné polohy se liší, protože násobení transformačních matic není komutativní (`R * T != T * R`). Obě varianty byly vykresleny a vizuálně porovnány.
+Výsledek je odlišný, protože násobení matic není komutativní (`R*T != T*R`). Asociativita naopak umožňuje měnit závorkování beze změny pořadí členů. Původní testovací scéna s trojúhelníkem byla nahrazena aktuálními scénami; test je zachycen v předchozí etapě projektu.
 
 ### 5. Splněno – Návrhový vzor Kompozit
-Pro skládání transformací byl implementován návrhový vzor Kompozit.
+`Transformation` definuje polymorfní rozhraní `getMatrix() const`. `Translation`, `Rotation`, `Scale` a `CompositeTransformation` jej implementují. Kompozit vlastní uspořádanou kolekci transformací a sestavuje výslednou matici od jednotkové matice `I` podle předpisu `result = transformation->getMatrix() * result`. Pořadí vložení proto odpovídá pořadí účinků na bod, zatímco v maticovém součinu se nová transformace zapisuje vlevo. Composite funguje i pro další vnořený kompozit díky stejnému rozhraní; samostatný automatizovaný test mimo projekt není doložen.
 
-Abstraktní třída `Transformation` definuje metodu `getMatrix()`. Konkrétní transformace `Translation`, `Rotation` a `Scale` implementují toto rozhraní.
+### 6. Splněno – Les s transformacemi
+Scéna obsahuje 20 stromů a 30 keřů, rozmístěných pseudonáhodně s pevným seedem a různými měřítky. Jednotlivé `DrawableObject` sdílejí příslušné geometrické `Model` a jeden `ShaderProgram`, ale mají vlastní transformace. Jeden strom se otáčí kolem lokální osy Y. Pro lokální rotaci je pořadí vložení `Scale → Rotation → Translation`, tedy `M = T * R * S`. Scéna využívá `viewMatrix`, perspektivní projekci a hloubkový test.
 
-Třída `CompositeTransformation` také dědí z `Transformation`, ale obsahuje kolekci dalších transformací. Jejich výslednou matici sestavuje postupným násobením matic.
+### 7. Nesplněno – Rotující 3D login
+Existuje pouze prázdná druhá instance `Scene` dostupná klávesou 2. Model loginu POL0511, jeho načtení ani rotace nebyly implementovány. Tento bod byl vědomě vynechán; v současné situaci nebyl k dispozici Blender ani volné místo pro jeho instalaci. Nejde o hotovou scénu.
 
-Díky společnému rozhraní může `DrawableObject` používat jednotlivou i složenou transformaci bez potřeby rozlišovat její konkrétní typ.
+### 8. Splněno – Sluneční soustava (Slunce, Země, Měsíc)
+Třetí scéna, přepínaná klávesou 3, obsahuje tři `DrawableObject` sdílející `sphereModel`; jejich velikosti a polohy jsou odlišeny modelovými maticemi.
 
-Funkčnost skládání byla ověřena na vykreslovaných objektech.
+- **Slunce:** statické u počátku souřadnic, `M_S = S_S` (měřítko 0,65).
+- **Země:** oběh kolem Slunce a současně vlastní rotace, `M_Z = R_{orbitZ} * T_Z * R_{spinZ} * S_Z`. Vzdálenost od Slunce je 2,5; oběžná rychlost je 0,5 rad/s a vlastní rotace 2,0 rad/s.
+- **Měsíc:** oběh kolem Země, který současně následuje oběh Země kolem Slunce, `M_M = R_{orbitZ} * T_Z * R_{orbitM} * T_M * S_M`. Vzdálenost od Země je 0,55; relativní oběžná rychlost 2,0 rad/s.
 
-### 6. Splněno – Scéna s lesem
-Byla vytvořena 3D scéna obsahující více stromů a keřů s náhodně generovanými pozicemi a různými velikostmi.
+Pro Měsíc používáme vlastní instanci `Rotation` reprezentující oběh Země. Ta je synchronizována s oběžnou rotací Země pomocí stejné úhlové rychlosti (0,5 rad/s) a stejného absolutního času; nejde tedy o skutečnou hierarchii transformačních rodičů. `CompositeTransformation` skládá transformace v pořadí `Scale → Translation(Měsíc) → Rotation(Měsíc) → Translation(Země) → Rotation(Země)`. Díky tomu Měsíc obíhá pohybující se Zemi.
 
-Jednotlivé objekty využívají sdílené modely geometrie a shader program, ale každý má vlastní transformační matici. Umístění objektů je realizováno skládáním transformací `Scale` a `Translation`.
-
-Pro vykreslování je použita perspektivní projekce, pohledová matice a testování hloubky. Výsledek byl vizuálně ověřen.
-
-### 7. Nesplněno – Scéna s rotujícím loginem
-Samostatná scéna s rotujícím 3D modelem loginu POL0511 zatím nebyla vytvořena.
-
-### 8. Nesplněno – Sluneční soustava
-Scéna se Sluncem, Zemí a Měsícem zatím nebyla implementována.
-
-Princip zamýšleného řešení spočívá ve skládání transformací. Slunce by bylo umístěno ve středu soustavy. Země by obíhala kolem Slunce a současně rotovala kolem vlastní osy. Měsíc by obíhal kolem Země.
-
-Transformace Měsíce by musela zohledňovat také polohu Země. Výsledná matice by proto vznikala kombinací rotace oběhu Země, posunu Země od Slunce, rotace oběhu Měsíce a posunu Měsíce od Země. Transformace by se měnily v závislosti na čase.
-
-Tento princip je zatím pouze návrhem, nikoli funkční implementací.
+Funkčnost pohybu Slunce–Země uživatel v diskusi potvrdil a výsledná scéna je také ve zdrojovém commitu se snímkem `pol0511_8.png`. Asistent samostatný build ani běh neprováděl.
 
 ---
 
-### Použité prostředky a zdroje
-Aplikace využívá C++, OpenGL 3.3, GLFW, GLAD, GLM a GLSL. Modely stromů a keřů pocházejí ze studijních materiálů poskytnutých vyučujícím.
+### Ovládání, snímky a prostředky
+Klávesy `1`, `2`, `3` přepínají les, prázdnou scénu loginu a sluneční soustavu; `Esc` ukončuje aplikaci. V repozitáři jsou snímky `pol0511_4a.png`, `pol0511_4b.png`, `pol0511_6.png` a `pol0511_8.png`. Úplnost a požadované pojmenování všech snímků pro odevzdání (`login_1.png` až `login_8.png`) je nutné ověřit zvlášť; bod 7 doložit nelze.
 
-Při přípravě některých částí implementace a shaderů byla využita asistence AI (ChatGPT). Výsledný kód byl následně integrován a prakticky testován v aplikaci.
+Použité technologie: C++20, OpenGL 3.3 Core Profile, GLFW, GLAD, GLM a GLSL. Modely lesa a koule pocházejí ze školních podkladů. Při návrhu, ladění a přípravě částí kódu byla využita pomoc AI (ChatGPT); výsledné změny byly integrovány do projektu.

@@ -8,6 +8,10 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Samostatně prokázáno
 
+- **DU02 (28. 10.) – asociativita a přenos modelové matice:** student vlastním vyjádřením správně odvodil, že jiné závorkování stejného řetězce matic nemění matematický výsledek, a že složená `modelMatrix` se nahraje do GPU pro všechny vrcholy konkrétního vykreslovaného objektu. Neprokazuje to ještě samostatné sestavení nového pořadí transformací.
+- **DU02 (28. 10.) – aktivní porovnání přístupů:** student sám připomněl `T(P)*R*T(-P)` pro rotaci kolem obecného bodu a rozpoznal, že ho musí sladit s lokálním transformačním řetězcem planet. Samostatné zdůvodnění rozdílu zatím neověřeno.
+- **DU02 (28. 10.) – rozpoznání meze implementace:** student výslovně upozornil, že dynamická je zatím jen `Rotation`, a ptal se na translaci a škálování. Nepokládáme to za důkaz samostatného návrhu těchto animací.
+
 - **DU02 – návrh více scén (27. 10.):** student bez nabídnutých typů navrhl kolekci (např. `vector`) a samostatnou členskou proměnnou pro výběr aktivní scény. Na základě vlastní úvahy zpochybnil dědičnost `ForestScene`/`SolarSystemScene` a upozornil, že společná `Scene` by neměla obsahovat všechna konkrétní pravidla.
 - **DU02 – přístup ze vstupu:** jako část řešení přístupu ke stavu `Application` ze statického callbacku student sám navrhl veřejný getter/setter. Specifický GLFW user-pointer mechanismus dodal asistent.
 
@@ -24,6 +28,10 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - Pro DU1 bylo vědomě rozhodnuto nezavádět `Scene` předčasně.
 
 ### Pochopeno s vedením
+
+- **DU02 (28. 10.) – sluneční soustava a skládání transformací:** Slunce, Země a Měsíc mají správné transformační řetězce, ale konkrétní vzorec a kód Měsíce dodal na žádost asistent. Student výsledek integroval a pushnul; samostatná konstrukce hierarchických matic zatím nebyla prokázána.
+- **DU02 (28. 10.) – pořadí matic:** výslovně přiznaný zmatek mezi pořadím přidávání do Composite, násobením matic a působením na vrchol byl vysvětlen na `R*T` a `T*R`. Další samostatný příklad je potřebný.
+- **DU02 (28. 10.) – statické a dynamické parametry:** rozdělení `Transformation` jako zdroje aktuální matice a `Animation` jako pravidla změny stavu bylo vysvětleno i pro možnou animovanou translaci a škálování; tyto animace zatím nejsou implementované.
 
 - **DU02 – animační komponenty a polymorfismus (27. 10.):** vytvořeny `Animation` a `RotationAnimation`, přidány `Scene::addAnimation()` a `Scene::update(time)`. Mechanismus kompozice animací a doporučené rozhraní dodal asistent; student implementoval a pushnul jednotlivé etapy.
 - **DU02 – přepínání scén (27. 10.):** `Application` vlastní `vector<unique_ptr<Scene>>`, vybírá `activeSceneIdx`, callback získává `Application*` přes GLFW window user pointer. Konkrétní API, práce s `.get()` a nutnost kontroly indexu byly vysvětleny s vedením.
@@ -53,14 +61,15 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Potřebuje upevnit
 
-- **OTEVŘENÁ CHYBA na `a421f09`:** `setActiveScene(idx)` chybně validuje `activeSceneIdx < scenes.size()` místo vstupního `idx < scenes.size()`. Bez opravy není kontrakt setteru bezpečný pro neplatný index. Otestovat i chování bez scén.
+- **Opravená chyba (commit `897793f`):** `setActiveScene(idx)` nyní kontroluje vstupní `idx < scenes.size()`; cílený test chování při prázdné kolekci a obecné životnosti scén zatím není doložen.
 - **DU02 – vlastnictví a runtime lifetime:** samostatně vysvětlit použití `unique_ptr` po `std::move`, podmínku platnosti nevlastnícího `Rotation*` při odebrání objektu, pořadí zániku `animations`/ `objects` a `scenes.clear()`.
+- **DU02 – transformační řetězec:** samostatně spočítat `R*T` a `T*R` na bodu; odlišit vložení transformací, zápis jejich součinu a skutečné působení na vrchol. Vysvětleno s vedením.
 - **DU02 – nové animační rozhraní:** bez nápovědy navrhnout jiný druh animace, obhájit absolutní čas proti `deltaTime` a vyhodnotit chování při přepnutí neaktivní scény.
 
 - DU02: vztahy typový (IS-A), strukturální (HAS-A/USES-A) a ownership/lifetime, polymorfní vlastnictví prostřednictvím abstraktní třídy – vysvětleno s vedením, samostatné použití zatím neověřeno.
 - DU02: `CompositeTransformation::getMatrix()` už existuje a vrací matici, ale samostatné odvození algoritmu i jeho jednotkové/běhové testy jsou zatím nevyhodnocené.
 - DU02: propojení `DrawableObject` → `ShaderProgram` → `modelMatrix` už student vyzkoušel funkčně; samostatná obhajoba uniform API, lifecycle a ownershipu je stále k upevnění.
-- DU02: funkční jedna animovaná rotace v render loop a Composite použitý ve více instancích lesa; **k upevnění:** samostatný návrh aktualizace více objektů, životnost nevlastnících odkazů při změně scény a samostatné odvození správného pořadí matic.
+- DU02: funkční rotace v lese i několik animací ve sluneční soustavě; **k upevnění:** samostatný návrh další animace, životnost nevlastnících odkazů při odebrání objektu a odvození správného pořadí matic.
 - DU02: důvod destrukce `DrawableObject` před `Model`/`ShaderProgram` – kód má správné pořadí, ale komentář mylně uvádí, že `DrawableObject` oba objekty vlastní; tento mentální model je potřeba ověřit a opravit.
 
 - Samostatné odvození stride a offsetů u jiného vertex layoutu než současného `position + color`.
@@ -71,9 +80,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Další procvičení
 
-- **Nejbližší krok:** opravit `setActiveScene(idx)` tak, aby kontroloval nově požadovaný index, a ověřit výběr scén 0/1 i odmítnutí neexistujícího indexu.
-- Vytvořit skutečnou druhou scénu s rotujícím loginem a vlastní `RotationAnimation`, vyzkoušet klávesy 1/2 a odůvodnit lifetime všech používaných odkazů.
-- Před solárním systémem navrhnout vnořené transformace oběhu Země a Měsíce, oddělit rotaci kolem vlastní osy od oběhu.
+- **Nejbližší krok:** zkontrolovat aktuální `souhrn.txt` a požadované snímky pro odevzdání DU02; pokračovat DU03 – osvětlení a dynamický aspect ratio projekční matice.
+- **Odložené:** rotující 3D login POL0511 (bod 7 je vědomě nesplněný; chybí Blender a místo na instalaci).
+- Později procvičit bez nápovědy obecnou rotaci kolem bodu vs. oběh pomocí lokální soustavy a případnou animovanou translaci/škálování.
 
 - DU02: bez nápovědy vysvětlit a otestovat pořadí `T*R` proti `R*T` na konkrétním vrcholu, prázdný a vnořený Composite.
 - DU02: doplnit CPU testy transformací a Composite (včetně vnoření), samostatně navrhnout aktualizaci více rotací a vyzkoušet změnu scény při existujícím nevlastnícím `Rotation*`.
@@ -87,9 +96,13 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ## Generalizovatelné programovací a návrhové principy
 
+- **Rozlišuj sestavení operace od její aplikace:** Composite ukládá `T → R` a sestaví `R*T`, GPU tento součin aplikuje jako `R*(T*p)`. Asociativita dovoluje závorkování, ne změnu pořadí faktorů.
+- **Lokální souřadnice snižují potřebu kompenzačních transformací:** model kolem lokálního počátku lze otočit a umístit; obecná rotace světového bodu kolem `P` má tvar `T(P)*R*T(-P)`.
+- **Možnost animace a skutečná animace nejsou totéž:** společné `getMatrix()` podporuje obě varianty; časově měníme jen parametry `Rotation`. Přidat `TranslationAnimation` a `ScaleAnimation` by šlo bez změn `Composite`, ale zatím není potřeba.
+
 - **Proměnlivé chování lze skládat, ne dědit celé kontejnery:** různé instance `Scene` mohou obsahovat odlišné `Animation` implementující jednotné `update(time)`. Tím se zabrání pravidlům typu `if(sceneType)` v obecném kontejneru.
 - **Vlastnictví, aktuální volba a možnost přístupu jsou různé vztahy:** `scenes` vlastní objekty, `activeSceneIdx` pouze vybírá a `glfwGetWindowUserPointer` poskytuje nevlastnící přístup k aplikaci.
-- **Při změně validuj nový požadavek, ne dosavadní hodnotu:** `setActiveScene(idx)` musí ověřit parametr `idx`, ne `activeSceneIdx`; současný kód zde má otevřenou chybu.
+- **Při změně validuj nový požadavek, ne dosavadní hodnotu:** `setActiveScene(idx)` musí ověřit parametr `idx`, ne `activeSceneIdx`; původní chyba byla opravena commitem `897793f`.
 - **Přesun vlastnictví mění platnost vlastnícího handle, ne adresu objektu:** po `std::move(unique_ptr)` původní `unique_ptr` objekt nevlastní; dříve získaný raw pointer může zůstat platný, dokud pointee existuje.
 
 - **Odděl změnu stavu od výpočtu odvozeného výsledku a jeho použití:** úhel `Rotation` se mění v čase, `getMatrix()` jej při kreslení převádí na matici a `DrawableObject` ji předává do GPU; není nutná duplicita uložené matice či nový `setTransformation()`.
@@ -122,17 +135,18 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ## Aktuální architektonický stav
 
-**DU02 – animace a dvě instance scén (GitHub code commit `a421f09`, 2026-10-27):**
+**DU02 – tři scény s animacemi (ověřený GitHub commit `b9a53b6`, 28. 10. 2026):**
 
-- `Application` vlastní dvě scény přes `vector<unique_ptr<Scene>>`, dva `Model` (strom, keře) a `ShaderProgram`. Proměnná `activeSceneIdx` vybírá aktuální scénu pro `update(time)` a `draw()`.
-- `Scene` zůstává **konkrétní třídou**, vlastní `vector<unique_ptr<DrawableObject>> objects` a `vector<unique_ptr<Animation>> animations`. Není potřeba odvozovat potomky pro každý obsah.
-- `Animation` je abstraktní rozhraní, `RotationAnimation` uchovává nevlastnící `Rotation*` a rychlost. `Application` už neukládá vlastní `animatedRotation`, pouze dodává scéně čas přes `Scene::update(glfwGetTime())`.
-- Les má 20 stromů a 30 keřů, jedna instance stromu používá animovanou rotaci Y; všechny transformace se předávají při `DrawableObject::draw()` do GLSL přes `modelMatrix`. Shaderové úpravy ze cvičení zůstávají zachované.
-- Druhá scéna (`sceneLogin`) je **zatím prázdná**; callback kláves 1/2 získává instanci aplikace přes GLFW user pointer a volá `setActiveScene(0/1)`.
-- Destruktor používá `scenes.clear()` před uvolněním shader programu, modelů a OpenGL contextu. Ve `Scene` se díky pořadí deklarace při zániku ruší animace před objekty.
-- **Zbývá opravit chybu indexu:** `setActiveScene(idx)` kontroluje `activeSceneIdx` místo `idx`. Zkontrolovaný zdrojový kód nemá potvrzený nezávislý build či test přepínání. Zatím není hotový rotující login, sluneční soustava ani osvětlení DU03 / aktualizace projection aspect ratio.
+- `Application` vlastní `vector<unique_ptr<Scene>>`, modely stromů, keřů a koule, plus sdílený `ShaderProgram`; aktivní `Scene` vybírá `activeSceneIdx`. Pro klávesy 1/2/3 callback používá GLFW window user pointer a veřejnou metodu `setActiveScene()`. Index se kontroluje správně.
+- `Scene` je stále **konkrétní třída** vlastnící `vector<unique_ptr<DrawableObject>>` a `vector<unique_ptr<Animation>>`; vykonává `update(time)` a `draw()`. `RotationAnimation` má nevlastnící `Rotation*` a časově mění úhel.
+- **Scéna 1 – les:** 20 stromů a 30 keřů, vlastní modelové transformace, jedna rotující instance stromu.
+- **Scéna 2 – login:** pouze prázdný placeholder. Rotující 3D login nebyl vytvořen; bod 7 DU02 je **vědomě nesplněný** kvůli momentálně nedostupnému Blenderu a prostoru pro instalaci.
+- **Scéna 3 – sluneční soustava:** Slunce, Země a Měsíc používají společnou `sphereModel` a vlastní `CompositeTransformation`; Země se otáčí kolem vlastní osy a obíhá Slunce, Měsíc obíhá Země a spolu s ní Slunce. Oběh Země je ve transformaci Měsíce replikován synchronizovanou rotací (není parent-child scene graph). Commit obsahuje snímek `pol0511_8.png`.
+- Dynamické jsou **rotace**, nikoli translace či měřítko. Pro geometrie se při `DrawableObject::draw()` vždy sestaví aktuální `modelMatrix` a nahraje do GLSL.
+- Destruktor explicitně uvolňuje všechny scény, potom shader program a modely před zánikem OpenGL contextu. Při runtime odebrání objektu by však nevlastnící animační `Rotation*` mohl být neplatný; takové odebírání aplikace neimplementuje.
+- Přepínání/pohyb má podle uživatele funkční výsledek; nezávislý build ani test asistenta neproběhl. Pro DU03 zbývá implementovat osvětlovací shadery a správný aspect ratio po změně rozměrů okna.
 
-Přenos `unique_ptr` vyžaduje pozorně oddělit vlastnící proměnnou a identitu pointee. Při odstraňování `DrawableObject` za běhu může `RotationAnimation` zůstat s neplatným nevlastnícím pointerem; běžné pořadí destrukce celé scény samo takový případ nepokrývá.
+**DU02 odevzdání:** aktualizovaný školní souhrn je v `project/souhrn.txt`; aktuální seznam snímků zahrnuje `pol0511_4a.png`, `pol0511_4b.png`, `pol0511_6.png`, `pol0511_8.png`. Úplnost a naming dle požadavků zadání je nutné ještě zkontrolovat.
 
 ## Oblasti
 
@@ -161,7 +175,7 @@ Aktuálně:
 - `uniformy-a-drawableobject.md`
 - `sceny-animace-a-prepinani.md` (kompozice animačních pravidel, změna ownershipu, GLFW callback)
 
-Poznámka `transformace-a-composite.md` aktualizována 2026-10-27 o dynamickou rotaci a lifetime nevlastnících ukazatelů.
+Poznámka `transformace-a-composite.md` aktualizována 2026-10-28 o řetězce matic, lokální souřadnice a sluneční soustavu.
 
 ## Learning checkpointy
 
@@ -181,6 +195,7 @@ Aktuálně:
 - `2026-10-15--du02-drawableobject-a-prenos-matice-do-gpu.md` (uniformy, vlastnictví a první fungující DrawableObject)
 - `2026-10-27--du02-dynamicke-transformace-a-pristup-ke-stavu.md` (první animovaný strom, vlastnictví vs. pozorování, změna stavu vs. render)
 - `2026-10-27--du02-animace-sceny-a-prepinani.md` (kompozice chování, více scén, index, chyby ownershipu)
+- `2026-10-28--du02-slunecni-soustava-a-matice.md` (hierarchie pohybu, skládání matic, dynamické parametry, omezení DU02)
 
 Checkpoint se v učitelském chatu spouští slovem:
 

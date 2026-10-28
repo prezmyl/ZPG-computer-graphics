@@ -1,6 +1,6 @@
 # Transformace a Composite v DU02 – koncepty a pracovní architektura
 
-Tato poznámka shrnuje aktuálně používanou transformační hierarchii, její propojení s vykreslováním i první animaci. Navazuje na checkpointy z 2026-10-13 a 2026-10-15; stav dynamické transformace odpovídá ověřenému code commitu `da67ac4` z 2026-10-27.
+Tato poznámka shrnuje transformační hierarchii, skládání matic a dynamické aktualizace. Navazuje na checkpointy z 2026-10-13, 2026-10-15 a 2026-10-27. Aktuální implementace sluneční soustavy odpovídá commitu `b9a53b6` z 2026-10-28; historické popisy první animace níže zachováváme jako doklad jejího vývoje.
 
 ## Odpovědnosti a rozhraní
 
@@ -86,3 +86,36 @@ Pro lokální rotaci objektu na jeho místě se vloží `Scale → Rotation → 
 ## Co zatím není hotové / není ověřené
 
 Render s `modelMatrix` a jedna animovaná rotace v lese jsou funkčně potvrzené uživatelem. Stále nejsou samostatné CPU testy složených matic, cílová architektura aktualizace scén, rotující login a hierarchická sluneční soustava. Asistent dosud nevykonal nezávislý lokální build.
+
+
+## Sluneční soustava a tři různá pořadí (2026-10-28)
+
+Nezaměňovat následující úrovně:
+
+1. **Pořadí vložení do Composite:** `add(T)`, potom `add(R)`.
+2. **Pořadí zápisu výsledného součinu:** cyklus `result = newMatrix * result` sestaví `M = R*T`.
+3. **Pořadí působení na sloupcový bod:** `p' = (R*T)*p = R*(T*p)`; na bod nejprve působí `T`, pak `R`.
+
+Composite iteruje, **není sám o sobě rekurzivním algoritmem**. Rekurzivní struktura vzniká teprve vložením dalšího Composite jako potomka stejného polymorfního `Transformation`.
+
+Asociativita `(A*B)*C = A*(B*C)` umožní přeskupit závorky, avšak **nepovoluje přehodit pořadí matic** (`R*T != T*R`). Výslednou `modelMatrix` na CPU sestavuje `CompositeTransformation::getMatrix()` a `DrawableObject::draw()` ji nahraje jako uniform pro aktuální draw call. Stejná matice transformuje všechny vrcholy tohoto objektu na GPU; jiný `DrawableObject` používá jinou modelovou matici, i když sdílí stejné GPU VAO/VBO.
+
+### Rotace kolem bodu vs. práce s lokálním počátkem
+
+Obecný vztah pro rotaci světového bodu kolem středu `P` je `T(P)*R*T(-P)`. To je ekvivalent `p' = P + R*(p-P)`. Pokud je model geometricky vytvořen kolem lokálního středu (počátku), není nutné před lokální rotací odečítat světové `P`: objekt nejprve lokálně transformujeme a pak teprve umístíme.
+
+### Země a Měsíc
+
+`M_Z = R_orbitZ * T_Z * R_spinZ * S_Z` (vloženo `S_Z → R_spinZ → T_Z → R_orbitZ`).
+
+`M_M = R_orbitZ * T_Z * R_orbitM * T_M * S_M` (vloženo `S_M → T_M → R_orbitM → T_Z → R_orbitZ`).
+
+Střed Země `p_Z = R_orbitZ * d_Z`; střed Měsíce `p_M = R_orbitZ * (d_Z + R_orbitM * d_M)`. Jejich vzájemná vzdálenost odpovídá délce `d_M`, protože rotace délku nemění. Přitom celá soustava Země–Měsíc obíhá kolem počátku se Sluncem.
+
+Oběh Země se v dnešních transformacích Země a Měsíce reprezentuje dvěma **samostatnými rotacemi** synchronizovanými společným absolutním časem a stejnou rychlostí. Není to hierarchický scene graph; při složitější soustavě se vyplatí reprezentovat rodičovské transformace explicitně.
+
+### Dynamika aktuálního stavu
+
+`Scene::update(time)` volá polymorfní `Animation::update(time)`. Současná `RotationAnimation` nastavuje `Rotation::setAngle(angularSpeed*time)`, zatímco `Translation` a `Scale` zůstávají konstantní: neexistuje pro ně setter ani `TranslationAnimation` či `ScaleAnimation`. Composite nic takového nepotřebuje znát – vždy si vyžádá aktuální matici.
+
+**Rozsah DU02:** bod 8 (Slunce–Země–Měsíc) je implementovaný; bod 7 (rotující 3D login) byl vědomě vynechán, scéna loginu zůstává prázdná. Poslední skutečný runtime výsledek potvrdil student, ne nezávislý test asistenta.
