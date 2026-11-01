@@ -30,6 +30,8 @@ add_executable(project
         Animation.h
         RotationAnimation.cpp
         RotationAnimation.h
+        Camera.cpp
+        Camera.h
 )
 
 target_include_directories(project PRIVATE
