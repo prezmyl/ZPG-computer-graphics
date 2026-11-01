@@ -23,8 +23,8 @@ glm::mat4 Camera::getProjectionMatrix() const {
     return glm::perspective(glm::radians(fov), aspectRatio, near, far);
 }
 
-glm::mat4 Camera::resize(int width, int height) {
-    glViewport(0, 0, width, height);
-    aspectRatio = (float) width / (float) height;
-    return getProjectionMatrix();
+void Camera::resize(int width, int height) {
+   // glViewport(0, 0, width, height); volajici app si vyresi
+    aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+    // return getProjectionMatrix(); volajici si pak zavola getProjectionMatrix()
 }

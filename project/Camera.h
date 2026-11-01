@@ -26,7 +26,7 @@ public:
     glm::vec3 getCenter() const;
     glm::mat4 getViewMatrix() const; //lookAt(position, center, up)
     glm::mat4 getProjectionMatrix() const; //
-    glm::mat4 resize(int width, int height);
+    void resize(int width, int height);
 
 };
 
