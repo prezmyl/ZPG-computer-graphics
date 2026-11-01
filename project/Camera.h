@@ -4,6 +4,7 @@
 
 #ifndef PROJECT_CAMERA_H
 #define PROJECT_CAMERA_H
+#include <GLFW/glfw3.h>
 #include <glm/vec3.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 
@@ -23,9 +24,9 @@ public:
     Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 up, float fov, float aspectRatio, float near, float far);
 
     glm::vec3 getCenter();
-    glm::mat4 getViewMatrix(); //lookAt(position, center, up)
+    glm::mat4 getViewMatrix() const; //lookAt(position, center, up)
     glm::mat4 getProjectionMatrix(); //
-    
+    GLFWwindow resize(int width, int height);
 
 };
 
