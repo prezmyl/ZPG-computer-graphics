@@ -15,12 +15,18 @@ private:
     glm::vec3 up;
 
     float fov;
+    float aspectRatio;
+    float near;
+    float far;
 
 public:
-    Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 up, float fov);
-    glm::vec3 getCenter;
+    Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 up, float fov, float aspectRatio, float near, float far);
+
+    glm::vec3 getCenter();
     glm::mat4 getViewMatrix(); //lookAt(position, center, up)
     glm::mat4 getProjectionMatrix(); //
+    
+
 };
 
 
