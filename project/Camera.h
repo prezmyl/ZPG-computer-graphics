@@ -23,10 +23,10 @@ private:
 public:
     Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 up, float fov, float aspectRatio, float near, float far);
 
-    glm::vec3 getCenter();
+    glm::vec3 getCenter() const;
     glm::mat4 getViewMatrix() const; //lookAt(position, center, up)
-    glm::mat4 getProjectionMatrix(); //
-    GLFWwindow resize(int width, int height);
+    glm::mat4 getProjectionMatrix() const; //
+    glm::mat4 resize(int width, int height);
 
 };
 
