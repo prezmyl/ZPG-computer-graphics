@@ -28,3 +28,7 @@ void Camera::resize(int width, int height) {
     aspectRatio = static_cast<float>(width) / static_cast<float>(height);
     // return getProjectionMatrix(); volajici si pak zavola getProjectionMatrix()
 }
+/*
+Camera& Camera::getCamera() {
+    return *this;
+}*/

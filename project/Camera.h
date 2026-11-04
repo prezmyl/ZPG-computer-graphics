@@ -27,6 +27,7 @@ public:
     glm::mat4 getViewMatrix() const; //lookAt(position, center, up)
     glm::mat4 getProjectionMatrix() const; //
     void resize(int width, int height);
+    //Camera& getCamera();
 
 };
 

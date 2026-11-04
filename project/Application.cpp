@@ -32,6 +32,8 @@
 
 #include <random>
 
+#include "Camera.h"
+
 //static - original callbacks
 static void error_callback(int error, const char* description)
 {
@@ -80,8 +82,15 @@ void Application::createResources() {
     Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/normal.frag");
 
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
-
-    auto sceneForest = std::make_unique<Scene>();
+    Camera camera = Camera(glm::vec3(5.0f, 1.0f, 12.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f),
+        45.0f,
+        800.0f / 600.0f,
+        0.1f,
+        100.0f
+    );
+    auto sceneForest = std::make_unique<Scene>(camera);
     //addScene(std::move(sceneForest)); uz bych predal vlastnictvi scenes[0] a to bych musel pouzivat dale -> tohle presunu az nokonec a tam lokalni forestScene predam az do scenes[0]
     //==== GENERETED AI =====
     // lambda func temporary for transforamtion
@@ -139,11 +148,11 @@ void Application::createResources() {
     addScene(std::move(sceneForest)); //az tady ji predam
 
 
-    auto sceneLogin = std::make_unique<Scene>();
+    auto sceneLogin = std::make_unique<Scene>(camera);
     addScene(std::move(sceneLogin));
 
 // ======= SOLOAR SYSTEM============
-    auto sceneSolarSystem = std::make_unique<Scene>();
+    auto sceneSolarSystem = std::make_unique<Scene>(camera);
 
     // ===== SUN =====
     auto sunTransform = std::make_unique<CompositeTransformation>();
@@ -364,11 +373,11 @@ Application::~Application() {
 }
 
 void Application::run() {
-    glm::mat4 view = glm::lookAt(
+/*    glm::mat4 view = glm::lookAt(
     glm::vec3(5.0f, 1.0f, 12.0f),
     glm::vec3(0.0f, 0.0f, 0.0f),
     glm::vec3(0.0f, 1.0f, 0.0f)
-);
+);*/
 
     glm::mat4 projection = glm::perspective(
         glm::radians(45.0f),
@@ -378,8 +387,8 @@ void Application::run() {
     );
 
     shaderProgram->use();
-    shaderProgram->setMat4("viewMatrix", view);
-    shaderProgram->setMat4("projectionMatrix", projection);
+    shaderProgram->setMat4("viewMatrix", scenes[activeSceneIdx]->getCamera().getViewMatrix());
+    shaderProgram->setMat4("projectionMatrix", scenes[activeSceneIdx]->getCamera().getProjectionMatrix());
     while (!glfwWindowShouldClose(window))
     {
         // background color

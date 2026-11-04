@@ -9,6 +9,9 @@
 
 #include "Animation.h"
 
+Scene::Scene(Camera &camera) : camera(camera){
+}
+
 Scene::~Scene() = default;
 
 void Scene::addObject(std::unique_ptr<DrawableObject> object) {
@@ -29,4 +32,8 @@ void Scene::update(float time) {
     for (auto& animation : animations) {
         animation->update(time);
     }
+}
+
+Camera & Scene::getCamera() {
+    return camera;
 }
