@@ -4,7 +4,7 @@
 
 #ifndef PROJECT_CAMERA_H
 #define PROJECT_CAMERA_H
-#include <GLFW/glfw3.h>
+
 #include <glm/vec3.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 

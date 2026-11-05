@@ -9,7 +9,7 @@
 
 #include "Animation.h"
 
-Scene::Scene(const Camera camera) : camera(camera){
+Scene::Scene(const Camera& camera) : camera(camera){
 }
 
 Scene::~Scene() = default;

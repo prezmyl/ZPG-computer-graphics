@@ -21,7 +21,7 @@ private:
     Camera camera;
 
 public:
-    Scene(const Camera camera);
+    Scene(const Camera& camera);
     ~Scene();
     void addObject(std::unique_ptr<DrawableObject> object);
     void addAnimation(std::unique_ptr<Animation> animation);
