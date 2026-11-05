@@ -1,0 +1,244 @@
+@startuml
+class "std::unique_ptr<DrawableObject>" as C_0009635456962427627091
+class C_0009635456962427627091 {
+__
+}
+class "std::unique_ptr<Animation>" as C_0015989245659094276206
+class C_0015989245659094276206 {
+__
+}
+class "std::vector<std::unique_ptr<DrawableObject>>" as C_0003254735137969347630
+class C_0003254735137969347630 {
+__
+}
+class "std::vector<std::unique_ptr<Animation>>" as C_0005257475143305114708
+class C_0005257475143305114708 {
+__
+}
+class "std::unique_ptr<Transformation>" as C_0011978167887591285784
+class C_0011978167887591285784 {
+__
+}
+class "std::vector<std::unique_ptr<Transformation>>" as C_0003315780756738677811
+class C_0003315780756738677811 {
+__
+}
+class "std::unique_ptr<Scene>" as C_0005841236919913815719
+class C_0005841236919913815719 {
+__
+}
+class "std::unique_ptr<Model>" as C_0005429747195776422453
+class C_0005429747195776422453 {
+__
+}
+class "std::unique_ptr<ShaderProgram>" as C_0002291808102789227029
+class C_0002291808102789227029 {
+__
+}
+class "std::vector<std::unique_ptr<Scene>>" as C_0001345993189807237249
+class C_0001345993189807237249 {
+__
+}
+class "glm::mat<4,4,float,defaultp>" as C_0010357790864569679796
+class C_0010357790864569679796 {
+__
+}
+class "glm::vec<3,float,defaultp>" as C_0005836985577823843820
+class C_0005836985577823843820 {
+__
+}
+enum "khronos_boolean_enum_t" as C_0014616433944762754393
+enum C_0014616433944762754393 {
+KHRONOS_FALSE
+KHRONOS_TRUE
+KHRONOS_BOOLEAN_ENUM_FORCE_SIZE
+}
+class "Shader" as C_0014899929896336503560
+class C_0014899929896336503560 {
++Shader(GLenum shaderType, const char * shaderPath) : void
++Shader(const Shader &) = deleted : void
++~Shader() : void
+..
++operator=(const Shader &) = deleted : Shader &
+..
+-createShaderFromFile(GLenum shaderType, const char * shaderFile) : GLuint
++get_id() const : GLuint
+__
+-id : GLuint
+}
+class "ShaderProgram" as C_0009272917675807370667
+class C_0009272917675807370667 {
++ShaderProgram(const Shader & vertexShader, const Shader & fragmentShader) : void
++ShaderProgram(const ShaderProgram &) = deleted : void
++~ShaderProgram() : void
+..
++operator=(const ShaderProgram &) = deleted : ShaderProgram &
+..
++setMat4(const char * name, const glm::mat4 & matrix) const : void
++use() const : void
+__
+-id : GLuint
+}
+class "_cl_context" as C_0005505353034777529899
+class C_0005505353034777529899 {
+__
+}
+class "__GLsync" as C_0005656535728663299924
+class C_0005656535728663299924 {
+__
+}
+class "_cl_event" as C_0016742860404031477541
+class C_0016742860404031477541 {
+__
+}
+class "Scene" as C_0016177104474805726272
+class C_0016177104474805726272 {
++~Scene() : void
+..
++addAnimation(std::unique_ptr<Animation> animation) : void
++addObject(std::unique_ptr<DrawableObject> object) : void
++draw() const : void
++update(float time) : void
+__
+}
+class "Model" as C_0013243640185453418494
+class C_0013243640185453418494 {
++Model(const float * points, GLsizei vertexCount) : void
++Model(const Model &) = deleted : void
++~Model() : void
+..
++operator=(const Model &) = deleted : Model &
+..
++draw() const : void
+__
+-VAO : GLuint
+-VBO : GLuint
+-vertexCount : GLsizei
+}
+abstract "Transformation" as C_0011135272028013465752
+abstract C_0011135272028013465752 {
++~Transformation() constexpr = default : void
+..
+{abstract} +getMatrix() const = 0 : glm::mat4
+__
+}
+class "DrawableObject" as C_0000766055162852517381
+class C_0000766055162852517381 {
++DrawableObject(Model * model, ShaderProgram * shaderProgram, std::unique_ptr<Transformation> transformation) : void
+..
++draw() const : void
+__
+}
+abstract "Animation" as C_0009177790275752332348
+abstract C_0009177790275752332348 {
++~Animation() constexpr = default : void
+..
+{abstract} +update(float time) = 0 : void
+__
+}
+class "CompositeTransformation" as C_0014692852523536517661
+class C_0014692852523536517661 {
++CompositeTransformation() = default : void
+..
++addTransformation(std::unique_ptr<Transformation> transformation) : void
++getMatrix() const : glm::mat4
+__
+}
+class "Scale" as C_0017660363320762853361
+class C_0017660363320762853361 {
++Scale(glm::vec3 factor) : void
+..
++getMatrix() const : glm::mat4
+__
+}
+class "Rotation" as C_0018403690083903418410
+class C_0018403690083903418410 {
++Rotation(glm::vec3 axis, float angle) : void
+..
++getMatrix() const : glm::mat4
++setAngle(float angle) : void
+__
+-angle : float
+}
+class "RotationAnimation" as C_0007382990770960972762
+class C_0007382990770960972762 {
++RotationAnimation(Rotation * rotation, float angularSpeed) : void
+..
++update(float time) : void
+__
+-angularSpeed : float
+}
+class "Application" as C_0008808924239730370349
+class C_0008808924239730370349 {
++Application() : void
++~Application() : void
+..
++addScene(std::unique_ptr<Scene> scene) : void
+-createResources() : void
++initialize() : bool
++run() : void
++setActiveScene(std::size_t idx) : void
+__
+-activeSceneIdx : std::size_t
+-window : GLFWwindow *
+}
+class "Translation" as C_0017401563024334194039
+class C_0017401563024334194039 {
++Translation(glm::vec3 translation) : void
+..
++getMatrix() const : glm::mat4
+__
+}
+class "GLFWwindow" as C_0008434725962297335764
+class C_0008434725962297335764 {
+__
+}
+C_0009635456962427627091 ..> C_0000766055162852517381
+C_0015989245659094276206 ..> C_0009177790275752332348
+C_0003254735137969347630 ..> C_0009635456962427627091
+C_0005257475143305114708 ..> C_0015989245659094276206
+C_0011978167887591285784 ..> C_0011135272028013465752
+C_0003315780756738677811 ..> C_0011978167887591285784
+C_0005841236919913815719 ..> C_0016177104474805726272
+C_0005429747195776422453 ..> C_0013243640185453418494
+C_0002291808102789227029 ..> C_0009272917675807370667
+C_0001345993189807237249 ..> C_0005841236919913815719
+C_0009272917675807370667 ..> C_0014899929896336503560
+C_0009272917675807370667 ..> C_0010357790864569679796
+C_0016177104474805726272 ..> C_0009635456962427627091
+C_0016177104474805726272 ..> C_0000766055162852517381
+C_0016177104474805726272 ..> C_0015989245659094276206
+C_0016177104474805726272 ..> C_0009177790275752332348
+C_0016177104474805726272 o-- C_0003254735137969347630 : -objects
+C_0016177104474805726272 o-- C_0005257475143305114708 : -animations
+C_0011135272028013465752 ..> C_0010357790864569679796
+C_0000766055162852517381 ..> C_0011135272028013465752
+C_0000766055162852517381 o-- C_0011978167887591285784 : -transformation
+C_0000766055162852517381 --> C_0013243640185453418494 : -model
+C_0000766055162852517381 --> C_0009272917675807370667 : -shaderProgram
+C_0014692852523536517661 ..> C_0011978167887591285784
+C_0014692852523536517661 ..> C_0010357790864569679796
+C_0014692852523536517661 o-- C_0003315780756738677811 : -transformations
+C_0011135272028013465752 <|-- C_0014692852523536517661
+C_0017660363320762853361 ..> C_0010357790864569679796
+C_0017660363320762853361 o-- C_0005836985577823843820 : -factor
+C_0011135272028013465752 <|-- C_0017660363320762853361
+C_0018403690083903418410 ..> C_0010357790864569679796
+C_0018403690083903418410 o-- C_0005836985577823843820 : -axis
+C_0011135272028013465752 <|-- C_0018403690083903418410
+C_0007382990770960972762 --> C_0018403690083903418410 : -rotation
+C_0009177790275752332348 <|-- C_0007382990770960972762
+C_0008808924239730370349 ..> C_0005841236919913815719
+C_0008808924239730370349 ..> C_0016177104474805726272
+C_0008808924239730370349 o-- C_0005429747195776422453 : -model
+C_0008808924239730370349 o-- C_0005429747195776422453 : -treeModel
+C_0008808924239730370349 o-- C_0005429747195776422453 : -sphereModel
+C_0008808924239730370349 o-- C_0002291808102789227029 : -shaderProgram
+C_0008808924239730370349 o-- C_0001345993189807237249 : -scenes
+C_0017401563024334194039 ..> C_0010357790864569679796
+C_0017401563024334194039 o-- C_0005836985577823843820 : -translation
+C_0011135272028013465752 <|-- C_0017401563024334194039
+
+'Generated with clang-uml, version 0.6.3
+'LLVM version clang version 22.1.8 (Fedora 22.1.8-4.fc44)
+@enduml
