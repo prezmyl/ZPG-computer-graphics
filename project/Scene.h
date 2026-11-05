@@ -7,21 +7,21 @@
 #include <memory>
 #include <vector>
 
-
+#include "Camera.h"
 
 
 class Animation;
 class DrawableObject;
-class Camera;
+//class Camera;
 
 class Scene {
 private:
     std::vector<std::unique_ptr<DrawableObject>> objects;
     std::vector<std::unique_ptr<Animation>> animations;
-    Camera &camera;
+    Camera camera;
 
 public:
-    Scene(Camera &camera);
+    Scene(const Camera camera);
     ~Scene();
     void addObject(std::unique_ptr<DrawableObject> object);
     void addAnimation(std::unique_ptr<Animation> animation);
