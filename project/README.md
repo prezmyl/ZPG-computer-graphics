@@ -8,6 +8,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Samostatně prokázáno
 
+- **DU03 – kamera (1.–5. 11.):** student samostatně identifikoval potřebu pohyblivé kamery před osvětlením, zdůvodnil FPS pohyb s konstantním směrem, rozdělil `Application`/ `Camera`/ `ShaderProgram` podle odpovědností a zvolil samostatnou kameru jako součást každé `Scene`. Poznal, že první `Camera&` jako člen scény sdílí jeden objekt; následně vlastními slovy dovodil nezávislé kopie hodnotového členu z jedné výchozí lokální kamery. Konkrétní C++ konstrukce a GLM byly průběžně vysvětleny s vedením.
+
+
 - **DU02 (28. 10.) – asociativita a přenos modelové matice:** student vlastním vyjádřením správně odvodil, že jiné závorkování stejného řetězce matic nemění matematický výsledek, a že složená `modelMatrix` se nahraje do GPU pro všechny vrcholy konkrétního vykreslovaného objektu. Neprokazuje to ještě samostatné sestavení nového pořadí transformací.
 - **DU02 (28. 10.) – aktivní porovnání přístupů:** student sám připomněl `T(P)*R*T(-P)` pro rotaci kolem obecného bodu a rozpoznal, že ho musí sladit s lokálním transformačním řetězcem planet. Samostatné zdůvodnění rozdílu zatím neověřeno.
 - **DU02 (28. 10.) – rozpoznání meze implementace:** student výslovně upozornil, že dynamická je zatím jen `Rotation`, a ptal se na translaci a škálování. Nepokládáme to za důkaz samostatného návrhu těchto animací.
@@ -28,6 +31,10 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - Pro DU1 bylo vědomě rozhodnuto nezavádět `Scene` předčasně.
 
 ### Pochopeno s vedením
+
+- **DU03 – implementace kamery:** `getCenter`, `glm::lookAt`, `glm::perspective`, `const` gettery; `Scene(const Camera&)` s vlastním hodnotovým členem `Camera camera` a nevlastnícím `getCamera(): Camera&`. Asistent objasnil rozdíl směru a bodu, dangling referenci původní lokální kamery a include konflikt GLAD/GLFW. Student změny implementoval a pushnul.
+- **DU03 – render-loop uniformy:** `viewMatrix` a `projectionMatrix` se nyní předávají přes `ShaderProgram::setMat4` každý snímek; potřebu přesunout nahrání z prostoru před smyčkou vysvětlil asistent.
+
 
 - **DU02 (28. 10.) – sluneční soustava a skládání transformací:** Slunce, Země a Měsíc mají správné transformační řetězce, ale konkrétní vzorec a kód Měsíce dodal na žádost asistent. Student výsledek integroval a pushnul; samostatná konstrukce hierarchických matic zatím nebyla prokázána.
 - **DU02 (28. 10.) – pořadí matic:** výslovně přiznaný zmatek mezi pořadím přidávání do Composite, násobením matic a působením na vrchol byl vysvětlen na `R*T` a `T*R`. Další samostatný příklad je potřebný.
@@ -61,6 +68,11 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Potřebuje upevnit
 
+- **DU03:** znovu samostatně odvodit `normalize(target-position)`, hodnotová kopie vs. uložená reference vs. návratový `Camera&`; ukázat vliv změny jedné kamery na ostatní. Ovládání WASD/myší dosud není implementováno ani ověřeno.
+- **DU03 – otevřená chyba/úkol:** GLFW callback mění pouze `glViewport`, kamery nedostanou nové rozměry; `Camera::resize` nekontroluje `height == 0`. Potřebujeme použít velikost framebufferu, přepočítat poměr stran všech scén a otestovat zúžené okno.
+- **DU03 – ověření:** nový build po opravě konfliktu GLAD/GLFW a runtime test přepínání nezávislých kamer nejsou doloženy; nepovažovat správně vypadající kód za nezávisle ověřený.
+
+
 - **Opravená chyba (commit `897793f`):** `setActiveScene(idx)` nyní kontroluje vstupní `idx < scenes.size()`; cílený test chování při prázdné kolekci a obecné životnosti scén zatím není doložen.
 - **DU02 – vlastnictví a runtime lifetime:** samostatně vysvětlit použití `unique_ptr` po `std::move`, podmínku platnosti nevlastnícího `Rotation*` při odebrání objektu, pořadí zániku `animations`/ `objects` a `scenes.clear()`.
 - **DU02 – transformační řetězec:** samostatně spočítat `R*T` a `T*R` na bodu; odlišit vložení transformací, zápis jejich součinu a skutečné působení na vrchol. Vysvětleno s vedením.
@@ -80,7 +92,10 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Další procvičení
 
-- **Nejbližší krok:** zkontrolovat aktuální `souhrn.txt` a požadované snímky pro odevzdání DU02; pokračovat DU03 – osvětlení a dynamický aspect ratio projekční matice.
+- **Nejbližší krok DU03 (5. 11.):** samostatně navrhnout `Application` metodu pro framebuffer resize, která nastaví viewport a `aspectRatio` kamer všech scén; doplnit guard nulové výšky a otestovat poměr stran. Následně odlišit polohy dvou scén, přidat WASD/myš a poté osvětlovací modely.
+
+
+- **Historický úkol DU02:** zkontrolovat `souhrn.txt` a požadované snímky; **aktuální priorita DU03:** korektní aktualizace `aspectRatio` všech kamer při resize, pak WASD/myš a osvětlení.
 - **Odložené:** rotující 3D login POL0511 (bod 7 je vědomě nesplněný; chybí Blender a místo na instalaci).
 - Později procvičit bez nápovědy obecnou rotaci kolem bodu vs. oběh pomocí lokální soustavy a případnou animovanou translaci/škálování.
 
@@ -95,6 +110,11 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - Pro více animací ověřit rozdělení řízení času mezi `Application`, `Scene` a jednotlivé `Animation`; současná `Scene` již má `addAnimation()` a `update()`.
 
 ## Generalizovatelné programovací a návrhové principy
+
+- **Nejdřív sémantika vztahu, pak C++ zápis:** kompozice `Scene`–`Camera` znamená vlastní identitu a životnost; hodnotový člen je zde jednodušší než `unique_ptr`. Parametr `const Camera&` může sloužit pro inicializační kopii, getter `Camera&` pro nevlastnící přístup.
+- **Událost → stav → odvozený výsledek → konzument:** GLFW přinese rozměry, `Camera` drží `aspectRatio`, GLM vypočítá projekci, `ShaderProgram` přenese uniform; CPU změny se samy na GPU nepropíší.
+- **Transitivní závislosti hlaviček ovlivňují i cizí překladové jednotky:** vložení hodnotového členu `Camera` do `Scene` vynutilo `#include "Camera.h"`, jenž zprvu zbytečně načítal GLFW a vyvolal konflikt `GL/gl.h` s GLAD.
+
 
 - **Rozlišuj sestavení operace od její aplikace:** Composite ukládá `T → R` a sestaví `R*T`, GPU tento součin aplikuje jako `R*(T*p)`. Asociativita dovoluje závorkování, ne změnu pořadí faktorů.
 - **Lokální souřadnice snižují potřebu kompenzačních transformací:** model kolem lokálního počátku lze otočit a umístit; obecná rotace světového bodu kolem `P` má tvar `T(P)*R*T(-P)`.
@@ -135,7 +155,14 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ## Aktuální architektonický stav
 
-**DU02 – tři scény s animacemi (ověřený GitHub commit `b9a53b6`, 28. 10. 2026):**
+**DU03 – kamera v jednotlivých scénách (kontrolovaný commit `3b218847`, 5. 11. 2026):**
+
+- `Camera` obsahuje pozici, směrový a up vektor a parametry perspektivy; matice počítá z hodnot (GLM `lookAt`/`perspective`).
+- Každá `Scene` vlastní **vlastní kopii** kamery jako `Camera camera`, vytvořenou z počáteční `const Camera&`; `getCamera()` vrací nevlastnící `Camera&`. Dosud mají všechny scény shodné počáteční nastavení.
+- `Application` odvozuje `direction=normalize(target-position)` a před každým `Scene::draw()` aktualizuje `viewMatrix`/`projectionMatrix` uniformy v aktuálně jediném `ShaderProgram`.
+- **Nedokončeno:** framebuffer resize není napojen na kamery (callback jen `glViewport`), `Camera::resize` neošetřuje nulovou výšku; není ovládání WASD/myší ani osvětlení. Po opravě GLAD/GLFW není doložen nový úspěšný build. Detail a důkazy: `notes/checkpoints/2026-11-05--du03-kamera-vlastnictvi-a-aktualizace-matic.md`.
+
+**DU02 – historický stav před kamerami (ověřený GitHub commit `b9a53b6`, 28. 10. 2026):**
 
 - `Application` vlastní `vector<unique_ptr<Scene>>`, modely stromů, keřů a koule, plus sdílený `ShaderProgram`; aktivní `Scene` vybírá `activeSceneIdx`. Pro klávesy 1/2/3 callback používá GLFW window user pointer a veřejnou metodu `setActiveScene()`. Index se kontroluje správně.
 - `Scene` je stále **konkrétní třída** vlastnící `vector<unique_ptr<DrawableObject>>` a `vector<unique_ptr<Animation>>`; vykonává `update(time)` a `draw()`. `RotationAnimation` má nevlastnící `Rotation*` a časově mění úhel.
@@ -174,6 +201,7 @@ Aktuálně:
 - `transformace-a-composite.md`
 - `uniformy-a-drawableobject.md`
 - `sceny-animace-a-prepinani.md` (kompozice animačních pravidel, změna ownershipu, GLFW callback)
+- `kamera-vlastnictvi-a-promitaci-retezec.md` (Scene–Camera kompozice, hodnotové kopie a přenos matic do GPU)
 
 Poznámka `transformace-a-composite.md` aktualizována 2026-10-28 o řetězce matic, lokální souřadnice a sluneční soustavu.
 
@@ -196,6 +224,7 @@ Aktuálně:
 - `2026-10-27--du02-dynamicke-transformace-a-pristup-ke-stavu.md` (první animovaný strom, vlastnictví vs. pozorování, změna stavu vs. render)
 - `2026-10-27--du02-animace-sceny-a-prepinani.md` (kompozice chování, více scén, index, chyby ownershipu)
 - `2026-10-28--du02-slunecni-soustava-a-matice.md` (hierarchie pohybu, skládání matic, dynamické parametry, omezení DU02)
+- `2026-11-05--du03-kamera-vlastnictvi-a-aktualizace-matic.md` (samostatný návrh kamery, kompozice a životnost, GLM/view/projection, rozpracované resize)
 
 Checkpoint se v učitelském chatu spouští slovem:
 
