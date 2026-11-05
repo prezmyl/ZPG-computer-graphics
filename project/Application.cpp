@@ -82,8 +82,12 @@ void Application::createResources() {
     Shader fragmentShader(GL_FRAGMENT_SHADER, "shaders/normal.frag");
 
     shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
-    Camera camera = Camera(glm::vec3(5.0f, 1.0f, 12.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
+
+    glm::vec3 position(5.0f, 1.0f, 12.0f);
+    glm::vec3 target(0.0f, 0.0f, 0.0f);
+    glm::vec3 direction = glm::normalize(target - position);
+    Camera camera = Camera(position,
+        direction,
         glm::vec3(0.0f, 1.0f, 0.0f),
         45.0f,
         800.0f / 600.0f,
@@ -379,16 +383,15 @@ void Application::run() {
     glm::vec3(0.0f, 1.0f, 0.0f)
 );*/
 
-    glm::mat4 projection = glm::perspective(
+   /* glm::mat4 projection = glm::perspective(
         glm::radians(45.0f),
         800.0f / 600.0f,
         0.1f,
         100.0f
-    );
+    );*/
 
-    shaderProgram->use();
-    shaderProgram->setMat4("viewMatrix", scenes[activeSceneIdx]->getCamera().getViewMatrix());
-    shaderProgram->setMat4("projectionMatrix", scenes[activeSceneIdx]->getCamera().getProjectionMatrix());
+
+
     while (!glfwWindowShouldClose(window))
     {
         // background color
@@ -409,7 +412,12 @@ void Application::run() {
         // == using made oop interfaces ==
         Scene* activeScene = scenes[activeSceneIdx].get();
 
-        activeScene->update(glfwGetTime()); //added
+        activeScene->update(glfwGetTime()); //update transformacnich matic
+
+        shaderProgram->use();
+        shaderProgram->setMat4("viewMatrix", scenes[activeSceneIdx]->getCamera().getViewMatrix());
+        shaderProgram->setMat4("projectionMatrix", scenes[activeSceneIdx]->getCamera().getProjectionMatrix());
+
         activeScene->draw();
 
         // display result
