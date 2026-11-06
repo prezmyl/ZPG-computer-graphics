@@ -64,10 +64,14 @@ static void key_callback(GLFWwindow* window, int key,
     }
 }
 
-static void window_size_callback(GLFWwindow* window,
-                                 int width, int height)
+static void window_size_callback(GLFWwindow* window, int width, int height)
 {
-    glViewport(0, 0, width, height);
+    auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+
+    if (app) {
+        app->onFramebufferResize(width, height);
+    }
+
 }
 
 
@@ -377,20 +381,6 @@ Application::~Application() {
 }
 
 void Application::run() {
-/*    glm::mat4 view = glm::lookAt(
-    glm::vec3(5.0f, 1.0f, 12.0f),
-    glm::vec3(0.0f, 0.0f, 0.0f),
-    glm::vec3(0.0f, 1.0f, 0.0f)
-);*/
-
-   /* glm::mat4 projection = glm::perspective(
-        glm::radians(45.0f),
-        800.0f / 600.0f,
-        0.1f,
-        100.0f
-    );*/
-
-
 
     while (!glfwWindowShouldClose(window))
     {
@@ -415,8 +405,8 @@ void Application::run() {
         activeScene->update(glfwGetTime()); //update transformacnich matic
 
         shaderProgram->use();
-        shaderProgram->setMat4("viewMatrix", scenes[activeSceneIdx]->getCamera().getViewMatrix());
-        shaderProgram->setMat4("projectionMatrix", scenes[activeSceneIdx]->getCamera().getProjectionMatrix());
+        shaderProgram->setMat4("viewMatrix", activeScene->getCamera().getViewMatrix());
+        shaderProgram->setMat4("projectionMatrix", activeScene->getCamera().getProjectionMatrix());
 
         activeScene->draw();
 
@@ -436,6 +426,14 @@ void Application::addScene(std::unique_ptr<Scene> scene) {
 void Application::setActiveScene(std::size_t idx) {
     if (idx < scenes.size()) {
         activeSceneIdx = idx;
+    }
+}
+
+void Application::onFramebufferResize(int width, int height) {
+    glViewport(0, 0, width, height);
+
+    for (auto& scene : scenes) {
+        scene->getCamera().resize(width, height);
     }
 }
 

@@ -24,9 +24,10 @@ glm::mat4 Camera::getProjectionMatrix() const {
 }
 
 void Camera::resize(int width, int height) {
-   // glViewport(0, 0, width, height); volajici app si vyresi
+    //prevent 0 division if the window is minimized, thus the height is 0
+    if (height == 0) {return;}
     aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-    // return getProjectionMatrix(); volajici si pak zavola getProjectionMatrix()
+
 }
 /*
 Camera& Camera::getCamera() {
