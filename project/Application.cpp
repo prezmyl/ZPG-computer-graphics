@@ -360,7 +360,7 @@ bool Application::initialize() {
 
     //working with bufferSize instead of windows
     //glfwSetWindowSizeCallback(window, window_size_callback);
-    glfwSetWindowSizeCallback(window, window_size_callback);
+    glfwSetFramebufferSizeCallback(window, window_size_callback);
 
     createResources();
 
