@@ -24,8 +24,8 @@ glm::mat4 Camera::getProjectionMatrix() const {
 }
 
 void Camera::resize(int width, int height) {
-    //prevent 0 division if the window is minimized, thus the height is 0
-    if (height == 0) {return;}
+    //prevent 0 division if the window is minimized, thus the height or widht is 0
+    if (width <= 0 || height <= 0) {return;}
     aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 
 }

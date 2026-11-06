@@ -66,6 +66,7 @@ static void key_callback(GLFWwindow* window, int key,
 
 static void window_size_callback(GLFWwindow* window, int width, int height)
 {
+    //access to the instance of app without the need of owning it
     auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
 
     if (app) {
@@ -357,10 +358,9 @@ bool Application::initialize() {
         key_callback
     );
 
-    glfwSetWindowSizeCallback(
-        window,
-        window_size_callback
-    );
+    //working with bufferSize instead of windows
+    //glfwSetWindowSizeCallback(window, window_size_callback);
+    glfwSetWindowSizeCallback(window, window_size_callback);
 
     createResources();
 
