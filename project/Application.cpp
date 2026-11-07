@@ -386,15 +386,14 @@ void Application::run() {
     // for moving camera around
     float speed = 3;
     float distance;
-    float deltaTime;
-    long currentTime, lastTime;
+    double currentTime, lastTime = glfwGetTime();
 
 
     while (!glfwWindowShouldClose(window))
     {
         //deltaT
         currentTime = glfwGetTime();
-        deltaTime = currentTime - lastTime;
+        float deltaTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
 
         // background color
@@ -416,7 +415,7 @@ void Application::run() {
         Scene* activeScene = scenes[activeSceneIdx].get();
 
         activeScene->update(glfwGetTime()); //update transformacnich matic
-        
+
         //wasd
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             distance = speed * deltaTime;
@@ -424,7 +423,7 @@ void Application::run() {
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
             distance = speed * deltaTime;
-            activeScene->getCamera().moveForward(distance);
+            activeScene->getCamera().moveForward(-distance);
         }
 
         shaderProgram->use();

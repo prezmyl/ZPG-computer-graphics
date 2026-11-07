@@ -31,10 +31,12 @@ void Camera::resize(int width, int height) {
 }
 
 void Camera::moveForward(float distance) {
-    position = position + direction * distance;
+    //leveled movment should ignore the y coordivate and rest of the vector should be normalized
+    glm::vec3 forward = glm::normalize(glm::vec3(direction.x, 0.0f, direction.z));
+    position = position + /*direction*/forward * distance;
 }
 
 /*
 Camera& Camera::getCamera() {
-    return *this;
+    return *this; 
 }*/
