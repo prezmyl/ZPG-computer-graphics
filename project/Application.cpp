@@ -434,6 +434,8 @@ void Application::run() {
             activeScene->getCamera().moveRight(-distance);
         }
 
+        activeScene->getCamera().rotate(glm::radians(90.0f), 0.0f);
+
         shaderProgram->use();
         shaderProgram->setMat4("viewMatrix", activeScene->getCamera().getViewMatrix());
         shaderProgram->setMat4("projectionMatrix", activeScene->getCamera().getProjectionMatrix());

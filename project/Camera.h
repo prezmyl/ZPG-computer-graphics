@@ -31,6 +31,8 @@ public:
     void moveForward(float distance); //+forward/-backward
     void moveRight(float distance); //+right/-left
 
+    void rotate(float yawDelta, float pitchDelta);
+
 };
 
 

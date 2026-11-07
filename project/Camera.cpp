@@ -38,8 +38,23 @@ void Camera::moveForward(float distance) {
 
 void Camera::moveRight(float distance) {
     glm::vec3 forward = glm::normalize(glm::vec3(direction.x, 0.0f, direction.z));
-    glm::vec3 right = glm::normalize(glm::cross(forward, up)); //kolmy
+    glm::vec3 right = glm::normalize(glm::cross(forward, up)); //perpendicular to forward and up(used as helper vector)
     position = position + right * distance;
+}
+
+void Camera::rotate(float yawDelta, float pitchDelta) {
+    float yaw = glm::atan(direction.z, direction.x);
+    float pitch = glm::asin(direction.y);
+
+    yaw = yaw + yawDelta;
+    pitch = pitch + pitchDelta;
+
+    //limit the pitch due to mathematics restrains on calculation
+    pitch = glm::clamp(pitch, -89.0f, 89.0f);
+
+    direction.x = glm::cos(pitch) * glm::cos(yaw);
+    direction.y = glm::sin(pitch);
+    direction.z = glm::cos(pitch) * glm::sin(yaw);
 }
 
 /*
