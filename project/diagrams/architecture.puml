@@ -192,6 +192,7 @@ class C_0008808924239730370349 {
 +addScene(std::unique_ptr<Scene> scene) : void
 -createResources() : void
 +initialize() : bool
++onFramebufferResize(int width, int height) : void
 +run() : void
 +setActiveScene(std::size_t idx) : void
 __

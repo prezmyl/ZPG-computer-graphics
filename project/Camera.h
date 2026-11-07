@@ -28,6 +28,7 @@ public:
     glm::mat4 getProjectionMatrix() const; //
     void resize(int width, int height);
     //Camera& getCamera();
+    void moveForward(float distance); //+forward/-backward
 
 };
 

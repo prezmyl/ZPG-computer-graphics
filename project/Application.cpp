@@ -47,10 +47,11 @@ static void key_callback(GLFWwindow* window, int key,
         glfwGetWindowUserPointer(window) //get the address of app instance, since this is static metod
     );
 
+    //close
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
-
+    //switch scene
     if (app && key == GLFW_KEY_1 && action == GLFW_PRESS) {
         app->setActiveScene(0);
     }
@@ -62,6 +63,7 @@ static void key_callback(GLFWwindow* window, int key,
     if (app && key == GLFW_KEY_3 && action == GLFW_PRESS) {
         app->setActiveScene(2);
     }
+
 }
 
 static void window_size_callback(GLFWwindow* window, int width, int height)
@@ -381,9 +383,20 @@ Application::~Application() {
 }
 
 void Application::run() {
+    // for moving camera around
+    float speed = 3;
+    float distance;
+    float deltaTime;
+    long currentTime, lastTime;
+
 
     while (!glfwWindowShouldClose(window))
     {
+        //deltaT
+        currentTime = glfwGetTime();
+        deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
         // background color
         glClearColor(
             0.15f,
@@ -403,6 +416,16 @@ void Application::run() {
         Scene* activeScene = scenes[activeSceneIdx].get();
 
         activeScene->update(glfwGetTime()); //update transformacnich matic
+        
+        //wasd
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            distance = speed * deltaTime;
+            activeScene->getCamera().moveForward(distance);
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            distance = speed * deltaTime;
+            activeScene->getCamera().moveForward(distance);
+        }
 
         shaderProgram->use();
         shaderProgram->setMat4("viewMatrix", activeScene->getCamera().getViewMatrix());
@@ -427,6 +450,10 @@ void Application::setActiveScene(std::size_t idx) {
     if (idx < scenes.size()) {
         activeSceneIdx = idx;
     }
+}
+
+Scene& Application::getActiveScene() {
+    return *scenes[activeSceneIdx];
 }
 
 void Application::onFramebufferResize(int width, int height) {

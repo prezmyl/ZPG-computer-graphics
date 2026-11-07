@@ -29,6 +29,11 @@ void Camera::resize(int width, int height) {
     aspectRatio = static_cast<float>(width) / static_cast<float>(height);
 
 }
+
+void Camera::moveForward(float distance) {
+    position = position + direction * distance;
+}
+
 /*
 Camera& Camera::getCamera() {
     return *this;

@@ -38,6 +38,7 @@ public:
 
     void addScene(std::unique_ptr<Scene> scene);
     void setActiveScene(std::size_t idx);
+    Scene& getActiveScene();
 
     void onFramebufferResize(int width, int height);
 
