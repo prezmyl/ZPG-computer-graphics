@@ -31,12 +31,18 @@ void Camera::resize(int width, int height) {
 }
 
 void Camera::moveForward(float distance) {
-    //leveled movment should ignore the y coordivate and rest of the vector should be normalized
+    //leveled movment should ignore the y coordivate and the vector should be normalized
     glm::vec3 forward = glm::normalize(glm::vec3(direction.x, 0.0f, direction.z));
-    position = position + /*direction*/forward * distance;
+    position = position + forward * distance;
+}
+
+void Camera::moveRight(float distance) {
+    glm::vec3 forward = glm::normalize(glm::vec3(direction.x, 0.0f, direction.z));
+    glm::vec3 right = glm::normalize(glm::cross(forward, up)); //kolmy
+    position = position + right * distance;
 }
 
 /*
 Camera& Camera::getCamera() {
-    return *this; 
+    return *this;
 }*/

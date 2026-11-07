@@ -425,6 +425,14 @@ void Application::run() {
             distance = speed * deltaTime;
             activeScene->getCamera().moveForward(-distance);
         }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            distance = speed * deltaTime;
+            activeScene->getCamera().moveRight(distance);
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            distance = speed * deltaTime;
+            activeScene->getCamera().moveRight(-distance);
+        }
 
         shaderProgram->use();
         shaderProgram->setMat4("viewMatrix", activeScene->getCamera().getViewMatrix());

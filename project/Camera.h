@@ -29,6 +29,7 @@ public:
     void resize(int width, int height);
     //Camera& getCamera();
     void moveForward(float distance); //+forward/-backward
+    void moveRight(float distance); //+right/-left
 
 };
 
