@@ -50,7 +50,7 @@ void Camera::rotate(float yawDelta, float pitchDelta) {
     pitch = pitch + pitchDelta;
 
     //limit the pitch due to mathematics restrains on calculation
-    pitch = glm::clamp(pitch, -89.0f, 89.0f);
+    pitch = glm::clamp(pitch, glm::radians(-89.0f), glm::radians(89.0f));
 
     direction.x = glm::cos(pitch) * glm::cos(yaw);
     direction.y = glm::sin(pitch);

@@ -388,6 +388,9 @@ void Application::run() {
     float distance;
     double currentTime, lastTime = glfwGetTime();
 
+    scenes[activeSceneIdx]->getCamera().rotate(
+        glm::radians(90.0f), 0.0f
+    );
 
     while (!glfwWindowShouldClose(window))
     {
@@ -434,7 +437,7 @@ void Application::run() {
             activeScene->getCamera().moveRight(-distance);
         }
 
-        activeScene->getCamera().rotate(glm::radians(90.0f), 0.0f);
+
 
         shaderProgram->use();
         shaderProgram->setMat4("viewMatrix", activeScene->getCamera().getViewMatrix());
