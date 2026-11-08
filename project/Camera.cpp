@@ -42,12 +42,12 @@ void Camera::moveRight(float distance) {
     position = position + right * distance;
 }
 
-void Camera::rotate(float yawDelta, float pitchDelta) {
+void Camera::rotate(float deltaYaw, float deltaPitch) {
     float yaw = glm::atan(direction.z, direction.x);
     float pitch = glm::asin(direction.y);
 
-    yaw = yaw + yawDelta;
-    pitch = pitch + pitchDelta;
+    yaw = yaw + deltaYaw;
+    pitch = pitch + deltaPitch;
 
     //limit the pitch due to mathematics restrains on calculation
     pitch = glm::clamp(pitch, glm::radians(-89.0f), glm::radians(89.0f));

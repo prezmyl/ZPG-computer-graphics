@@ -386,18 +386,17 @@ void Application::run() {
     // for moving camera around
     float speed = 3;
     float distance;
-    double currentTime, lastTime = glfwGetTime();
+    double now;
+    double lastTime = glfwGetTime();
 
-    scenes[activeSceneIdx]->getCamera().rotate(
-        glm::radians(90.0f), 0.0f
-    );
+
 
     while (!glfwWindowShouldClose(window))
     {
         //deltaT
-        currentTime = glfwGetTime();
-        float deltaTime = static_cast<float>(currentTime - lastTime);
-        lastTime = currentTime;
+        now = glfwGetTime();
+        float deltaTime = static_cast<float>(now - lastTime);
+        lastTime = now;
 
         // background color
         glClearColor(
@@ -473,6 +472,27 @@ void Application::onFramebufferResize(int width, int height) {
 
     for (auto& scene : scenes) {
         scene->getCamera().resize(width, height);
+    }
+}
+
+void Application::onMouseMove(double xpos, double ypos) {
+    //mouse control
+    double lastMouseX; // odkud
+    double lastMouseY; // odkud
+    double deltaX;
+    double deltaY;
+    bool firstMouse = true;
+
+    if (firstMouse) {
+        lastMouseX = xpos;
+        lastMouseY = ypos;
+        firstMouse = false;
+    }
+    else {
+        deltaX = xpos - lastMouseX;
+        deltaY = ypos - lastMouseY;
+        getActiveScene().getCamera().rotate(deltaX, deltaY);
+
     }
 }
 
