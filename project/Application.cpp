@@ -77,6 +77,15 @@ static void window_size_callback(GLFWwindow* window, int width, int height)
 
 }
 
+//mouse movement
+static void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    auto* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+
+    if (app) {
+        app->onMouseMove(xpos, ypos );
+    }
+}
+
 
 
 void Application::createResources() {
@@ -364,6 +373,9 @@ bool Application::initialize() {
     //glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetFramebufferSizeCallback(window, window_size_callback);
 
+    //mouse movement callback registration
+    glfwSetCursorPosCallback(window, mouse_callback);
+
     createResources();
 
     return true;
@@ -436,7 +448,7 @@ void Application::run() {
             activeScene->getCamera().moveRight(-distance);
         }
 
-
+        //mouse movement -> solved by callback
 
         shaderProgram->use();
         shaderProgram->setMat4("viewMatrix", activeScene->getCamera().getViewMatrix());
@@ -477,11 +489,12 @@ void Application::onFramebufferResize(int width, int height) {
 
 void Application::onMouseMove(double xpos, double ypos) {
     //mouse control
-    double lastMouseX; // odkud
-    double lastMouseY; // odkud
     double deltaX;
     double deltaY;
-    bool firstMouse = true;
+    double deltaYaw;
+    double deltaPitch;
+    float sensitivity = glm::radians(0.1f);
+
 
     if (firstMouse) {
         lastMouseX = xpos;
@@ -491,7 +504,10 @@ void Application::onMouseMove(double xpos, double ypos) {
     else {
         deltaX = xpos - lastMouseX;
         deltaY = ypos - lastMouseY;
-        getActiveScene().getCamera().rotate(deltaX, deltaY);
+        deltaYaw = deltaX * sensitivity;
+        deltaPitch = -deltaY * sensitivity;
+
+        getActiveScene().getCamera().rotate(deltaYaw, deltaPitch);
 
     }
 }

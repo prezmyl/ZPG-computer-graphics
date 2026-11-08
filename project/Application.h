@@ -27,7 +27,10 @@ private:
     std::unique_ptr<ShaderProgram> shaderProgram;
     std::vector<std::unique_ptr<Scene>> scenes;
     std::size_t activeSceneIdx = 0;
-    //Rotation* animatedRotation = nullptr;
+     // mouse movement states
+    double lastMouseX;
+    double lastMouseY;
+    bool firstMouse = true;
 
     void createResources();
     Scene& getActiveScene();
