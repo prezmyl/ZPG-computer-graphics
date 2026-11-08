@@ -509,6 +509,9 @@ void Application::onMouseMove(double xpos, double ypos) {
 
         getActiveScene().getCamera().rotate(deltaYaw, deltaPitch);
 
+        lastMouseX = xpos;
+        lastMouseY = ypos;
+
     }
 }
 
