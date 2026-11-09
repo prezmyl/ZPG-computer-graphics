@@ -1,0 +1,39 @@
+//
+// Created by pol0511 on 11/1/26.
+//
+
+#ifndef PROJECT_CAMERA_H
+#define PROJECT_CAMERA_H
+
+#include <glm/vec3.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
+
+
+class Camera {
+private:
+    glm::vec3 position;
+    glm::vec3 direction;
+    glm::vec3 up;
+
+    float fov;
+    float aspectRatio;
+    float near;
+    float far;
+
+public:
+    Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 up, float fov, float aspectRatio, float near, float far);
+
+    glm::vec3 getCenter() const;
+    glm::mat4 getViewMatrix() const; //lookAt(position, center, up)
+    glm::mat4 getProjectionMatrix() const; //
+    void resize(int width, int height);
+    //Camera& getCamera();
+    void moveForward(float distance); //+forward/-backward
+    void moveRight(float distance); //+right/-left
+
+    void rotate(float yawDelta, float pitchDelta);
+
+};
+
+
+#endif //PROJECT_CAMERA_H
