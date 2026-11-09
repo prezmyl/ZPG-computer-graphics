@@ -98,7 +98,10 @@ class C_0005049148943034209802 {
 +getCenter() const : glm::vec3
 +getProjectionMatrix() const : glm::mat4
 +getViewMatrix() const : glm::mat4
++moveForward(float distance) : void
++moveRight(float distance) : void
 +resize(int width, int height) : void
++rotate(float yawDelta, float pitchDelta) : void
 __
 -aspectRatio : float
 -far : float
@@ -191,12 +194,17 @@ class C_0008808924239730370349 {
 ..
 +addScene(std::unique_ptr<Scene> scene) : void
 -createResources() : void
+-getActiveScene() : Scene &
 +initialize() : bool
 +onFramebufferResize(int width, int height) : void
++onMouseMove(double xpos, double ypos) : void
 +run() : void
 +setActiveScene(std::size_t idx) : void
 __
 -activeSceneIdx : std::size_t
+-firstMouse : bool
+-lastMouseX : double
+-lastMouseY : double
 -window : GLFWwindow *
 }
 class "Translation" as C_0017401563024334194039
@@ -250,8 +258,8 @@ C_0018403690083903418410 o-- C_0005836985577823843820 : -axis
 C_0011135272028013465752 <|-- C_0018403690083903418410
 C_0007382990770960972762 --> C_0018403690083903418410 : -rotation
 C_0009177790275752332348 <|-- C_0007382990770960972762
-C_0008808924239730370349 ..> C_0005841236919913815719
 C_0008808924239730370349 ..> C_0016177104474805726272
+C_0008808924239730370349 ..> C_0005841236919913815719
 C_0008808924239730370349 o-- C_0005429747195776422453 : -model
 C_0008808924239730370349 o-- C_0005429747195776422453 : -treeModel
 C_0008808924239730370349 o-- C_0005429747195776422453 : -sphereModel
