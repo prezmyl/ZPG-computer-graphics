@@ -1,6 +1,6 @@
 # Kamera v ZPG: vlastnictví, pohled/projekce a tok aktualizací
 
-**Stav:** 2026-11-05, GitHub `3b218847cb64949c33ee4575c884aaa0c904b6b2`. Návrhový model + ověřený zdrojový stav, nikoli důkaz běhového testu.
+**Původní stav:** 2026-11-05, GitHub `3b218847cb64949c33ee4575c884aaa0c904b6b2`; **aktualizováno:** 2026-11-09, GitHub `5a972baa`. Zdrojový stav byl přezkoumán, uživatel potvrdil běžný funkční test WASD + myši, nezávislý runtime test asistent neprovedl.
 
 ## Mentální model (co a proč)
 
@@ -53,7 +53,7 @@ Application::run() [každý snímek]
   -> Scene::draw() [GPU použije matice při vykreslení]
 ```
 
-**Pozor na rozdíl mezi cílovým návrhem a stavem kódu:** současný callback dělá pouze `glViewport`; `Camera::resize` se zatím nevolá. Matice se ale již nahrávají v každém snímku. Při přechodu na čtyři osvětlovací shader programy musí být view/projection aktuální v každém programu, který danou scénu vykresluje.
+**Současný stav (9. 11.):** callback již používá velikost framebufferu, nastaví `glViewport` a aktualizuje `Camera::resize()` u všech scén, včetně ochrany nulových rozměrů. Matice se nahrávají před vykreslením v každém snímku. WASD a myš jsou zapojeny; detailní rozbor je v `ovladani-kamery-vstupy-cas-a-orientace.md`. Při přechodu na více osvětlovacích shader programů musí být view/projection aktuální v každém programu, který danou scénu vykresluje.
 
 **Proč nyní ne Observer:** při jednoduchém render loop stačí pravidelně přečíst aktuální stav, bez registrace a životnosti subscriberů. Observer dává smysl, až když konkrétní potřeba ukáže výhodu notifikací.
 
@@ -69,7 +69,7 @@ Application::run() [každý snímek]
 
 ## Otevřené ověřovací úkoly
 
-- Při resize širokého a úzkého framebufferu zůstává koule kulatá; výška 0 nevede k dělení nulou.
-- Dvě scény začínají s různou kamerou; přepnutí změní pohled, aniž by si scény přepisovaly stav.
-- Pozorovatel s kamerou se pohybuje WASD a rozhlíží myší; lze vysvětlit `direction`, `right`, `up`, yaw/pitch a závislost na `deltaTime`.
-- Build a běh opraveného stavu ještě nejsou doložené asistentem.
+- Uživatel potvrdil funkční zúžení/rozšíření okna a WASD + myš, bez samostatného testu asistenta. Přesná inicializace pro HiDPI a minimalizaci zůstává nevyhodnocená.
+- Dvě scény mají ve výchozím stavu stejnou kameru jako nezávislé kopie; cílený test, že si po odlišném pohybu uchovají samostatný stav, zůstává otevřený.
+- Při současném diagonálním pohybu, přesné vertikální orientaci a znovuzískání fokusu ověřit hraniční chování. Samostatné odvození yaw/pitch a příslušných jednotek je dále k procvičení.
+- Build a běh **asistentem** stále nejsou doložené.

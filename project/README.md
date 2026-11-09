@@ -8,6 +8,8 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Samostatně prokázáno
 
+- **DU03 – ovládání kamery (7.–9. 11.):** student samostatně zdůvodnil oddělení GLFW od `Camera`, zvolil `direction` jako zdroj pravdy (yaw/pitch lze dopočítat), experimentoval s `getActiveScene(): Scene&` a po skutečné zkušenosti s omezeným kurzorem navrhl použití `GLFW_CURSOR_DISABLED`. Úspěšné chování WASD a myši výslovně potvrdil; poznání konkrétních GLM/GLFW detailů bylo kombinací vlastní práce a nápověd.
+
 - **DU03 – kamera (1.–5. 11.):** student samostatně identifikoval potřebu pohyblivé kamery před osvětlením, zdůvodnil FPS pohyb s konstantním směrem, rozdělil `Application`/ `Camera`/ `ShaderProgram` podle odpovědností a zvolil samostatnou kameru jako součást každé `Scene`. Poznal, že první `Camera&` jako člen scény sdílí jeden objekt; následně vlastními slovy dovodil nezávislé kopie hodnotového členu z jedné výchozí lokální kamery. Konkrétní C++ konstrukce a GLM byly průběžně vysvětleny s vedením.
 
 
@@ -31,6 +33,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - Pro DU1 bylo vědomě rozhodnuto nezavádět `Scene` předčasně.
 
 ### Pochopeno s vedením
+
+- **DU03 – časování a posun (7. 11.):** první `long` a neinicializované `lastTime` nahrazeno po review inicializovaným `double` časem a `deltaTime` v sekundách; vyřešeno znaménko W/S, XZ projekce směru, `cross(forward, up)` pro pravý vektor a A/D. Samostatné znovuodvození vektorů neověřeno.
+- **DU03 – rotace a myš (7.–9. 11.):** student implementoval `rotate()` s yaw/pitch odvozenými z `direction`; s vedením opravil míchání stupňů/radiánů a volání rotace v každém snímku. V `onMouseMove()` byly opraveny lokální stavy `firstMouse/lastMouseX/Y` a zapomenutá aktualizace referenční polohy. Po registraci callbacku a povolení disabled cursor uživatel potvrzuje funkční ovládání.
 
 - **DU03 – implementace kamery:** `getCenter`, `glm::lookAt`, `glm::perspective`, `const` gettery; `Scene(const Camera&)` s vlastním hodnotovým členem `Camera camera` a nevlastnícím `getCamera(): Camera&`. Asistent objasnil rozdíl směru a bodu, dangling referenci původní lokální kamery a include konflikt GLAD/GLFW. Student změny implementoval a pushnul.
 - **DU03 – render-loop uniformy:** `viewMatrix` a `projectionMatrix` se nyní předávají přes `ShaderProgram::setMat4` každý snímek; potřebu přesunout nahrání z prostoru před smyčkou vysvětlil asistent.
@@ -68,9 +73,9 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Potřebuje upevnit
 
-- **DU03:** znovu samostatně odvodit `normalize(target-position)`, hodnotová kopie vs. uložená reference vs. návratový `Camera&`; ukázat vliv změny jedné kamery na ostatní. Ovládání WASD/myší dosud není implementováno ani ověřeno.
-- **DU03 – otevřená chyba/úkol:** GLFW callback mění pouze `glViewport`, kamery nedostanou nové rozměry; `Camera::resize` nekontroluje `height == 0`. Potřebujeme použít velikost framebufferu, přepočítat poměr stran všech scén a otestovat zúžené okno.
-- **DU03 – ověření:** nový build po opravě konfliktu GLAD/GLFW a runtime test přepínání nezávislých kamer nejsou doloženy; nepovažovat správně vypadající kód za nezávisle ověřený.
+- **DU03 – kamera (stav 9. 11.):** základní WASD, rozhlížení myší a resize callback jsou **implementované a uživatelem funkčně ověřené**. Zbývá samostatně upevnit `direction`/yaw/pitch, pořadí `cross`, správné jednotky a rozdíl `getActiveScene(): Scene&` vs. návrat `Scene` hodnotou.
+- **DU03 – okrajové případy:** diagonální W+D má přibližně √2násobnou rychlost, případný svislý/nulový `direction` v konstruktoru není ošetřen; nemáme reset `firstMouse` po ztrátě fokusu ani převzetí počáteční velikosti přímo z framebufferu.
+- **DU03 – ověření:** test fungování po zúžení okna a rozhlížení myší potvrdil student. Nezávislý build, cílený test různých stavů dvou kamer a krajních vstupů nejsou doloženy.
 
 
 - **Opravená chyba (commit `897793f`):** `setActiveScene(idx)` nyní kontroluje vstupní `idx < scenes.size()`; cílený test chování při prázdné kolekci a obecné životnosti scén zatím není doložen.
@@ -92,10 +97,10 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ### Další procvičení
 
-- **Nejbližší krok DU03 (5. 11.):** samostatně navrhnout `Application` metodu pro framebuffer resize, která nastaví viewport a `aspectRatio` kamer všech scén; doplnit guard nulové výšky a otestovat poměr stran. Následně odlišit polohy dvou scén, přidat WASD/myš a poté osvětlovací modely.
+- **Nejbližší krok DU03 (9. 11.):** základní navigace je uzavřená podle uživatelského testu. Přejít k zadání osvětlení a před implementací samostatně navrhnout, kde bude světlo a jeho parametry, kdo předá údaje shaderu a co se počítá ve vertex/fragment shaderu. Později procvičit výjimečné stavy myši/rychlosti a odlišnou kameru každé scény.
 
 
-- **Historický úkol DU02:** zkontrolovat `souhrn.txt` a požadované snímky; **aktuální priorita DU03:** korektní aktualizace `aspectRatio` všech kamer při resize, pak WASD/myš a osvětlení.
+- **Historický úkol DU02:** zkontrolovat `souhrn.txt` a požadované snímky; **aktuální priorita DU03:** pokračovat osvětlením a potřebnými normálami/shadery. Resize a WASD + myš jsou už uživatelem ověřené.
 - **Odložené:** rotující 3D login POL0511 (bod 7 je vědomě nesplněný; chybí Blender a místo na instalaci).
 - Později procvičit bez nápovědy obecnou rotaci kolem bodu vs. oběh pomocí lokální soustavy a případnou animovanou translaci/škálování.
 
@@ -110,6 +115,10 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 - Pro více animací ověřit rozdělení řízení času mezi `Application`, `Scene` a jednotlivé `Animation`; současná `Scene` již má `addAnimation()` a `update()`.
 
 ## Generalizovatelné programovací a návrhové principy
+
+- **Událost → interpretace → doménová operace:** GLFW čte klávesy a myš, Application převádí pixely/sekundy na požadovaný pohyb, Camera zná pouze prostorové operace bez závislosti na GLFW.
+- **Přírůstky vyžadují udržovaný referenční bod:** `now-lastTime` i `x-lastMouseX` jsou změny jen tehdy, když po zpracování aktualizujeme minulou hodnotu. Scope proměnné musí přežít mezi událostmi, pokud to vyžaduje její význam.
+- **Odděl fyzikální/geometrické veličiny a jednotky:** směr pohledu není směr chůze v XZ, pixely nejsou radiány a rychlost za sekundu se násobí `deltaTime`. Správný typ `float` bez správné jednotky nic nezaručuje.
 
 - **Nejdřív sémantika vztahu, pak C++ zápis:** kompozice `Scene`–`Camera` znamená vlastní identitu a životnost; hodnotový člen je zde jednodušší než `unique_ptr`. Parametr `const Camera&` může sloužit pro inicializační kopii, getter `Camera&` pro nevlastnící přístup.
 - **Událost → stav → odvozený výsledek → konzument:** GLFW přinese rozměry, `Camera` drží `aspectRatio`, GLM vypočítá projekci, `ShaderProgram` přenese uniform; CPU změny se samy na GPU nepropíší.
@@ -155,7 +164,14 @@ Zdrojový kód a Git historie ukazují, **co se změnilo**. Checkpointy a koncep
 
 ## Aktuální architektonický stav
 
-**DU03 – kamera v jednotlivých scénách (kontrolovaný commit `3b218847`, 5. 11. 2026):**
+**DU03 – základní FPS navigace (ověřený GitHub HEAD `5a972baa`, 9. 11. 2026):**
+
+- `Application::run()` čte držené W/S/A/D přes GLFW a používá `speed * deltaTime`; `Camera` udržuje `position` a `direction`, poskytuje `moveForward` a `moveRight` pro pohyb v XZ.
+- `Application::onMouseMove()` uchovává předchozí pozici kurzoru v členském stavu, počítá sousední delty, převádí je na radiány a volá `Camera::rotate`. GLFW kurzor je v `GLFW_CURSOR_DISABLED`, takže otáčení není omezeno okrajem okna.
+- Framebuffer resize aktualizuje viewport i `aspectRatio` všech scén. Každá `Scene` má svou hodnotovou `Camera`, `getActiveScene(): Scene&` a `getCamera(): Camera&` jsou nevlastnící reference.
+- Uživatel potvrdil základní běhovou funkčnost; **asistent test neprováděl**. Není dořešena diagonální rychlost, ztráta fokusu, validace nenulového `direction` a počáteční skutečné rozměry framebufferu. **Další hlavní etapa:** DU03 osvětlení. Podrobnosti v `notes/checkpoints/2026-11-09--du03-ovladani-kamery-wasd-a-mys.md`.
+
+**DU03 – předchozí milník: kamera v jednotlivých scénách (commit `3b218847`, 5. 11. 2026; navazující úpravy popsány výše):**
 
 - `Camera` obsahuje pozici, směrový a up vektor a parametry perspektivy; matice počítá z hodnot (GLM `lookAt`/`perspective`).
 - Každá `Scene` vlastní **vlastní kopii** kamery jako `Camera camera`, vytvořenou z počáteční `const Camera&`; `getCamera()` vrací nevlastnící `Camera&`. Dosud mají všechny scény shodné počáteční nastavení.
@@ -202,6 +218,7 @@ Aktuálně:
 - `uniformy-a-drawableobject.md`
 - `sceny-animace-a-prepinani.md` (kompozice animačních pravidel, změna ownershipu, GLFW callback)
 - `kamera-vlastnictvi-a-promitaci-retezec.md` (Scene–Camera kompozice, hodnotové kopie a přenos matic do GPU)
+- `ovladani-kamery-vstupy-cas-a-orientace.md` (WASD, časování, mouse delta, yaw/pitch, oddělení GLFW od Camera)
 
 Poznámka `transformace-a-composite.md` aktualizována 2026-10-28 o řetězce matic, lokální souřadnice a sluneční soustavu.
 
@@ -225,6 +242,7 @@ Aktuálně:
 - `2026-10-27--du02-animace-sceny-a-prepinani.md` (kompozice chování, více scén, index, chyby ownershipu)
 - `2026-10-28--du02-slunecni-soustava-a-matice.md` (hierarchie pohybu, skládání matic, dynamické parametry, omezení DU02)
 - `2026-11-05--du03-kamera-vlastnictvi-a-aktualizace-matic.md` (samostatný návrh kamery, kompozice a životnost, GLM/view/projection, rozpracované resize)
+- `2026-11-09--du03-ovladani-kamery-wasd-a-mys.md` (WASD, myš, delta události, reflexe chyb, funkční uzavření základní navigace)
 
 Checkpoint se v učitelském chatu spouští slovem:
 
