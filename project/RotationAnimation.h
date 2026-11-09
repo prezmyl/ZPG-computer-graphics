@@ -1,5 +1,5 @@
 //
-// Created by xpolas on 10/27/26.
+// Created by pol0511 on 10/27/26.
 //
 
 #ifndef PROJECT_ROTATIONANIMATION_H

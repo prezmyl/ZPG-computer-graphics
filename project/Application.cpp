@@ -34,7 +34,7 @@
 
 #include "Camera.h"
 
-//static - original callbacks
+//static - callbacks
 static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -375,6 +375,8 @@ bool Application::initialize() {
 
     //mouse movement callback registration
     glfwSetCursorPosCallback(window, mouse_callback);
+    //hiding mouse cursor and locking the cursor to the window
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     createResources();
 
